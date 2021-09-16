@@ -9,7 +9,7 @@ class UserTable extends Migration
     public function up()
     {
         $this->forge->addField([
-            'id_user' => [
+            'id' => [
                 'type' => 'INT',
                 'constraint' => 11,
                 'auto_increment' => true
@@ -45,12 +45,12 @@ class UserTable extends Migration
             ],
         ]);
 
-        $this->forge->addKey('id_user', true);
+        $this->forge->addKey('id', true);
         $this->forge->createTable('users');
     }
 
     public function down()
     {
-        $this->forge->dropDatabase('users', true);
+        $this->forge->dropTable('users', true);
     }
 }

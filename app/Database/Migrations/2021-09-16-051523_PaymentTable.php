@@ -14,7 +14,7 @@ class PaymentTable extends Migration
                 'constraint' => 11,
                 'auto_increment' => true,
             ],
-            'user_id' => [
+            'id_user' => [
                 'type' => 'INT',
                 'constraint' => 11,
             ],
@@ -74,11 +74,12 @@ class PaymentTable extends Migration
         ]);
 
         $this->forge->addKey('id_payment', true);
+        $this->forge->addForeignKey('id_user', 'users', 'id');
         $this->forge->createTable('payment');
     }
 
     public function down()
     {
-        $this->forge->dropDatabase('payment', true);
+        $this->forge->dropTable('payment', true);
     }
 }

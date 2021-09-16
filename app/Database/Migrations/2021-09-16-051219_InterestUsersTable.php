@@ -14,7 +14,7 @@ class InterestUsersTable extends Migration
                 'constraint' => 11,
                 'auto_increment' => true,
             ],
-            'user_id' => [
+            'id_user' => [
                 'type' => 'INT',
                 'constraint' => 11,
             ],
@@ -33,11 +33,12 @@ class InterestUsersTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
+        $this->forge->addForeignKey('id_user', 'users', 'id');
         $this->forge->createTable('interest_users');
     }
 
     public function down()
     {
-        $this->forge->dropDatabase('interest_users', true);
+        $this->forge->dropTable('interest_users', true);
     }
 }

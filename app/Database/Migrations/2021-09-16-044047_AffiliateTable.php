@@ -14,9 +14,8 @@ class AffiliateTable extends Migration
                 'constraint' => 11,
                 'auto_increment' => true,
             ],
-            'users_id' => [
+            'user_id' => [
                 'type' => 'INT',
-                'constraint' => 11,
             ],
             'leader' => [
                 'type' => 'VARCHAR',
@@ -43,12 +42,12 @@ class AffiliateTable extends Migration
         ]);
 
         $this->forge->addKey('id_affiliate', true);
+        $this->forge->addForeignKey('user_id', 'users', 'id');
         $this->forge->createTable('affiliate');
     }
 
     public function down()
     {
-        $this->forge->dropDatabase('affiliate', true);
+        $this->forge->dropTable('affiliate', true);
     }
-
 }

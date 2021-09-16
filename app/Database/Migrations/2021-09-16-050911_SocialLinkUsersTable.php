@@ -33,11 +33,12 @@ class SocialLinkUsersTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
+        $this->forge->addForeignKey('id_user', 'users', 'id');
         $this->forge->createTable('social_link_users');
     }
 
     public function down()
     {
-        $this->forge->dropDatabase('social_link_users', true);
+        $this->forge->dropTable('social_link_users', true);
     }
 }

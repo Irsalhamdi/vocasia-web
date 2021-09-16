@@ -41,11 +41,12 @@ class UserDetailTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
+        $this->forge->addForeignKey('id_user', 'users', 'id');
         $this->forge->createTable('user_detail');
     }
 
     public function down()
     {
-        $this->forge->dropDatabase('user_detail', true);
+        $this->forge->dropTable('user_detail', true);
     }
 }
