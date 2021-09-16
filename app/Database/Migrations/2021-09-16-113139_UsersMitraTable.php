@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class UserTable extends Migration
+class UsersMitraTable extends Migration
 {
     public function up()
     {
@@ -14,34 +14,30 @@ class UserTable extends Migration
                 'constraint' => 11,
                 'auto_increment' => true
             ],
-            'first_name' => [
+            'id_user' => [
+                'type' => 'INT',
+                'constraint' => 11,
+
+            ],
+            'number_code' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,
+
             ],
-            'last_name' => [
+            'collage' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,
+
             ],
-            'email' => [
+            'major' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,
+
             ],
-            'password' => [
+            'mitra_name' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,
-            ],
-            'username' => [
-                'type' => 'VARCHAR',
-                'constraint' => 255,
-            ],
-            'role_id' => [
-                'type' => 'VARCHAR',
-                'constraint' => 255,
-            ],
-            'is_verified' => [
-                'type' => 'ENUM',
-                'constraint' => ['active', 'deactive'],
-                'default' => 'deactive'
+
             ],
             'create_at' => [
                 'type' => 'DATETIME'
@@ -52,11 +48,12 @@ class UserTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->createTable('users');
+        $this->forge->addForeignKey('id_user', 'users', 'id');
+        $this->forge->createTable('users_mitra');
     }
 
     public function down()
     {
-        $this->forge->dropTable('users', true);
+        $this->forge->dropTable('users_mitra');
     }
 }
