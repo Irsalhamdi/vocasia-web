@@ -49,10 +49,9 @@ class QnaThreadTable extends Migration
         ]);
 
         $this->forge->addKey('id_qna', true);
-        $this->forge->addForeignKey('sender');
-        $this->forge->addForeignKey('id_course','course','id');
-        $this->forge->addForeignKey('id_lesson','lesson','id');
-        $this->forge->addForeignKey('user_id_up','users','id_users');
+        $this->forge->addForeignKey('id_course', 'courses', 'id');
+        $this->forge->addForeignKey('id_lesson', 'lesson', 'id');
+        $this->forge->addForeignKey('user_id_up', 'users', 'id');
         $this->forge->createTable('qna_thread');
     }
 

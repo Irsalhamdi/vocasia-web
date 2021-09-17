@@ -28,7 +28,7 @@ class SectionTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->addForeignKey('course_id','course','id');
+        $this->forge->addForeignKey('course_id', 'courses', 'id');
         $this->forge->createTable('section');
     }
 

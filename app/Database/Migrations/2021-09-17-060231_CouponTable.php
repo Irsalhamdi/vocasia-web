@@ -51,8 +51,8 @@ class CouponTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->addForeignKey('user_id','users','id_users');
-        $this->forge->addForeignKey('course_id','course','id');
+        $this->forge->addForeignKey('user_id', 'users', 'id');
+        $this->forge->addForeignKey('course_id', 'courses', 'id');
         $this->forge->createTable('coupon');
     }
 
