@@ -19,8 +19,7 @@ class UserDetailTable extends Migration
                 'constraint' => 11,
             ],
             'biography' => [
-                'type' => 'VARCHAR',
-                'constraint' => 255,
+                'type' => 'LONGTEXT',
             ],
             'adress' => [
                 'type' => 'VARCHAR',
