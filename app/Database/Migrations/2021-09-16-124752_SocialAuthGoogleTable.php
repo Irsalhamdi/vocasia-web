@@ -16,15 +16,15 @@ class SocialAuthGoogleTable extends Migration
             ],
             'first_name' => [
                 'type' => 'VARCHAR',
-                'constraint' => '255',
+                'constraint' => 255,
             ],
             'last_name' => [
                 'type' => 'VARCHAR',
-                'constraint' => '255,'
+                'constraint' => 255,
             ],
             'email' => [
                 'type' => 'VARCHAR',
-                'constraint' => '255',
+                'constraint' => 255,
             ],
             'profile_pic' => [
                 'type' => 'LONGTEXT'

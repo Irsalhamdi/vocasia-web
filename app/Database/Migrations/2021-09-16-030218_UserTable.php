@@ -35,8 +35,7 @@ class UserTable extends Migration
                 'constraint' => 255,
             ],
             'role_id' => [
-                'type' => 'VARCHAR',
-                'constraint' => 255,
+                'type' => 'INT',
             ],
             'is_verified' => [
                 'type' => 'ENUM',

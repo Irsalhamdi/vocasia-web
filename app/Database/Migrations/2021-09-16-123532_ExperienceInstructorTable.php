@@ -15,20 +15,19 @@ class ExperienceInstructorTable extends Migration
                 'auto_increment' => true,
             ],
             'users_id' => [
-                'type' => 'VARCHAR',
-                'constraint' => '255',
+                'type' => 'INT',
             ],
             'experience' => [
                 'type' => 'VARCHAR',
-                'constraint' => '255',
+                'constraint' => 255,
             ],
             'content' => [
                 'type' => 'VARCHAR',
-                'constraint' => '255',
+                'constraint' => 255,
             ],
             'audience' => [
                 'type' => 'VARCHAR',
-                'constraint' => '255',
+                'constraint' => 255,
             ],
         ]);
         $this->forge->addKey('id', true);

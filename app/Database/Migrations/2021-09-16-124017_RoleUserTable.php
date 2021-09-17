@@ -16,17 +16,15 @@ class RoleUserTable extends Migration
             ],
             'role_name' => [
                 'type' => 'VARCHAR',
-                'constraint' => '255',
+                'constraint' => 255,
             ],
             'create_at' => [
                 'type' => 'DATETIME',
-                'default' => null,
-                'null' => true
+
             ],
             'update_at' => [
                 'type' => 'DATETIME',
-                'default' => null,
-                'null' => true
+
             ],
         ]);
         $this->forge->addKey('id', true);
