@@ -82,6 +82,7 @@ class LessonTable extends Migration
 
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('course_id', 'courses', 'id');
+        $this->forge->addForeignKey('section_id', 'section', 'id');
         $this->forge->createTable('lesson');
     }
 
