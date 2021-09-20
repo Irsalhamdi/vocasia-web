@@ -54,10 +54,6 @@ class NotificationTable extends Migration
             ],
         ]);
         $this->forge->addKey('id_notif', true);
-        $this->forge->addForeignKey('user_id', 'course', 'id');
-        $this->forge->addForeignKey('user_id_sender', 'course', 'id');
-        $this->forge->addForeignKey('order_id', 'course', 'id');
-        $this->forge->addForeignKey('courses_id', 'course', 'id');
         $this->forge->createTable('notification');
     }
 

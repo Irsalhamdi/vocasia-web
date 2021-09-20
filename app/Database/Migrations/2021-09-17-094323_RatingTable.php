@@ -42,8 +42,8 @@ class RatingTable extends Migration
             ],
         ]);
         $this->forge->addKey('id', true);
-        $this->forge->addForeignKey('user_id', 'course', 'id');
-        $this->forge->addForeignKey('retable_id', 'course', 'id');
+        $this->forge->addForeignKey('user_id', 'users', 'id');
+        $this->forge->addForeignKey('ratable_id', 'courses', 'id');
         $this->forge->createTable('rating');
     }
 
