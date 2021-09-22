@@ -38,6 +38,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($r
     $routes->get('course', 'Courses::index');
     $routes->get('course/(:num)', 'Courses::show/$1');
     $routes->post('course', 'Courses::create');
+    $routes->post('course/update/(:num)', 'Courses::update/$1');
+    $routes->delete('course/(:num)', 'Courses::delete/$1');
 });
 
 /*

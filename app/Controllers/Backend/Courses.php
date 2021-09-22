@@ -30,4 +30,25 @@ class Courses extends BackendController
         $this->model_course->protect(false)->insert($data_course);
         return $this->respondCreated(response_create());
     }
+
+    public function update($id = null)
+    {
+        $data_course = $this->request->getJSON();
+        $course_list_by_id = $this->model_course->get_course_list($id);
+        if (is_null($course_list_by_id)) {
+            return $this->failNotFound();
+        }
+        $this->model_course->update($id, $data_course);
+        return $this->respondUpdated(response_update());
+    }
+
+    public function delete($id = null)
+    {
+        $course_list_by_id = $this->model_course->get_course_list($id);
+        if (is_null($course_list_by_id)) {
+            return $this->failNotFound();
+        }
+        $this->model_course->delete($id);
+        return $this->respondDeleted(response_delete());
+    }
 }
