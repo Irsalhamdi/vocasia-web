@@ -34,7 +34,10 @@ $routes->setAutoRoute(false);
 // $routes->get('/', 'Home::index');
 
 $routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($routes) {
-    $routes->get('/', 'Dashboard::index');
+    // $routes->get('/', 'Dashboard::index');
+    $routes->get('course', 'Courses::index');
+    $routes->get('course/(:num)', 'Courses::show/$1');
+    $routes->post('course', 'Courses::create');
 });
 
 /*
