@@ -8,6 +8,6 @@ class Dashboard extends BackendController
 {
     public function index()
     {
-        return 'Haloo Dashboard';
+        return $this->respond(response_create());
     }
 }

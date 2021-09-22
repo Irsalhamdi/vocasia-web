@@ -8,8 +8,9 @@ use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
+use CodeIgniter\RESTful\ResourceController;
 
-class BackendController extends Controller
+class BackendController extends ResourceController
 {
     /**
      * Instance of the main Request object.
@@ -18,13 +19,12 @@ class BackendController extends Controller
      */
     protected $request;
 
-    protected $helpers = []; //jika ingin mengload helper silahkan dimasukan kedalam sini
+    protected $helpers = ['response'];
 
     public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)
     {
         parent::initController($request, $response, $logger);
 
         //silahkan load semua model dibawah ini kalau bisa semua kompak disini semua
-
     }
 }
