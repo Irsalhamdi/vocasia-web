@@ -36,10 +36,10 @@ $routes->setAutoRoute(false);
 $routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($routes) {
     // $routes->get('/', 'Dashboard::index');
     $routes->get('course', 'Courses::index');
-    $routes->get('course/(:num)', 'Courses::show/$1');
-    $routes->post('course', 'Courses::create');
-    $routes->post('course/update/(:num)', 'Courses::update/$1');
-    $routes->delete('course/(:num)', 'Courses::delete/$1');
+    $routes->get('course-detail', 'Courses::show_detail');
+    $routes->post('course-add', 'Courses::create');
+    $routes->post('course-update', 'Courses::update');
+    $routes->delete('course-delete', 'Courses::delete');
 });
 
 /*
