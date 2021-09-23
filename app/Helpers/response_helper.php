@@ -47,3 +47,14 @@ function response_delete()
     ];
     return $response;
 }
+function response_failed()
+{
+    $response = [
+        'status' => 500,
+        'error' => true,
+        'data' => [
+            'messages' => 'Invalid Data'
+        ]
+    ];
+    return $response;
+}
