@@ -75,7 +75,7 @@ class CoursesTable extends Migration
                 'type' => 'VARCHAR',
                 'constraint' => 255
             ],
-            'visiblity' => [
+            'visibility' => [
                 'type' => 'INT',
             ],
             'is_top_course' => [
