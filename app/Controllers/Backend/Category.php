@@ -63,17 +63,9 @@ class Category extends BackendController
     public function update($id = null)
     {
         $data_by_id = $this->category->find($id);
-        $nama_lama = $data_by_id['name_category'];
         $name_category = $this->request->getVar('name_category');
-        $rulesBiasa = $this->category->validationRules;
-        $rules_update = $this->category->validationRulesUpdate;
-        if ($nama_lama == $name_category) {
-            $validasi = $rules_update;
-        }else {
-            $validasi = $rulesBiasa;
-        }
+        $rules = $this->category->validationRules;
         
-        $rules = $validasi;
         if (!$this->validate($rules)) {
             return $this->fail("Record fail to update");
         }elseif ($data_by_id) {         
