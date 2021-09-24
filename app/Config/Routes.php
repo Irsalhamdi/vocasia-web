@@ -34,11 +34,6 @@ $routes->setAutoRoute(false);
 // $routes->get('/', 'Home::index');
 
 $routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($routes) {
-    $routes->get('category', 'Category::index');
-    $routes->get('category-detail/(:num)', 'Category::show_detail/$1');
-    $routes->post('category-add', 'Category::create');
-    $routes->post('category-update/(:num)', 'Category::update/$1');
-    $routes->delete('category-delete/(:num)', 'Category::delete/$1');
     $routes->get('course', 'Courses::index');
     $routes->get('course-detail', 'Courses::show_detail');
     $routes->post('course-add', 'Courses::create');
