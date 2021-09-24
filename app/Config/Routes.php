@@ -39,6 +39,12 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($r
     $routes->post('course-add', 'Courses::create');
     $routes->post('course-update', 'Courses::update');
     $routes->delete('course-delete', 'Courses::delete');
+    $routes->get('category', 'Category::index');
+    $routes->get('category/(:num)', 'Category::show/$1');
+    $routes->post('category/create', 'Category::create');
+    $routes->put('category/(:num)', 'Category::update/$1');
+    $routes->patch('category/(:num)', 'Category::update/$1');
+    $routes->delete('category/(:num)', 'Category::delete/$1');
 });
 
 /*

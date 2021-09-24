@@ -14,7 +14,7 @@ class CategoryModel extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = [];
+    protected $allowedFields        = ['code_category', 'name_category', 'parent_category', 'slug_category', 'font_awesome_class', 'thumbnail'];
 
     // Dates
     protected $useTimestamps        = true;
@@ -24,7 +24,13 @@ class CategoryModel extends Model
     protected $deletedField         = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'code_category' => 'required',
+        'name_category' => 'required|is_unique[category.name_category]',
+        'parent_category' => 'required',
+        'font_awesome_class' => 'required',
+        'thumbnail' => 'required',
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
@@ -39,4 +45,13 @@ class CategoryModel extends Model
     protected $afterFind            = [];
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
+
+    public function get_category($id = null)
+    {
+        if ($id == null) {
+            return $this->findAll();
+        } else {
+            return $this->where('id', $id)->first();
+        }
+    }
 }

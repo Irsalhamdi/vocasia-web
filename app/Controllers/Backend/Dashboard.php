@@ -10,4 +10,9 @@ class Dashboard extends BackendController
     {
         return $this->respond(response_create());
     }
+    
+    public function coba()
+    {
+        return $this->respond("ini halaman coba");
+    }
 }
