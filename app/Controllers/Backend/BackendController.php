@@ -9,6 +9,7 @@ use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use CodeIgniter\RESTful\ResourceController;
+use App\Models\CategoryModel;
 
 class BackendController extends ResourceController
 {
@@ -28,5 +29,6 @@ class BackendController extends ResourceController
         //silahkan load semua model dibawah ini kalau bisa semua kompak disini semua
 
         $this->model_course = model('CoursesModel');
+        $this->category = new CategoryModel();
     }
 }
