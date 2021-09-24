@@ -10,24 +10,16 @@ class Category extends BackendController
 
     public function index()
     {
-        $data = $this->category->get_category();
-        return $this->respond([
-            'status' => 200,
-            'messages' => 'success',
-            'data' => $data,
-        ]);
+        $category_list = $this->model_category->get_category();
+        return $this->respond(get_response($category_list));
     }
 
-    public function show($id = null)
+    public function show($params = null)
     {
-        $data = $this->category->get_category($id);
+        $category_list_by_id = $this->model_category->get_category($params);
 
-        if ($data) {
-            return $this->respond([
-                'status' => 200,
-                'messages' => 'success',
-                'data' => $data,
-            ]);
+        if ($category_list_by_id) {
+            return $this->respond(get_response($category_list_by_id));
         }else{
             return $this->failNotFound();
         }
@@ -35,42 +27,38 @@ class Category extends BackendController
 
     public function create()
     {
-        $rules = $this->category->validationRules;
+        $rules = $this->model_category->validationRules;
         if (!$this->validate($rules)) {
-            return $this->fail("Record fail to insert");
+            return $this->fail('Failed To Create Please Try Again');
         }else {
-            $slug = url_title($this->request->getvar('name_category'),'_',true);
-        $data = [
+            $slug_category = url_title($this->request->getvar('name_category'),'_',true);
+        $data_category = [
             'code_category' => $this->request->getVar('code_category'),
             'name_category' => $this->request->getVar('name_category'),
             'parent_category' => $this->request->getVar('parent_category'),
-            'slug_category' => $slug,
+            '_category_category' => $slug_category,
             'font_awesome_class' => $this->request->getVar('font_awesome_class'),
             'thumbnail' => base64_encode($this->request->getVar('thumbnail')),
         ];
 
-        $this->category->save($data);
+        $this->model_category->save($data_category);
 
-        return $this->respondCreated([
-            'status' => 200,
-            'messages' => 'Created success',
-            'data' => $data,
-        ]);
+        return $this->respondCreated(response_create());
         }
 
     }
 
-    public function update($id = null)
+    public function update($params = null)
     {
-        $data_by_id = $this->category->find($id);
+        $data_by_id = $this->model_category->find($params);
         $name_category = $this->request->getVar('name_category');
-        $rules = $this->category->validationRules;
+        $rules = $this->model_category->validationRules;
         
         if (!$this->validate($rules)) {
-            return $this->fail("Record fail to update");
+            return $this->fail("Failed To Update Please Try Again");
         }elseif ($data_by_id) {         
             $slug = url_title($this->request->getVar('name_category'),'_',true);
-            $data = [
+            $data_category = [
                 'code_category' => $this->request->getVar('code_category'),
                 'name_category' => $name_category,
                 'parent_category' => $this->request->getVar('parent_category'),
@@ -79,12 +67,8 @@ class Category extends BackendController
                 'thumbnail' => base64_encode($this->request->getVar('thumbnail')),
             ];
     
-            $this->category->update($id, $data);
-            return $this->respondCreated([
-                'status' => 200,
-                'messages' => 'Updated success',
-                'data' => $data,
-            ]);
+            $this->model_category->update($params, $data_category);
+            return $this->respondUpdated(response_update());
             
         }else {
             return $this->failNotFound();
@@ -92,17 +76,13 @@ class Category extends BackendController
         
     }
 
-    public function delete($id = null)
+    public function delete($params = null)
     {
-        $data = $this->category->find($id);
+        $data = $this->model_category->find($params);
 		if ($data) {
-			$this->category->delete($id);
+			$this->model_category->delete($params);
 
-			return $this->respondDeleted([
-                'status' => 200,
-                'message' => 'Deleted success',
-                'data' => $data,
-            ]);
+			return $this->respondDeleted(response_delete());
 		} else {
 			return $this->failNotFound();
 		}

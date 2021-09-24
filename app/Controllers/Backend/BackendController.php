@@ -29,6 +29,6 @@ class BackendController extends ResourceController
         //silahkan load semua model dibawah ini kalau bisa semua kompak disini semua
 
         $this->model_course = model('CoursesModel');
-        $this->category = new CategoryModel();
+        $this->model_category = model('CategoryModel');
     }
 }
