@@ -30,5 +30,7 @@ class BackendController extends ResourceController
 
         $this->model_course = model('CoursesModel');
         $this->category = new CategoryModel();
+        $this->model_coupon = model('CouponModel');
+        $this->model_users = model('UsersModel');
     }
 }
