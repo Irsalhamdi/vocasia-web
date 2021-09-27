@@ -21,7 +21,7 @@ class Coupon extends BackendController
             $course_exists = $this->model_course->find($this->request->getVar('course_id'));
             if (!empty($course_exists)) {
                 // course exists
-                $coupon_data = $this->request->getPost();
+                $coupon_data = $this->request->getJSON();
                 if ($coupon_data) {
                     // success to create
                     $this->model_coupon->protect(false)->insert($coupon_data);
@@ -61,7 +61,7 @@ class Coupon extends BackendController
                 $course_exists = $this->model_course->find($this->request->getPost('course_id'));
                 if ($course_exists) {
                     // course exists
-                    $coupon_update = $this->request->getPost();
+                    $coupon_update = $this->request->getJSON();
                     if ($coupon_update) {
                         // success to update
                         $this->model_coupon->update($coupon_id, $coupon_update);
