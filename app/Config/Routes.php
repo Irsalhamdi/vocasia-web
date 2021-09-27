@@ -45,6 +45,11 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($r
     $routes->put('category/(:num)', 'Category::update/$1');
     $routes->patch('category/(:num)', 'Category::update/$1');
     $routes->delete('category/(:num)', 'Category::delete/$1');
+    $routes->get('coupon', 'Coupon::index');
+    $routes->get('coupon-detail/(:num)', 'Coupon::show_detail/$1');
+    $routes->post('coupon-add', 'Coupon::create');
+    $routes->post('coupon-update/(:num)', 'Coupon::update/$1');
+    $routes->delete('coupon-delete/(:num)', 'Coupon::delete/$1');
 });
 
 /*
