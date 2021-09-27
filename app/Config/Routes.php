@@ -43,7 +43,6 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($r
     $routes->get('category/(:num)', 'Category::show/$1');
     $routes->post('category', 'Category::create');
     $routes->put('category/(:num)', 'Category::update/$1');
-    $routes->patch('category/(:num)', 'Category::update/$1');
     $routes->delete('category/(:num)', 'Category::delete/$1');
     $routes->get('coupons', 'Coupon::index');
     $routes->get('coupon/(:num)', 'Coupon::show_detail/$1');
