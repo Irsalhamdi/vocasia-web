@@ -26,7 +26,7 @@ class CategoryModel extends Model
     // Validation
     protected $validationRules      = [
         'code_category' => 'required',
-        'name_category' => 'required|is_unique[category.name_category]',
+        'name_category' => 'required',
         'parent_category' => 'required',
         'font_awesome_class' => 'required',
         'thumbnail' => 'required',
@@ -46,12 +46,12 @@ class CategoryModel extends Model
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
 
-    public function get_category($id = null)
+    public function get_category($params = null)
     {
-        if ($id == null) {
+        if ($params == null) {
             return $this->findAll();
         } else {
-            return $this->where('id', $id)->first();
+            return $this->where('id', $params)->first();
         }
     }
 }
