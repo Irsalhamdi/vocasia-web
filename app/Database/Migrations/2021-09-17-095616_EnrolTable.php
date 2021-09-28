@@ -43,7 +43,7 @@ class EnrolTable extends Migration
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('user_id', 'users', 'id');
         $this->forge->addForeignKey('course_id', 'courses', 'id');
-        $this->forge->addForeignKey('payment_id', 'payment', 'id_payment');
+        $this->forge->addForeignKey('payment_id', 'payment', 'id');
         $this->forge->createTable('enrol');
     }
 

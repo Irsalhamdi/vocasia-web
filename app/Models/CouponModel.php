@@ -53,4 +53,9 @@ class CouponModel extends Model
             ->get()
             ->getResult();
     }
+
+    public function get_coupons_prakerja()
+    {
+        // return $this->db->table('coupon a')->join();
+    }
 }

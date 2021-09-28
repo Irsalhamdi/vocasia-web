@@ -27,18 +27,6 @@ SET time_zone = "+00:00";
 -- Table structure for table `category`
 --
 
-CREATE TABLE `categor` (
-  `id` int(11) UNSIGNED NOT NULL,
-  `code_category` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `name_category` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `parent_category` varchar(255) DEFAULT '0',
-  `slug_category` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `font_awesome_class` varchar(255) DEFAULT NULL,
-  `thumbnail` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `create_at` datetime DEFAULT NULL,
-  `update_at` datetime COLLATE utf8_unicode_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
 --
 -- Dumping data for table `category`
 --

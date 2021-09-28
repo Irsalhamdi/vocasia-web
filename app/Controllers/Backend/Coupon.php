@@ -24,7 +24,7 @@ class Coupon extends BackendController
                 $coupon_data = $this->request->getJSON();
                 if ($coupon_data) {
                     // success to create
-                    $this->model_coupon->protect(false)->insert($coupon_data);
+                    $this->model_coupon->insert($coupon_data);
                     return $this->respondCreated(response_create());
                 } else {
                     // failed to create
@@ -94,5 +94,10 @@ class Coupon extends BackendController
             // coupon not exists
             return $this->failNotFound();
         }
+    }
+
+    public function prakerja_coupons()
+    {
+        $this->model_coupon->get_coupons_prakerja();
     }
 }
