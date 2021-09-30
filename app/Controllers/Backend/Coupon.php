@@ -39,9 +39,9 @@ class Coupon extends BackendController
             return $this->failNotFound();
         }
     }
-    public function show_detail($coupon_id = null)
+    public function show_detail($id_coupon = null)
     {
-        $coupon_exist = $this->model_coupon->find($coupon_id);
+        $coupon_exist = $this->model_coupon->get_list_coupon($id_coupon);
         if ($coupon_exist) {
             // coupon exists
             return $this->respond(get_response($coupon_exist));

@@ -49,6 +49,14 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($r
     $routes->post('coupon', 'Coupon::create');
     $routes->put('coupon/(:num)', 'Coupon::update/$1');
     $routes->delete('coupon/(:num)', 'Coupon::delete/$1');
+    $routes->get('enrols', 'enrol::index');
+    $routes->get('enrol/(:num)', 'enrol::show_detail/$1');
+    $routes->post('enrol', 'enrol::create');
+    $routes->put('enrol/(:num)', 'enrol::update/$1');
+    $routes->delete('enrol/(:num)', 'enrol::delete/$1');
+    $routes->get('revenue', 'revenue::admin_revenue');
+    $routes->get('revenue-instructor/(:num)', 'revenue::instructor_revenue/$1');
+    $routes->patch('delete/revenue-admin', 'revenue::update_admin_revenue');
 });
 
 /*
