@@ -70,7 +70,7 @@ class PaymentBalanceTable extends Migration
         ]);
         $this->forge->addKey('id_pb', true);
         $this->forge->addForeignKey('id_users', 'users', 'id');
-        $this->forge->addForeignKey('id_payment', 'payment', 'id_payment');
+        $this->forge->addForeignKey('id_payment', 'payment', 'id');
         $this->forge->createTable('payment_balance');
     }
 

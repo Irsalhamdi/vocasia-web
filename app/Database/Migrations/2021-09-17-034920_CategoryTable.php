@@ -34,8 +34,7 @@ class CategoryTable extends Migration
                 'constraint' => 255
             ],
             'thumbnail' => [
-                'type' => 'VARCHAR',
-                'constraint' => 255
+                'type' => 'LONGTEXT',
             ],
             'create_at' => [
                 'type' => 'DATETIME',

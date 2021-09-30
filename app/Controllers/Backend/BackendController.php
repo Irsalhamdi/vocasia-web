@@ -2,14 +2,12 @@
 
 namespace App\Controllers\Backend;
 
-use CodeIgniter\Controller;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use CodeIgniter\RESTful\ResourceController;
-use App\Models\CategoryModel;
 
 class BackendController extends ResourceController
 {
@@ -29,6 +27,10 @@ class BackendController extends ResourceController
         //silahkan load semua model dibawah ini kalau bisa semua kompak disini semua
 
         $this->model_course = model('CoursesModel');
+        $this->model_coupon = model('CouponModel');
+        $this->model_users = model('UsersModel');
         $this->model_category = model('CategoryModel');
+        $this->model_affiliate = model('AffiliateModel');
+        $this->model_users_mitra = model('UsersMitraModel');
     }
 }

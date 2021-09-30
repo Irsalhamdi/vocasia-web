@@ -34,17 +34,31 @@ $routes->setAutoRoute(false);
 // $routes->get('/', 'Home::index');
 
 $routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($routes) {
-    $routes->get('course', 'Courses::index');
-    $routes->get('course-detail', 'Courses::show_detail');
-    $routes->post('course-add', 'Courses::create');
-    $routes->post('course-update', 'Courses::update');
-    $routes->delete('course-delete', 'Courses::delete');
-    $routes->get('category', 'Category::index');
+    $routes->get('courses', 'Courses::index');
+    $routes->get('course/(:num)', 'Courses::show_detail/$1');
+    $routes->post('course', 'Courses::create');
+    $routes->put('course/(:num)', 'Courses::update/$1');
+    $routes->delete('course/(:num)', 'Courses::delete/$1');
+    $routes->get('categories', 'Category::index');
     $routes->get('category/(:num)', 'Category::show/$1');
-    $routes->post('category/create', 'Category::create');
+    $routes->post('category', 'Category::create');
     $routes->put('category/(:num)', 'Category::update/$1');
-    $routes->patch('category/(:num)', 'Category::update/$1');
     $routes->delete('category/(:num)', 'Category::delete/$1');
+    $routes->get('coupons', 'Coupon::index');
+    $routes->get('coupon/(:num)', 'Coupon::show_detail/$1');
+    $routes->post('coupon', 'Coupon::create');
+    $routes->put('coupon/(:num)', 'Coupon::update/$1');
+    $routes->delete('coupon/(:num)', 'Coupon::delete/$1');
+    $routes->get('users-mitra', 'UsersMitra::index');
+    $routes->get('users-mitra/(:num)', 'UsersMitra::show_detail/$1');
+    $routes->post('users-mitra', 'UsersMitra::create');
+    $routes->put('users-mitra/(:num)', 'UsersMitra::update/$1');
+    $routes->delete('users-mitra/(:num)', 'UsersMitra::delete/$1');
+    $routes->get('affiliates', 'affiliate::index');
+    $routes->get('affiliate/(:num)', 'affiliate::show_detail/$1');
+    $routes->post('affiliate', 'affiliate::create');
+    $routes->put('affiliate/(:num)', 'affiliate::update/$1');
+    $routes->delete('affiliate/(:num)', 'affiliate::delete/$1');
 });
 
 /*

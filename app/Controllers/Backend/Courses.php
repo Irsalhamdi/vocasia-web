@@ -16,9 +16,8 @@ class Courses extends BackendController
         return $this->respond(get_response($course_list));
     }
 
-    public function show_detail()
+    public function show_detail($id_course)
     {
-        $id_course = $this->request->getVar('id');
         $course_list_by_id = $this->model_course->get_course_list($id_course);
         if (is_null($course_list_by_id)) {
             return $this->failNotFound();
@@ -40,11 +39,10 @@ class Courses extends BackendController
         }
     }
 
-    public function update($params = null)
+    public function update($id_course = null)
     {
-        $id_course = $this->request->getVar('id');
         $data_course = $this->request->getJSON();
-        $course_list_by_id = $this->model_course->get_course_list($id_course);
+        $course_list_by_id = $this->model_course->find($id_course);
         if (is_null($data_course) || is_null($course_list_by_id)) {
             throw new Exception('Data Request Not Found Or Id Not Found!! Failed To Update Please Try Again');
         }
@@ -56,10 +54,9 @@ class Courses extends BackendController
         }
     }
 
-    public function delete($params = null)
+    public function delete($id_course = null)
     {
-        $id_course = $this->request->getVar('id');
-        $course_list_by_id = $this->model_course->get_course_list($id_course);
+        $course_list_by_id = $this->model_course->find($id_course);
         if (is_null($course_list_by_id)) {
             return $this->failNotFound();
         }
