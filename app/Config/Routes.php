@@ -49,6 +49,16 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($r
     $routes->post('coupon', 'Coupon::create');
     $routes->put('coupon/(:num)', 'Coupon::update/$1');
     $routes->delete('coupon/(:num)', 'Coupon::delete/$1');
+    $routes->get('users-mitra', 'UsersMitra::index');
+    $routes->get('users-mitra/(:num)', 'UsersMitra::show_detail/$1');
+    $routes->post('users-mitra', 'UsersMitra::create');
+    $routes->put('users-mitra/(:num)', 'UsersMitra::update/$1');
+    $routes->delete('users-mitra/(:num)', 'UsersMitra::delete/$1');
+    $routes->get('affiliates', 'affiliate::index');
+    $routes->get('affiliate/(:num)', 'affiliate::show_detail/$1');
+    $routes->post('affiliate', 'affiliate::create');
+    $routes->put('affiliate/(:num)', 'affiliate::update/$1');
+    $routes->delete('affiliate/(:num)', 'affiliate::delete/$1');
     $routes->get('enrols', 'enrol::index');
     $routes->get('enrol/(:num)', 'enrol::show_detail/$1');
     $routes->post('enrol', 'enrol::create');
