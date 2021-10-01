@@ -43,11 +43,17 @@ class CouponModel extends Model
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
 
-    public function get_list_coupon()
+    public function get_list_coupon($id = null)
     {
-        return $this->db->table('coupon')->select("
-            coupon.*,concat(users.first_name,' ',users.last_name) 
-            as name,courses.title,courses.short_description")
+        if (!empty($id)) {
+            return $this->db->table('coupon')->select("coupon.*")
+                ->join('users', 'users.id = coupon.user_id')
+                ->join('courses', 'courses.id = coupon.course_id')
+                ->where('coupon.id', $id)
+                ->get()
+                ->getRow();
+        }
+        return $this->db->table('coupon')->select("coupon.*")
             ->join('users', 'users.id = coupon.user_id')
             ->join('courses', 'courses.id = coupon.course_id')
             ->get()

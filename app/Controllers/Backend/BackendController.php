@@ -32,5 +32,7 @@ class BackendController extends ResourceController
         $this->model_category = model('CategoryModel');
         $this->model_affiliate = model('AffiliateModel');
         $this->model_users_mitra = model('UsersMitraModel');
+        $this->model_enrol = model('EnrolModel');
+        $this->model_payment = model('PaymentModel');
     }
 }

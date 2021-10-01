@@ -50,7 +50,7 @@ function response_delete()
 function response_failed()
 {
     $response = [
-        'status' => 500,
+        'status' => 400,
         'error' => true,
         'data' => [
             'messages' => 'Invalid Data'
