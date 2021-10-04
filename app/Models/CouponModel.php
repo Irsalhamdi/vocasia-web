@@ -48,14 +48,12 @@ class CouponModel extends Model
         if (!empty($id)) {
             return $this->db->table('coupon')->select("coupon.*")
                 ->join('users', 'users.id = coupon.user_id')
-                ->join('courses', 'courses.id = coupon.course_id')
                 ->where('coupon.id', $id)
                 ->get()
                 ->getRow();
         }
         return $this->db->table('coupon')->select("coupon.*")
-            ->join('users', 'users.id = coupon.user_id')
-            ->join('courses', 'courses.id = coupon.course_id')
+            ->join('users', 'users.id = coupon.user_id')->limit(10)
             ->get()
             ->getResult();
     }

@@ -31,8 +31,8 @@ class CouponTable extends Migration
                 'constraint' => 11
             ],
             'course_id' => [
-                'type' => 'INT',
-                'constraint' => 11
+                'type' => 'VARCHAR',
+                'constraint' => 255
             ],
             'quantity' => [
                 'type' => 'INT',
@@ -52,7 +52,6 @@ class CouponTable extends Migration
 
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('user_id', 'users', 'id');
-        $this->forge->addForeignKey('course_id', 'courses', 'id');
         $this->forge->createTable('coupon');
     }
 
