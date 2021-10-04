@@ -54,19 +54,19 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($r
     $routes->post('users-mitra', 'UsersMitra::create');
     $routes->put('users-mitra/(:num)', 'UsersMitra::update/$1');
     $routes->delete('users-mitra/(:num)', 'UsersMitra::delete/$1');
-    $routes->get('affiliates', 'affiliate::index');
-    $routes->get('affiliate/(:num)', 'affiliate::show_detail/$1');
-    $routes->post('affiliate', 'affiliate::create');
-    $routes->put('affiliate/(:num)', 'affiliate::update/$1');
-    $routes->delete('affiliate/(:num)', 'affiliate::delete/$1');
+    $routes->get('affiliates', 'Affiliate::index');
+    $routes->get('affiliate/(:num)', 'Affiliate::show_detail/$1');
+    $routes->post('affiliate', 'Affiliate::create');
+    $routes->put('affiliate/(:num)', 'Affiliate::update/$1');
+    $routes->delete('affiliate/(:num)', 'Affiliate::delete/$1');
     $routes->get('enrols', 'enrol::index');
-    $routes->get('enrol/(:num)', 'enrol::show_detail/$1');
-    $routes->post('enrol', 'enrol::create');
-    $routes->put('enrol/(:num)', 'enrol::update/$1');
-    $routes->delete('enrol/(:num)', 'enrol::delete/$1');
-    $routes->get('revenue', 'revenue::admin_revenue');
-    $routes->get('revenue-instructor/(:num)', 'revenue::instructor_revenue/$1');
-    $routes->patch('delete/revenue-admin', 'revenue::update_admin_revenue');
+    $routes->get('enrol/(:num)', 'Enrol::show_detail/$1');
+    $routes->post('enrol', 'Enrol::create');
+    $routes->put('enrol/(:num)', 'Enrol::update/$1');
+    $routes->delete('enrol/(:num)', 'Enrol::delete/$1');
+    $routes->get('revenue', 'Revenue::admin_revenue');
+    $routes->get('revenue-instructor/(:num)', 'Revenue::instructor_revenue/$1');
+    $routes->patch('delete/revenue-admin', 'Revenue::update_admin_revenue');
 });
 
 /*
