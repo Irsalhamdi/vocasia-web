@@ -20,28 +20,21 @@ class Enrol extends BackendController
             $course_exists = $this->model_course->find($this->request->getVar('course_id'));
             if ($course_exists) {
                 // course exist
-                $payment_exists = $this->model_payment->find($this->request->getVar('payment_id'));
-                if ($payment_exists) {
-                    // payment exist
-                    $enrol_data = $this->request->getJSON();
-                    if ($enrol_data) {
-                        // success to enrol
-                        $this->model_enrol->protect(false)->save($enrol_data);
-                        return $this->respondCreated(response_create());
-                    } else {
-                        // failed to enrol
-                        return $this->respond(response_failed());
-                    }
+                $enrol_data = $this->request->getJSON();
+                if ($enrol_data) {
+                    // success to enrol
+                    $this->model_enrol->protect(false)->save($enrol_data);
+                    return $this->respondCreated(response_create());
                 } else {
-                    // payment not exist
-                    return $this->failNotFound();
+                    // failed to enrol
+                    return $this->respond(response_failed());
                 }
             } else {
-                // course not exist
+                // payment not exist
                 return $this->failNotFound();
             }
         } else {
-            // user not exist
+            // course not exist
             return $this->failNotFound();
         }
     }
@@ -64,17 +57,12 @@ class Enrol extends BackendController
             if ($user_exists) {
                 $course_exists = $this->model_course->find($this->request->getVar('course_id'));
                 if ($course_exists) {
-                    $payment_exists = $this->model_payment->find($this->request->getVar('payment_id'));
-                    if ($payment_exists) {
-                        $enrol_update = $this->request->getJSON();
-                        if ($enrol_update) {
-                            $this->model_enrol->protect(false)->update($enrol_id, $enrol_update);
-                            return $this->respondUpdated(response_update());
-                        } else {
-                            return $this->respond(response_failed());
-                        }
+                    $enrol_update = $this->request->getJSON();
+                    if ($enrol_update) {
+                        $this->model_enrol->protect(false)->update($enrol_id, $enrol_update);
+                        return $this->respondUpdated(response_update());
                     } else {
-                        return $this->failNotFound();
+                        return $this->respond(response_failed());
                     }
                 } else {
                     return $this->failNotFound();

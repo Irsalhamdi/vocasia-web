@@ -23,27 +23,22 @@ class EnrolTable extends Migration
                 'constraint' => 11,
             ],
             'payment_id' => [
-                'type' => 'INT',
+                'type' => 'VARCHAR',
+                'constraint' => 255
             ],
             'create_at' => [
-                'type' => 'DATETIME',
+                'type' => 'INT',
             ],
             'update_at' => [
-                'type' => 'DATETIME',
-            ],
-            'last_modified' => [
                 'type' => 'INT',
-                'constraint' => 11,
             ],
             'finish_date' => [
-                'type' => 'INT',
-                'constraint' => 11,
+                'type' => 'DATE',
             ],
         ]);
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('user_id', 'users', 'id');
         $this->forge->addForeignKey('course_id', 'courses', 'id');
-        $this->forge->addForeignKey('payment_id', 'payment', 'id');
         $this->forge->createTable('enrol');
     }
 
