@@ -21,9 +21,14 @@ class UserDetailTable extends Migration
             'biography' => [
                 'type' => 'LONGTEXT',
             ],
-            'adress' => [
-                'type' => 'VARCHAR',
+            'datebrith' => [
+                'type' => 'DATE',
                 'constraint' => 255,
+            ],
+            'jenis_kel' => [
+                'type' => 'ENUM',
+                'constraint' => ['pria', 'wanita'],
+                'default' => NULL
             ],
             'phone' => [
                 'type' => 'VARCHAR',
