@@ -59,7 +59,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($r
     $routes->post('affiliate', 'Affiliate::create');
     $routes->put('affiliate/(:num)', 'Affiliate::update/$1');
     $routes->delete('affiliate/(:num)', 'Affiliate::delete/$1');
-    $routes->get('enrols', 'enrol::index');
+    $routes->get('enrols', 'Enrol::index');
     $routes->get('enrol/(:num)', 'Enrol::show_detail/$1');
     $routes->post('enrol', 'Enrol::create');
     $routes->put('enrol/(:num)', 'Enrol::update/$1');
