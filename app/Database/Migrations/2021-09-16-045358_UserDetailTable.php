@@ -23,12 +23,6 @@ class UserDetailTable extends Migration
             ],
             'datebrith' => [
                 'type' => 'DATE',
-                'constraint' => 255,
-            ],
-            'jenis_kel' => [
-                'type' => 'ENUM',
-                'constraint' => ['pria', 'wanita'],
-                'default' => NULL
             ],
             'phone' => [
                 'type' => 'VARCHAR',
@@ -41,6 +35,11 @@ class UserDetailTable extends Migration
             'is_instructor' => [
                 'type' => 'INT',
                 'constraint' => 11,
+            ],
+            'jenis_kel' => [
+                'type' => 'ENUM',
+                'constraint' => ['pria', 'wanita'],
+                'default' => 'pria'
             ],
         ]);
 
