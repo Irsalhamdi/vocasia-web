@@ -58,3 +58,16 @@ function response_failed()
     ];
     return $response;
 }
+
+function response_pagging($total_page, $data)
+{
+    $response = [
+        'status' => 200,
+        'error' => false,
+        'totalPages' => $total_page,
+        'data' => [
+            $data
+        ]
+    ];
+    return $response;
+}
