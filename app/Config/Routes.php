@@ -69,6 +69,13 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($r
     $routes->patch('delete/revenue-admin', 'Revenue::update_admin_revenue');
 });
 
+$routes->group('instructor', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
+    $routes->get('lessons', 'Lesson::index');
+    $routes->get('lesson/(:num)', 'Lesson::show_detail/$1');
+    $routes->post('lesson', 'Lesson::create');
+    $routes->put('lesson/(:num)', 'Lesson::update/$1');
+    $routes->delete('lesson/(:num)', 'Lesson::delete/$1');
+});
 /*
  * --------------------------------------------------------------------
  * Additional Routing
