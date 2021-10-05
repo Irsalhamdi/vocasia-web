@@ -19,10 +19,10 @@ class BankTable extends Migration
                 'constraint' => 255,
             ],
             'create_at' => [
-                'type' => 'DATETIME',
+                'type' => 'INT',
             ],
             'update_at' => [
-                'type' => 'DATETIME',
+                'type' => 'INT',
             ],
         ]);
         $this->forge->addKey('id', true);

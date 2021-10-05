@@ -109,10 +109,10 @@ class CoursesTable extends Migration
                 'type' => 'INT',
             ],
             'create_at' => [
-                'type' => 'DATETIME',
+                'type' => 'INT',
             ],
             'update_at' => [
-                'type' => 'DATETIME',
+                'type' => 'INT',
             ],
         ]);
 

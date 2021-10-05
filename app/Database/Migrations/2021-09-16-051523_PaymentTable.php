@@ -47,10 +47,10 @@ class PaymentTable extends Migration
                 'type' => 'DOUBLE',
             ],
             'create_at' => [
-                'type' => 'DATETIME',
+                'type' => 'INT',
             ],
             'update_at' => [
-                'type' => 'DATETIME',
+                'type' => 'INT',
             ],
             'admin_revenue' => [
                 'type' => 'VARCHAR',

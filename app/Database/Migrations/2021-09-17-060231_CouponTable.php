@@ -39,10 +39,10 @@ class CouponTable extends Migration
                 'constraint' => 11
             ],
             'date_added' => [
-                'type' => 'DATETIME'
+                'type' => 'INT'
             ],
             'last_modified' => [
-                'type' => 'DATETIME'
+                'type' => 'INT'
             ],
             'is_active' => [
                 'type' => 'INT',

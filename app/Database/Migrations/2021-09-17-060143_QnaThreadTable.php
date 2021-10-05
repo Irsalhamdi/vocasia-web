@@ -39,8 +39,11 @@ class QnaThreadTable extends Migration
             'user_id_up' => [
                 'type' => 'INT'
             ],
-            'date_add' => [
-                'type' => 'DATETIME'
+            'create_at' => [
+                'type' => 'INT'
+            ],
+            'update_at' => [
+                'type' => 'INT'
             ],
             'status' => [
                 'type' => 'INT',

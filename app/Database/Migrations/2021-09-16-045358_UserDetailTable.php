@@ -41,6 +41,16 @@ class UserDetailTable extends Migration
                 'constraint' => ['pria', 'wanita'],
                 'default' => 'pria'
             ],
+            [
+                'create_at' => [
+                    'type' => 'INT',
+                ]
+            ],
+            [
+                'update_at' => [
+                    'type' => 'INT',
+                ]
+            ]
         ]);
 
         $this->forge->addKey('id', true);
