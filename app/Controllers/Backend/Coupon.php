@@ -18,21 +18,14 @@ class Coupon extends BackendController
         $user_exists = $this->model_users->find($this->request->getVar("user_id"));
         if (!empty($user_exists)) {
             // user exists
-            $course_exists = $this->model_course->find($this->request->getVar('course_id'));
-            if (!empty($course_exists)) {
-                // course exists
-                $coupon_data = $this->request->getJSON();
-                if ($coupon_data) {
-                    // success to create
-                    $this->model_coupon->insert($coupon_data);
-                    return $this->respondCreated(response_create());
-                } else {
-                    // failed to create
-                    return $this->respond(response_failed());
-                }
+            $coupon_data = $this->request->getJSON();
+            if ($coupon_data) {
+                // success to create
+                $this->model_coupon->insert($coupon_data);
+                return $this->respondCreated(response_create());
             } else {
-                // course not exists
-                return $this->failNotFound();
+                // failed to create
+                return $this->respond(response_failed());
             }
         } else {
             // user no exist
