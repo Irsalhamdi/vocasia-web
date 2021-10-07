@@ -33,27 +33,18 @@ class Auth extends ResourceController
         return $this->respondCreated(response_register());
     }
 
+    /* Login untuk frontend website*/
+
     public function login()
     {
         $credentials = $this->request->getJSON();
-        $valid_credentials = $this->_check_login($credentials);
-        if ($valid_credentials) {
-            $key = Services::getSecretKey();
-            $iat = time(); //masa berlaku dalam timestamp
-            $nbf = $iat + 10;
-            $exp = $iat + 3600;
+        $generate_token = $this->_generate_token($credentials);
 
-            $payload = [
-                'name' => $valid_credentials["fullname"],
-                'email' => $valid_credentials["email"],
-                'role' => $valid_credentials["role"],
-                'expire_at' => $exp
-            ];
-            $jwt = JWT::encode($payload, $key);
+        if (!is_null($generate_token)) {
             $cookie = [
                 'name'   => 'TOKEN',
-                'value'  => $jwt,
-                'expire' => $exp,
+                'value'  => $generate_token['token'],
+                'expire' => $generate_token['expired_at'],
                 'domain' => 'localhost',
                 'path'   => '/',
                 'prefix' => '',
@@ -61,11 +52,37 @@ class Auth extends ResourceController
                 'httponly' => true,
             ];
             $this->response->setCookie($cookie);
-            return $this->respond(response_login($exp));
+            $response_data = [
+                'is_mobile' => false,
+                'exp' => $generate_token['expired_at'],
+            ];
+            return $this->respond(response_login($response_data));
         } else {
             return $this->failNotFound();
         }
     }
+
+    public function login_mobile()
+    {
+        $credentials_login_mobile = $this->request->getJSON();
+        $generate_token_for_mobile = $this->_generate_token($credentials_login_mobile);
+        if (!is_null($generate_token_for_mobile)) {
+            $response_data = [
+                'is_mobile' => true,
+                'token' => $generate_token_for_mobile['token'],
+                'exp' => $generate_token_for_mobile['expired_at'],
+            ];
+            return $this->respond(response_login($response_data));
+        }
+    }
+
+    public function logout()
+    {
+        delete_cookie('TOKEN');
+        return $this->respond(response_logout());
+    }
+
+    /* Check kredensial login user*/
 
     private function _check_login($credentials)
     {
@@ -81,9 +98,32 @@ class Auth extends ResourceController
         return false;
     }
 
-    public function logout()
+
+    /* Generate JWT Token*/
+
+    private function _generate_token($credentials_login)
     {
-        delete_cookie('TOKEN');
-        return $this->respond(response_logout());
+        $valid_credentials = $this->_check_login($credentials_login);
+        if ($valid_credentials) {
+            $key = Services::getSecretKey();
+            $iat = time(); //masa berlaku dalam timestamp
+            $nbf = $iat + 10;
+            $exp = $iat + 3600;
+
+            $payload = [
+                'name' => $valid_credentials["fullname"],
+                'email' => $valid_credentials["email"],
+                'role' => $valid_credentials["role"],
+                'expire_at' => $exp
+            ];
+            $jwt = JWT::encode($payload, $key);
+            $tokens = [
+                'token' => $jwt,
+                'expired_at' => $exp
+            ];
+            return $tokens;
+        } else {
+            return null;
+        }
     }
 }

@@ -86,15 +86,28 @@ function response_register()
 
 function response_login($data)
 {
-    $response = [
-        'status' => 200,
-        'error' => false,
-        'data' => [
-            'messages' => 'Login Success!',
-            'expire_at' => $data
-        ],
-    ];
-    return $response;
+    if ($data['is_mobile'] == true) {
+        $response = [
+            'status' => 200,
+            'error' => false,
+            'data' => [
+                'messages' => 'Login Success!',
+                'token'    => $data['token'],
+                'expire_at' => $data['exp']
+            ],
+        ];
+        return $response;
+    } else {
+        $response = [
+            'status' => 200,
+            'error' => false,
+            'data' => [
+                'messages' => 'Login Success!',
+                'expire_at' => $data['exp']
+            ],
+        ];
+        return $response;
+    }
 }
 
 function response_logout()
