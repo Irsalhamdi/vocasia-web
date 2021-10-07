@@ -71,3 +71,40 @@ function response_pagging($total_page, $data)
     ];
     return $response;
 }
+
+function response_register()
+{
+    $response = [
+        'status' => 200,
+        'error' => false,
+        'data' => [
+            'messages' => 'User Registered!'
+        ],
+    ];
+    return $response;
+}
+
+function response_login($data)
+{
+    $response = [
+        'status' => 200,
+        'error' => false,
+        'data' => [
+            'messages' => 'Login Success!',
+            'expire_at' => $data
+        ],
+    ];
+    return $response;
+}
+
+function response_logout()
+{
+    $response = [
+        'status' => 200,
+        'error' => false,
+        'data' => [
+            'messages' => 'User Logged Out!'
+        ],
+    ];
+    return $response;
+}

@@ -14,10 +14,10 @@ class UsersModel extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['first_name', 'last_name', 'email', 'password', 'username', 'role_id', 'is_verified'];
+    protected $allowedFields        = ['first_name', 'last_name', 'email', 'password', 'username', 'role_id', 'is_verified', 'create_at', 'update_at'];
 
     // Dates
-    protected $useTimestamps        = true;
+    protected $useTimestamps        = false;
     protected $dateFormat           = 'datetime';
     protected $createdField         = 'create_at';
     protected $updatedField         = 'update_at';

@@ -74,6 +74,12 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($r
     $routes->delete('community/(:num)', 'Community::delete/$1');
 });
 
+
+$routes->group('auth', ['namespace' => 'App\Controllers'], function ($routes) {
+    $routes->post('web/register', 'Auth::register');
+    $routes->post('web/login', 'Auth::login');
+    $routes->get('web/logout', 'Auth::logout');
+});
 /*
  * --------------------------------------------------------------------
  * Additional Routing
