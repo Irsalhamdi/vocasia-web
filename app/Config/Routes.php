@@ -75,7 +75,9 @@ $routes->group('instructor', ['namespace' => 'App\Controllers\Frontend'], functi
     $routes->post('lesson', 'Lesson::create');
     $routes->put('lesson/(:num)', 'Lesson::update/$1');
     $routes->delete('lesson/(:num)', 'Lesson::delete/$1');
-    $routes->get('questions/(:num)', 'Question::index/$1');
+    $routes->get('question/(:num)', 'Question::index/$1');
+    $routes->get('paymentbalance/(:num)', 'PaymentBalance::index/$1');
+    $routes->post('paymentbalance', 'PaymentBalance::create');
 });
 
 
