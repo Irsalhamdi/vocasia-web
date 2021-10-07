@@ -25,8 +25,12 @@ class PaymentBalanceModel extends Model
 
     // Validation
     protected $validationRules      = [
-        'id_users' => 'is_unique[payment_balance.id_users]',
-        'id_payment' => 'is_unique[payment_balance.id_payment]',
+        'id_users' => 'required',
+        'id_payment' => 'required',
+        'pb_nominal' => 'required',
+        'pb_on_behalf_of' => 'required',
+        'pb_bank' => 'required',
+        'pb_norek' => 'required'
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;

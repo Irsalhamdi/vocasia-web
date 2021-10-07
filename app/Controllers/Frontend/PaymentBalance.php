@@ -17,7 +17,7 @@ class PaymentBalance extends FrontendController
         if (!$this->validate($rules)) {
             return $this->fail("Failed To Create Please Try Again");
         } else {
-            $paymant_balance_data = $this->request->getPost();
+            $paymant_balance_data = $this->request->getJSON();
             $this->model_payment_balance->save($paymant_balance_data);
             return $this->respondCreated(response_create());
         }
