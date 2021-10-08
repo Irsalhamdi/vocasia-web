@@ -5,9 +5,22 @@ namespace App\Filters;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use Config\Services;
+use Firebase\JWT\JWT;
+use App\Models\UsersModel;
+use CodeIgniter\I18n\Time;
+use Exception;
+
+use function PHPUnit\Framework\throwException;
 
 class AuthFilter implements FilterInterface
 {
+
+    public function __construct()
+    {
+        $this->user_model = new UsersModel();
+        $this->secret_key = Services::getSecretKey();
+    }
     /**
      * Do whatever processing this filter needs to do.
      * By default it should not return anything during
@@ -25,12 +38,41 @@ class AuthFilter implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
+
         header('Access-Control-Allow-Origin: *');
         header("Access-Control-Allow-Credentials: true");
-
+        $user_model = $this->user_model;
         $auth_header = $request->getServer('HTTP_AUTHORIZATION');
-
         if (!is_null($auth_header)) {
+            $secret_key = $this->secret_key;
+            $explode_white_space = explode(' ', $auth_header);
+            $token = $explode_white_space[1];
+            if ($this->CheckExpiredToken($token) == true) {
+                try {
+                    $decode_jwt = JWT::decode($token, $secret_key, array('HS256'));
+                    $validate_user = $user_model->validate_user($decode_jwt->email);
+                    if ($validate_user->role_id == $decode_jwt->role) {
+                        return $request;
+                    }
+                    $response_invalid = [
+                        'status' => 401,
+                        'messages' => 'Cannot Acces This Resources! Invalid Users !'
+                    ];
+                    return Services::response()->setStatusCode('401')->setJSON($response_invalid);
+                } catch (\Throwable $th) {
+                    return Services::response()->setStatusCode(404)->setJSON([
+                        'status' => 404,
+                        'message' => 'token invalid !'
+                    ]);
+                    die;
+                }
+            }
+        } else {
+            $response_unauthorize = [
+                'status' => 403,
+                'messages' => 'Unauthorize Access! Token Not Found !'
+            ];
+            return Services::response()->setStatusCode(403)->setJSON($response_unauthorize);
         }
     }
 
@@ -49,5 +91,21 @@ class AuthFilter implements FilterInterface
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
         //
+    }
+
+    public function CheckExpiredToken($token)
+    {
+        $time = new Time();
+        $decode_jwt = JWT::decode($token, $this->secret_key, array('HS256'));
+        $time_now = strtotime($time->now('Asia/Jakarta', 'en_US'));
+        if ($decode_jwt->expire_at > $time_now) {
+            return true;
+        } else {
+            return Services::response()->setStatusCode(404)->setJSON([
+                'status' => 404,
+                'message' => 'token invalid !'
+            ]);
+            die;
+        }
     }
 }

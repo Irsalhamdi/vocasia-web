@@ -4,9 +4,9 @@ namespace App\Controllers;
 
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\UsersModel;
-use CodeIgniter\HTTP\Response;
 use Config\Services;
 use \Firebase\JWT\JWT;
+use CodeIgniter\I18n\Time;
 
 class Auth extends ResourceController
 {
@@ -44,7 +44,7 @@ class Auth extends ResourceController
             $cookie = [
                 'name'   => 'TOKEN',
                 'value'  => $generate_token['token'],
-                'expire' => $generate_token['expired_at'],
+                'expire' => 86400, // masa berlaku 24 jam
                 'domain' => 'localhost',
                 'path'   => '/',
                 'prefix' => '',
@@ -103,12 +103,13 @@ class Auth extends ResourceController
 
     private function _generate_token($credentials_login)
     {
+        $time = new Time();
         $valid_credentials = $this->_check_login($credentials_login);
         if ($valid_credentials) {
             $key = Services::getSecretKey();
-            $iat = time(); //masa berlaku dalam timestamp
+            $iat = strtotime($time->now('Asia/Jakarta', 'en_US')); //masa berlaku dalam timestamp
             $nbf = $iat + 10;
-            $exp = $iat + 3600;
+            $exp = $iat + 1440;
 
             $payload = [
                 'name' => $valid_credentials["fullname"],

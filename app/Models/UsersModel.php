@@ -39,4 +39,15 @@ class UsersModel extends Model
     protected $afterFind            = [];
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
+
+    public function validate_user($email)
+    {
+
+        $get_email = $this->db->table('users a')->select("a.email,concat(a.first_name,' ',a.last_name) as fullname,a.id as uid,a.role_id,b.role_name")->join('role_user b', 'a.role_id=b.id')->where('a.email', $email)->get()->getRow();
+        if ($get_email) {
+            return $get_email;
+        } else {
+            return null;
+        }
+    }
 }
