@@ -4,17 +4,17 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class LessonModel extends Model
+class SectionModel extends Model
 {
     protected $DBGroup              = 'default';
-    protected $table                = 'lesson';
+    protected $table                = 'section';
     protected $primaryKey           = 'id';
     protected $useAutoIncrement     = true;
     protected $insertID             = 0;
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['title','duration','course_id','section_id','video_type','video_url','lesson_type','attachment','attachment_type','summary','is_skip','order','video_type_for_mobile','video_url_for_mobile','duration_for_mobile'];
+    protected $allowedFields        = [];
 
     // Dates
     protected $useTimestamps        = false;
@@ -39,23 +39,4 @@ class LessonModel extends Model
     protected $afterFind            = [];
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
-
-    public function get_list_lesson($id = null)
-    {
-        if (is_null($id)) {
-            return $this->db->table('lesson')->select("
-                lesson.*")
-                ->join('courses', 'courses.id = lesson.course_id')
-                ->join('section', 'section.id = lesson.section_id')
-                ->get()
-                ->getResult();            
-            }
-            return $this->db->table('lesson')->select("
-                lesson.*")
-                ->join('courses', 'courses.id = lesson.course_id')
-                ->join('section', 'section.id = lesson.section_id')
-                ->where('lesson.id', $id)
-                ->get()
-                ->getRow();            
-    }
 }

@@ -75,6 +75,11 @@ $routes->group('instructor', ['namespace' => 'App\Controllers\Frontend'], functi
     $routes->post('lesson', 'Lesson::create');
     $routes->put('lesson/(:num)', 'Lesson::update/$1');
     $routes->delete('lesson/(:num)', 'Lesson::delete/$1');
+    $routes->get('dashboard-instructors', 'DashboardInstructor::index');
+    $routes->get('dashboard-instructor/(:num)', 'DashboardInstructor::show_detail/$1');
+    $routes->post('dashboard-instructor', 'DashboardInstructor::create');
+    $routes->put('dashboard-instructor/(:num)', 'DashboardInstructor::update/$1');
+    $routes->delete('dashboard-instructor/(:num)', 'DashboardInstructor::delete/$1');
 });
 /*
  * --------------------------------------------------------------------

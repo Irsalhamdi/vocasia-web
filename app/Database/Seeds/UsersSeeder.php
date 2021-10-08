@@ -15,7 +15,9 @@ class UsersSeeder extends Seeder
                     'password'    => password_hash('12345', PASSWORD_DEFAULT),
                     'username'    => 'username',
                     'role_id'    => '1',
-                    'is_verified'    => '1',
+                    'is_verified'    => 'active',
+                    'create_at'    => time(),
+                    'update_at'    => time()
                 ];
 
                 // Using Query Builder

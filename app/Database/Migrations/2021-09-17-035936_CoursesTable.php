@@ -114,6 +114,10 @@ class CoursesTable extends Migration
             'update_at' => [
                 'type' => 'INT',
             ],
+            'delete_at' => [
+                'type' => 'INT',
+                'null' => true
+            ],
         ]);
 
         $this->forge->addKey('id', true);
