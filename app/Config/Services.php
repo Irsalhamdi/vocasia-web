@@ -29,4 +29,13 @@ class Services extends BaseService
      *     return new \CodeIgniter\Example();
      * }
      */
+
+    public static function getSecretKey()
+    {
+        return getenv('JWT_SECRET_TOKEN');
+    }
+    public static function getBaseUrl()
+    {
+        return getenv('app.baseURL');
+    }
 }

@@ -14,7 +14,7 @@ class AffiliateModel extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['user_id','leader','co_leader','code_reff','is_active'];
+    protected $allowedFields        = ['user_id', 'leader', 'co_leader', 'code_reff', 'is_active'];
 
     // Dates
     protected $useTimestamps        = true;
@@ -43,19 +43,18 @@ class AffiliateModel extends Model
     public function get_list_affiliate($id = null)
     {
         if (is_null($id)) {
-            return $this->db->table('affiliate')->select("
-                affiliate.*,concat(users.first_name,' ',users.last_name) 
-                as name")
-                ->join('users', 'users.id = affiliate.user_id')
-                ->get()
-                ->getResult();            
-            }
-            return $this->db->table('affiliate')->select("
-                affiliate.*,concat(users.first_name,' ',users.last_name) 
-                as name")
-                ->join('users', 'users.id = affiliate.user_id')
-                ->where('affiliate.id_affiliate', $id)
-                ->get()
-                ->getRow();            
+            return $this->db->table('affiliate')->select("affiliate.*,concat(users.first_name,' ',users.last_name) as name")->join('users', 'users.id = affiliate.user_id')->get()->getResult();
+        }
+        return $this->db->table('affiliate')->select("affiliate.*,concat(users.first_name,' ',users.last_name) as name")->join('users', 'users.id = affiliate.user_id')->where('affiliate.id_affiliate', $id)->get()->getRow();
+    }
+
+    public function get_count_affiliate()
+    {
+        return $this->db->table('affiliate')->select("affiliate.*,concat(users.first_name,' ',users.last_name) as name")->join('users', 'users.id = affiliate.user_id')->countAllResults();
+    }
+
+    public function get_pagging_data($limit, $offset)
+    {
+        return $this->db->table('affiliate')->select("affiliate.*,concat(users.first_name,' ',users.last_name) as name")->join('users', 'users.id = affiliate.user_id')->limit($limit, $offset)->get()->getResult();
     }
 }

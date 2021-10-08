@@ -14,10 +14,10 @@ class EnrolModel extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['user_id', 'course_id', 'payment_id', 'last_modified', 'finish_date'];
+    protected $allowedFields        = ['user_id', 'course_id', 'payment_id', 'create_at', 'update_at'];
 
     // Dates
-    protected $useTimestamps        = true;
+    protected $useTimestamps        = false;
     protected $dateFormat           = 'datetime';
     protected $createdField         = 'create_at';
     protected $updatedField         = 'update_at';
@@ -65,25 +65,15 @@ class EnrolModel extends Model
                 ->get()
                 ->getRow();
         }
-        return $this->db->table('enrol')->select(
-            "enrol.*,concat(users.first_name,' ',users.last_name)
-        as Name,
-        courses.title as Title,
-        courses.description as Course Description,
-        courses.short_description as Short Description,
-        courses.bio_instructor as Instructor Biography,
-        courses.outcomes as Outcomes,
-        courses.section as Section,
-        courses.requirement as Requirement,
-        courses.level_course as Course Level, 
-        courses.price as Price,
-        courses.discount_price as Discount,
-        courses.language as Languange,
-        courses.status_course as Course Status"
-        )
-            ->join('users', 'users.id = enrol.user_id')
-            ->join('courses', 'courses.id = enrol.course_id')
-            ->get()
-            ->getResult();
+        return $this->db->table('enrol')->select("enrol.*,concat(users.first_name,' ',users.last_name)as Name,courses.title as Title,")->join('users', 'users.id = enrol.user_id')->join('courses', 'courses.id = enrol.course_id')->get()->getResult();
+    }
+
+    public function get_count_enrol()
+    {
+        return $this->db->table('enrol')->select("enrol.*,concat(users.first_name,' ',users.last_name)as Name,courses.title as Title,")->join('users', 'users.id = enrol.user_id')->join('courses', 'courses.id = enrol.course_id')->countAllResults();
+    }
+    public function get_pagging_data($limit, $offset)
+    {
+        return $this->db->table('enrol')->select("enrol.*,concat(users.first_name,' ',users.last_name)as Name,courses.title as Title,")->join('users', 'users.id = enrol.user_id')->join('courses', 'courses.id = enrol.course_id')->limit($limit, $offset)->get()->getResult();
     }
 }

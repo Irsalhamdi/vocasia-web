@@ -33,7 +33,7 @@ $routes->setAutoRoute(false);
 // route since we don't have to scan directories.
 // $routes->get('/', 'Home::index');
 
-$routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($routes) {
+$routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => 'auth'], function ($routes) {
     $routes->get('courses', 'Courses::index');
     $routes->get('course/(:num)', 'Courses::show_detail/$1');
     $routes->post('course', 'Courses::create');
@@ -67,6 +67,19 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($r
     $routes->get('revenue', 'Revenue::admin_revenue');
     $routes->get('revenue-instructor/(:num)', 'Revenue::instructor_revenue/$1');
     $routes->patch('delete/revenue-admin', 'Revenue::update_admin_revenue');
+    $routes->post('community', 'Community::create');
+    $routes->get('communities', 'Community::index');
+    $routes->get('community/(:num)', 'Community::show/$1');
+    $routes->put('community/(:num)', 'Community::update/$1');
+    $routes->delete('community/(:num)', 'Community::delete/$1');
+});
+
+
+$routes->group('auth', ['namespace' => 'App\Controllers'], function ($routes) {
+    $routes->post('register', 'Auth::register');
+    $routes->post('web/login', 'Auth::login');
+    $routes->get('web/logout', 'Auth::logout');
+    $routes->post('mobile/login', 'Auth::login_mobile');
 });
 
 /*
