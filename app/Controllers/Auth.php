@@ -10,6 +10,7 @@ use CodeIgniter\I18n\Time;
 
 class Auth extends ResourceController
 {
+
     public function __construct()
     {
         $this->model = new UsersModel();
@@ -39,17 +40,15 @@ class Auth extends ResourceController
     {
         $credentials = $this->request->getJSON();
         $generate_token = $this->_generate_token($credentials);
-
         if (!is_null($generate_token)) {
             $cookie = [
                 'name'   => 'TOKEN',
                 'value'  => $generate_token['token'],
                 'expire' => 86400, // masa berlaku 24 jam
-                'domain' => 'localhost',
                 'path'   => '/',
                 'prefix' => '',
                 'secure' => true,
-                'httponly' => true,
+                'httponly' => false,
             ];
             $this->response->setCookie($cookie);
             $response_data = [
