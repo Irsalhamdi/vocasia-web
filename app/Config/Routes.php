@@ -90,7 +90,6 @@ $routes->group('instructor', ['namespace' => 'App\Controllers\Frontend'], functi
     $routes->post('dashboard-instructor', 'DashboardInstructor::create');
     $routes->put('dashboard-instructor/(:num)', 'DashboardInstructor::update/$1');
     $routes->delete('dashboard-instructor/(:num)', 'DashboardInstructor::delete/$1');
-});
     $routes->get('question/(:num)', 'Question::index/$1');
     $routes->get('paymentbalance/(:num)', 'PaymentBalance::index/$1');
     $routes->post('paymentbalance', 'PaymentBalance::create');

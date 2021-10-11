@@ -41,6 +41,7 @@ class AuthFilter implements FilterInterface
 
         header('Access-Control-Allow-Origin: *');
         header("Access-Control-Allow-Credentials: true");
+        header("Access-Control-Allow-Methods: GET, POST,PUT, DELETE,PATCH");
         $user_model = $this->user_model;
         $auth_header = $request->getServer('HTTP_AUTHORIZATION');
         if (!is_null($auth_header)) {
