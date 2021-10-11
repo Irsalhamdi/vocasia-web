@@ -73,27 +73,28 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => '
     $routes->put('community/(:num)', 'Community::update/$1');
     $routes->delete('community/(:num)', 'Community::delete/$1');
 });
-
-
 $routes->group('auth', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->post('register', 'Auth::register');
     $routes->post('web/login', 'Auth::login');
     $routes->get('web/logout', 'Auth::logout');
     $routes->post('mobile/login', 'Auth::login_mobile');
 });
-
 $routes->group('instructor', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
     $routes->get('lessons', 'Lesson::index');
     $routes->get('lesson/(:num)', 'Lesson::show_detail/$1');
     $routes->post('lesson', 'Lesson::create');
     $routes->put('lesson/(:num)', 'Lesson::update/$1');
     $routes->delete('lesson/(:num)', 'Lesson::delete/$1');
+    $routes->get('dashboard-instructors', 'DashboardInstructor::index');
+    $routes->get('dashboard-instructor/(:num)', 'DashboardInstructor::show_detail/$1');
+    $routes->post('dashboard-instructor', 'DashboardInstructor::create');
+    $routes->put('dashboard-instructor/(:num)', 'DashboardInstructor::update/$1');
+    $routes->delete('dashboard-instructor/(:num)', 'DashboardInstructor::delete/$1');
+});
     $routes->get('question/(:num)', 'Question::index/$1');
     $routes->get('paymentbalance/(:num)', 'PaymentBalance::index/$1');
     $routes->post('paymentbalance', 'PaymentBalance::create');
 });
-
-
 /*
  * --------------------------------------------------------------------
  * Additional Routing

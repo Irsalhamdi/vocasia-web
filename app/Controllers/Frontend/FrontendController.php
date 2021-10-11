@@ -28,6 +28,9 @@ class FrontendController extends ResourceController
 
         //silahkan load semua model dibawah ini kalau bisa semua kompak disini semua
 
+        $this->model_lesson = model('LessonModel');
+        $this->model_instructor = model('DashboardInstructorModel');
+        $this->model_section = model('SectionModel');
         $this->model_question = model('QuestionModel');
         $this->model_payment_balance = model('PaymentBalanceModel');
     }
