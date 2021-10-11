@@ -82,6 +82,18 @@ $routes->group('auth', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->post('mobile/login', 'Auth::login_mobile');
 });
 
+$routes->group('instructor', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
+    $routes->get('lessons', 'Lesson::index');
+    $routes->get('lesson/(:num)', 'Lesson::show_detail/$1');
+    $routes->post('lesson', 'Lesson::create');
+    $routes->put('lesson/(:num)', 'Lesson::update/$1');
+    $routes->delete('lesson/(:num)', 'Lesson::delete/$1');
+    $routes->get('question/(:num)', 'Question::index/$1');
+    $routes->get('paymentbalance/(:num)', 'PaymentBalance::index/$1');
+    $routes->post('paymentbalance', 'PaymentBalance::create');
+});
+
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
