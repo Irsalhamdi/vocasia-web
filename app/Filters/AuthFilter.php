@@ -41,14 +41,14 @@ class AuthFilter implements FilterInterface
 
         header('Access-Control-Allow-Origin: *');
         header("Access-Control-Allow-Credentials: true");
-        header("Access-Control-Allow-Methods: GET, POST,PUT, DELETE,PATCH");
+        header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
         $user_model = $this->user_model;
         $auth_header = $request->getServer('HTTP_AUTHORIZATION');
         if (!is_null($auth_header)) {
             $secret_key = $this->secret_key;
             $explode_white_space = explode(' ', $auth_header);
             $token = $explode_white_space[1];
-            if ($this->CheckExpiredToken($token) == true) {
+            if ($this->CheckExpiredToken($token) === true) {
                 try {
                     $decode_jwt = JWT::decode($token, $secret_key, array('HS256'));
                     $validate_user = $user_model->validate_user($decode_jwt->email);
@@ -67,6 +67,12 @@ class AuthFilter implements FilterInterface
                     ]);
                     die;
                 }
+            } else {
+                return Services::response()->setStatusCode(404)->setJSON([
+                    'status' => 404,
+                    'message' => 'token invalid !'
+                ]);
+                die;
             }
         } else {
             $response_unauthorize = [
@@ -98,22 +104,11 @@ class AuthFilter implements FilterInterface
     {
         $time = new Time();
         $decode_jwt = JWT::decode($token, $this->secret_key, array('HS256'));
-        $exp = strtotime($time->now('Asia/Jakarta', 'en_US')) + 2880; // masa berlaku 2 haru
         $time_now = strtotime($time->now('Asia/Jakarta', 'en_US'));
         if ($decode_jwt->expire_at > $time_now) {
             return true;
         } else {
-            $reencoded_jwt = [
-                'name' => $decode_jwt->name,
-                'email' => $decode_jwt->email,
-                'role' => $decode_jwt->role,
-                'expire_at' => $exp
-            ];
-            return Services::response()->setStatusCode(404)->setJSON([
-                'status' => 404,
-                'message' => 'token invalid !'
-            ]);
-            die;
+            return false;
         }
     }
 }

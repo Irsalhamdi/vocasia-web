@@ -41,29 +41,26 @@ class Auth extends ResourceController
         $credentials = $this->request->getJSON();
         $generate_token = $this->_generate_token($credentials, $type = "web");
         if (!is_null($generate_token)) {
-            $cookie =
-                [
-                    'name'   => 'REFRESHTOKENS',
-                    'value'  => $generate_token['refresh_token'],
-                    'expire' => 2678400, // masa berlaku 30 hari
-                    'path'   => '/',
-                    'prefix' => '',
-                    'secure' => true,
-                    'httponly' => true,
-                ];
-
-            $cookie_access_token = [
+            $cookie = [
+                'name'   => 'REFRESHTOKEN',
+                'value'  => $generate_token['refresh_token'],
+                'expire' => 2678400, // masa berlaku 30 hari
+                'path'   => '/',
+                'prefix' => '',
+                'secure' => true,
+                'httponly' => true,
+            ];
+            $access_token = [
                 'name'   => 'ACCESSTOKEN',
                 'value'  => $generate_token['access_token'],
-                'expire' => 1, // masa berlaku 2 hari //172800
+                'expire' => 172800, // masa berlaku 2 hari //172800
                 'path'   => '/',
                 'prefix' => '',
                 'secure' => true,
                 'httponly' => false,
             ];
-
             $this->response->setCookie($cookie);
-            $this->response->setCookie($cookie_access_token);
+            $this->response->setCookie($access_token);
             $response_data = [
                 'is_mobile' => false,
                 'exp' => $generate_token['expired_at'],
@@ -104,7 +101,7 @@ class Auth extends ResourceController
                 'fullname' => $user_data["first_name"] . " " . $user_data["last_name"],
                 'email' => $user_data["email"],
                 'role' => $user_data["role_id"],
-                'id' => $user_data["id"]
+                'id' => base64_encode($user_data["id"])
             ];
             return $data;
         }
@@ -118,7 +115,7 @@ class Auth extends ResourceController
     {
         $time = new Time();
         $valid_credentials = $this->_check_login($credentials_login);
-        if ($valid_credentials) {
+        if ($valid_credentials == true) {
             $key = Services::getSecretKey();
             $iat = strtotime($time->now('Asia/Jakarta', 'en_US')); //masa berlaku dalam timestamp
             $nbf = $iat + 10;
@@ -129,7 +126,7 @@ class Auth extends ResourceController
                 'name' => $valid_credentials["fullname"],
                 'email' => $valid_credentials["email"],
                 'role' => $valid_credentials["role"],
-                'expire_at' => $exp
+                'expire_at' => $exp_access_token
             ];
             $payload_refresh_token = [
                 'id' => $valid_credentials["id"]
