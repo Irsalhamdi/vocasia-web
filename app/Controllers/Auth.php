@@ -39,18 +39,31 @@ class Auth extends ResourceController
     public function login()
     {
         $credentials = $this->request->getJSON();
-        $generate_token = $this->_generate_token($credentials);
+        $generate_token = $this->_generate_token($credentials, $type = "web");
         if (!is_null($generate_token)) {
-            $cookie = [
-                'name'   => 'TOKEN',
-                'value'  => $generate_token['token'],
-                'expire' => 86400, // masa berlaku 24 jam
+            $cookie =
+                [
+                    'name'   => 'REFRESHTOKENS',
+                    'value'  => $generate_token['refresh_token'],
+                    'expire' => 2678400, // masa berlaku 30 hari
+                    'path'   => '/',
+                    'prefix' => '',
+                    'secure' => true,
+                    'httponly' => true,
+                ];
+
+            $cookie_access_token = [
+                'name'   => 'ACCESSTOKEN',
+                'value'  => $generate_token['access_token'],
+                'expire' => 1, // masa berlaku 2 hari //172800
                 'path'   => '/',
                 'prefix' => '',
                 'secure' => true,
                 'httponly' => false,
             ];
+
             $this->response->setCookie($cookie);
+            $this->response->setCookie($cookie_access_token);
             $response_data = [
                 'is_mobile' => false,
                 'exp' => $generate_token['expired_at'],
@@ -64,7 +77,7 @@ class Auth extends ResourceController
     public function login_mobile()
     {
         $credentials_login_mobile = $this->request->getJSON();
-        $generate_token_for_mobile = $this->_generate_token($credentials_login_mobile);
+        $generate_token_for_mobile = $this->_generate_token($credentials_login_mobile, $type = "mobile");
         if (!is_null($generate_token_for_mobile)) {
             $response_data = [
                 'is_mobile' => true,
@@ -90,7 +103,8 @@ class Auth extends ResourceController
             $data = [
                 'fullname' => $user_data["first_name"] . " " . $user_data["last_name"],
                 'email' => $user_data["email"],
-                'role' => $user_data["role_id"]
+                'role' => $user_data["role_id"],
+                'id' => $user_data["id"]
             ];
             return $data;
         }
@@ -100,7 +114,7 @@ class Auth extends ResourceController
 
     /* Generate JWT Token*/
 
-    private function _generate_token($credentials_login)
+    private function _generate_token($credentials_login, $type)
     {
         $time = new Time();
         $valid_credentials = $this->_check_login($credentials_login);
@@ -108,20 +122,36 @@ class Auth extends ResourceController
             $key = Services::getSecretKey();
             $iat = strtotime($time->now('Asia/Jakarta', 'en_US')); //masa berlaku dalam timestamp
             $nbf = $iat + 10;
-            $exp = $iat + 1440;
+            $exp = $iat + 43200; //30 hari masa aktif refresh_token
+            $exp_access_token = $iat + 2880; // 2 hari masa aktif access_token 
 
-            $payload = [
+            $payload_access_token = [
                 'name' => $valid_credentials["fullname"],
                 'email' => $valid_credentials["email"],
                 'role' => $valid_credentials["role"],
                 'expire_at' => $exp
             ];
-            $jwt = JWT::encode($payload, $key);
-            $tokens = [
-                'token' => $jwt,
-                'expired_at' => $exp
+            $payload_refresh_token = [
+                'id' => $valid_credentials["id"]
             ];
-            return $tokens;
+
+            $jwt_refresh_token = JWT::encode($payload_refresh_token, $key);
+            $jwt_access_token = JWT::encode($payload_access_token, $key);
+            if ($type == 'web') {
+                $tokens = [
+                    'access_token' => $jwt_access_token,
+                    'refresh_token' => $jwt_refresh_token,
+                    'expired_at' => $exp_access_token
+                ];
+                return $tokens;
+            } else if ($type == 'mobile') {
+                $tokens = [
+                    'token' => $jwt_access_token,
+                    'expired_at' => $exp
+                ];
+
+                return $tokens;
+            }
         } else {
             return null;
         }

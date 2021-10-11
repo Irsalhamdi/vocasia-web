@@ -98,10 +98,17 @@ class AuthFilter implements FilterInterface
     {
         $time = new Time();
         $decode_jwt = JWT::decode($token, $this->secret_key, array('HS256'));
+        $exp = strtotime($time->now('Asia/Jakarta', 'en_US')) + 2880; // masa berlaku 2 haru
         $time_now = strtotime($time->now('Asia/Jakarta', 'en_US'));
         if ($decode_jwt->expire_at > $time_now) {
             return true;
         } else {
+            $reencoded_jwt = [
+                'name' => $decode_jwt->name,
+                'email' => $decode_jwt->email,
+                'role' => $decode_jwt->role,
+                'expire_at' => $exp
+            ];
             return Services::response()->setStatusCode(404)->setJSON([
                 'status' => 404,
                 'message' => 'token invalid !'
