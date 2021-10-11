@@ -11,6 +11,12 @@ class Courses extends BackendController
 
     public function index()
     {
+        if (!is_null($this->request->getVar('page')) && !is_null($this->request->getVar('limit'))) {
+            $page = $this->request->getVar('page');
+            $limit = $this->request->getVar('limit');
+            $pagging = $this->pagging($page, $limit);
+            return $this->respond(response_pagging($pagging['total_page'], $pagging['data']));
+        }
         $course_list = $this->model_course->get_course_list();
 
         return $this->respond(get_response($course_list));
@@ -62,5 +68,18 @@ class Courses extends BackendController
         }
         $this->model_course->delete($id_course);
         return $this->respondDeleted(response_delete());
+    }
+
+    public function pagging($page, $offset)
+    {
+        $start_index = ($page > 1) ? ($page * $offset) - $offset : 0; // hitung page saat ini
+        $count_data = $this->model_course->get_count_course(); // hitung total data ini akan mengembalikan angka
+        $total_pages = ceil($count_data / $offset); //perhitungan dari jumlah data yg dihitung dibagi dengan batas data yg ditentukan
+        $get_pagging_data = $this->model_course->get_pagging_data($offset, $start_index); //query berdasarkan data per halaman
+        $return_data = [
+            'total_page' => $total_pages,
+            'data' => $get_pagging_data
+        ];
+        return $return_data;
     }
 }

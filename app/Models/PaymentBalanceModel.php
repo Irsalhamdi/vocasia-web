@@ -4,27 +4,34 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class UsersModel extends Model
+class PaymentBalanceModel extends Model
 {
     protected $DBGroup              = 'default';
-    protected $table                = 'users';
-    protected $primaryKey           = 'id';
+    protected $table                = 'payment_balance';
+    protected $primaryKey           = 'id_pb';
     protected $useAutoIncrement     = true;
     protected $insertID             = 0;
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['first_name', 'last_name', 'email', 'password', 'username', 'role_id', 'is_verified', 'create_at', 'update_at'];
+    protected $allowedFields        = ['id_users', 'id_payment', 'pb_payment', 'pb_nominal', 'pb_type', 'pb_affiliate', 'pb_bank', 'pb_norek', 'pb_on_behalf_of', 'pb_status', 'pb_saldo', 'pb_date', 'pb_date', 'pb_date', 'pb_date_done', 'pb_token'];
 
     // Dates
     protected $useTimestamps        = false;
     protected $dateFormat           = 'datetime';
-    protected $createdField         = 'create_at';
-    protected $updatedField         = 'update_at';
+    protected $createdField         = 'created_at';
+    protected $updatedField         = 'updated_at';
     protected $deletedField         = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'id_users' => 'required',
+        'id_payment' => 'required',
+        'pb_nominal' => 'required',
+        'pb_on_behalf_of' => 'required',
+        'pb_bank' => 'required',
+        'pb_norek' => 'required'
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
@@ -40,14 +47,12 @@ class UsersModel extends Model
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
 
-    public function validate_user($email)
+    public function get_list_pb_by_user($user_id)
     {
-
-        $get_email = $this->db->table('users a')->select("a.email,concat(a.first_name,' ',a.last_name) as fullname,a.id as uid,a.role_id,b.role_name")->join('role_user b', 'a.role_id=b.id')->where('a.email', $email)->get()->getRow();
-        if ($get_email) {
-            return $get_email;
-        } else {
-            return null;
-        }
+        return $this->db->table('payment_balance')
+            ->select("payment_balance.pb_nominal")
+            ->where('payment_balance.id_users', $user_id)
+            ->get()
+            ->getRow();
     }
 }

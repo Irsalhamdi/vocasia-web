@@ -14,7 +14,7 @@ class UsersMitraModel extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['id_user','number_code','collage','major','mitra_name'];
+    protected $allowedFields        = ['id_user', 'number_code', 'collage', 'major', 'mitra_name'];
 
     // Dates
     protected $useTimestamps        = true;
@@ -43,12 +43,7 @@ class UsersMitraModel extends Model
     public function get_list_users_mitra($id = null)
     {
         if (is_null($id)) {
-            return $this->db->table('users_mitra')->select("
-                users_mitra.*,concat(users.first_name,' ',users.last_name) 
-                as name")
-                ->join('users', 'users.id = users_mitra.id_user')
-                ->get()
-                ->getResult();
+            return $this->db->table('users_mitra')->select("users_mitra.*,concat(users.first_name,' ',users.last_name) as name")->join('users', 'users.id = users_mitra.id_user')->get()->getResult();
         }
         return $this->db->table('users_mitra')->select("
             users_mitra.*,concat(users.first_name,' ',users.last_name) 
@@ -57,5 +52,15 @@ class UsersMitraModel extends Model
             ->where('users_mitra.id', $id)
             ->get()
             ->getRow();
+    }
+
+    public function get_count_users_mitra()
+    {
+        return $this->db->table('users_mitra')->select("users_mitra.*,concat(users.first_name,' ',users.last_name) as name")->join('users', 'users.id = users_mitra.id_user')->countAllResults();
+    }
+
+    public function get_pagging_data($limit, $offset)
+    {
+        return $this->db->table('users_mitra')->select("users_mitra.*,concat(users.first_name,' ',users.last_name) as name")->join('users', 'users.id = users_mitra.id_user')->limit($limit, $offset)->get()->getResult();
     }
 }

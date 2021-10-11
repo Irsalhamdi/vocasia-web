@@ -53,7 +53,7 @@ class CouponModel extends Model
                 ->getRow();
         }
         return $this->db->table('coupon')->select("coupon.*")
-            ->join('users', 'users.id = coupon.user_id')->limit(10)
+            ->join('users', 'users.id = coupon.user_id')
             ->get()
             ->getResult();
     }
@@ -61,5 +61,15 @@ class CouponModel extends Model
     public function get_coupons_prakerja()
     {
         // return $this->db->table('coupon a')->join();
+    }
+
+    public function get_count_coupon()
+    {
+        return $this->db->table('coupon')->select("coupon.*")->join('users', 'users.id = coupon.user_id')->countAllResults();
+    }
+
+    public function get_pagging_data($limit, $offset)
+    {
+        return $this->db->table('coupon')->select("coupon.*")->join('users', 'users.id = coupon.user_id')->limit($limit, $offset)->get()->getResult();
     }
 }

@@ -10,6 +10,12 @@ class UsersMitra extends BackendController
 
     public function index()
     {
+        if (!is_null($this->request->getVar('page')) && !is_null($this->request->getVar('limit'))) {
+            $page = $this->request->getVar('page');
+            $limit = $this->request->getVar('limit');
+            $pagging = $this->pagging($page, $limit);
+            return $this->respond(response_pagging($pagging['total_page'], $pagging['data']));
+        }
         $users_mitra_list = $this->model_users_mitra->get_list_users_mitra();
 
         return $this->respond(get_response($users_mitra_list));
@@ -32,16 +38,15 @@ class UsersMitra extends BackendController
         $user_exists = $this->model_users->find($this->request->getVar("id_user"));
         if (!empty($user_exists)) {
             // user exists
-                $users_mitra_data = $this->request->getJSON();
-                if ($users_mitra_data) {
-                    // success to create
-                    $this->model_users_mitra->protect(false)->insert($users_mitra_data);
-                    return $this->respondCreated(response_create());
-                } else {
-                    // failed to create
-                    return $this->respond(response_failed());
-                }
-            
+            $users_mitra_data = $this->request->getJSON();
+            if ($users_mitra_data) {
+                // success to create
+                $this->model_users_mitra->protect(false)->insert($users_mitra_data);
+                return $this->respondCreated(response_create());
+            } else {
+                // failed to create
+                return $this->respond(response_failed());
+            }
         } else {
             // user no exist
             return $this->failNotFound();
@@ -63,7 +68,7 @@ class UsersMitra extends BackendController
                 } else {
                     // failed to create
                     return $this->respond(response_failed());
-                }      
+                }
             } else {
                 // user no exist
                 return $this->failNotFound();
@@ -87,4 +92,16 @@ class UsersMitra extends BackendController
         }
     }
 
+    public function pagging($page, $offset)
+    {
+        $start_index = ($page > 1) ? ($page * $offset) - $offset : 0; // hitung page saat ini
+        $count_data = $this->model_users_mitra->get_count_users_mitra(); // hitung total data ini akan mengembalikan angka
+        $total_pages = ceil($count_data / $offset); //perhitungan dari jumlah data yg dihitung dibagi dengan batas data yg ditentukan
+        $get_pagging_data = $this->model_users_mitra->get_pagging_data($offset, $start_index); //query berdasarkan data per halaman
+        $return_data = [
+            'total_page' => $total_pages,
+            'data' => $get_pagging_data
+        ];
+        return $return_data;
+    }
 }
