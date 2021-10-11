@@ -20,10 +20,8 @@ class Auth extends ResourceController
     public function register()
     {
         $register_data = $this->request->getJSON();
-        $name = explode(' ', $register_data->name);
         $this->model->insert([
-            'first_name' => $name[0],
-            'last_name' => $name[1],
+            'first_name' => $register_data->name,
             'email' => $register_data->email,
             'password' => sha1($register_data->password),
             'role_id' => 2,
