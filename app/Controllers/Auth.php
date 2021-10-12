@@ -15,21 +15,55 @@ class Auth extends ResourceController
     {
         $this->model = new UsersModel();
         helper(['response', 'cookie']);
+        $this->validation = \Config\Services::validation();
     }
 
     public function register()
     {
-        $register_data = $this->request->getJSON();
-        $this->model->insert([
-            'first_name' => $register_data->name,
-            'email' => $register_data->email,
-            'password' => sha1($register_data->password),
-            'role_id' => 2,
-            'is_verified' => 'deactive',
-            'create_at' => strtotime(date('D,d-M-Y'))
-        ]);
+        $validation = [
+            'email' => [
+                'rules' => 'required|is_unique[users.email]',
+                'errors' => [
+                    'required' => 'email required !',
+                    'is_unique' => 'email was registered !'
+                ]
+            ],
+            'name' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'name required !',
+                ]
+            ],
+            'password' => [
+                'rules' => 'required|min_length[8]',
+                'errors' => [
+                    'required' => 'email required !',
+                    'min_length' => 'Password is to short !'
+                ]
+            ]
+        ];
+        if (!$this->validate($validation)) {
+            return $this->respond([
+                'status' => 403,
+                'error' => false,
+                'data' => [
+                    'message' => $this->validator->getErrors()
+                ]
+            ], 403);
+        } else {
 
-        return $this->respondCreated(response_register());
+            $register_data = $this->request->getJSON();
+            $this->model->insert([
+                'first_name' => $register_data->name,
+                'email' => $register_data->email,
+                'password' => sha1($register_data->password),
+                'role_id' => 2,
+                'is_verified' => 'deactive',
+                'create_at' => strtotime(date('D,d-M-Y'))
+            ]);
+
+            return $this->respondCreated(response_register());
+        }
     }
 
     /* Login untuk frontend website*/
@@ -65,7 +99,7 @@ class Auth extends ResourceController
             ];
             return $this->respond(response_login($response_data));
         } else {
-            return $this->failNotFound();
+            return $this->failNotFound("Login Failed");
         }
     }
 
@@ -80,6 +114,8 @@ class Auth extends ResourceController
                 'exp' => $generate_token_for_mobile['expired_at'],
             ];
             return $this->respond(response_login($response_data));
+        } else {
+            return $this->failNotFound("Login Failed !");
         }
     }
 
