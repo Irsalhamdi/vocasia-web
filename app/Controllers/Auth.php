@@ -7,6 +7,7 @@ use App\Models\UsersModel;
 use Config\Services;
 use \Firebase\JWT\JWT;
 use CodeIgniter\I18n\Time;
+use CodeIgniter\Cookie\Cookie;
 
 class Auth extends ResourceController
 {
@@ -90,6 +91,7 @@ class Auth extends ResourceController
                 'prefix' => '',
                 'secure' => true,
                 'httponly' => false,
+                'samesite' => Cookie::SAMESITE_NONE
             ];
             $this->response->setCookie($cookie);
             $this->response->setCookie($access_token);

@@ -99,5 +99,5 @@ class Cors extends \Fluent\Cors\Config\Cors
      *
      * @var boolean
      */
-    public $supportsCredentials = false;
+    public $supportsCredentials = true;
 }
