@@ -73,7 +73,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => '
     $routes->put('community/(:num)', 'Community::update/$1');
     $routes->delete('community/(:num)', 'Community::delete/$1');
 });
-$routes->group('auth', ['namespace' => 'App\Controllers'], function ($routes) {
+$routes->group('auth', ['namespace' => 'App\Controllers', 'filter' => 'cors'], function ($routes) {
     $routes->post('register', 'Auth::register');
     $routes->post('web/login', 'Auth::login');
     $routes->get('web/logout', 'Auth::logout');
