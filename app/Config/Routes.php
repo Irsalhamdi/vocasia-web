@@ -99,6 +99,7 @@ $routes->group('homepage', ['namespace' => 'App\Controllers\Frontend'], function
     $routes->get('categories', 'Home::get_all_category');
     $routes->get('wishlist', 'Home::chart_list');
     $routes->post('wishlist/add-to-cart', 'Home::add_to_chart');
+    $routes->delete('wishlist/add-to-cart/delete/(:num)', 'Home::delete_chart/$1');
     $routes->get('users-info/(:num)', 'Home::users_detail/$1');
 });
 /*

@@ -13,7 +13,12 @@ class Home extends FrontendController
         if ($this->request->getVar('category')) {
             $slug_category = $this->request->getVar('category');
             $course_by_category = $this->model_course->get_course_by_category($slug_category);
-            return $this->respond(get_response($course_by_category));
+            // for ($i = 0; $i <= $course_by_category['total']; $i++) {
+            //     $get_duration = $this->model_course->get_duration($course_by_category['data_course']['id']);
+            //     var_dump($get_duration);
+            //     die;
+            // }
+            return $this->respond(get_response($course_by_category['data_course']));
         }
         $list_course = $this->model_course->home_page_course();
         return $this->respond(get_response($list_course));
@@ -57,6 +62,23 @@ class Home extends FrontendController
             return $this->failNotFound();
         }
     }
+
+    public function delete_chart($id_chart)
+    {
+        try {
+            $this->model_wishlist->delete($id_chart);
+            return $this->respondDeleted([
+                'status' => 200,
+                'error' => false,
+                'data' => [
+                    'messages' => 'chart deleted !'
+                ]
+            ]);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+
     public function users_detail($id_user)
     {
         $user_detail = $this->model_users->get_detail_users($id_user);
