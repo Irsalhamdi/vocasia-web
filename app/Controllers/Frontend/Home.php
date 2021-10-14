@@ -2,77 +2,64 @@
 
 namespace App\Controllers\Frontend;
 
-use CodeIgniter\RESTful\ResourceController;
+use App\Controllers\Frontend\FrontendController;
 
-class Home extends ResourceController
+class Home extends FrontendController
 {
-    /**
-     * Return an array of resource objects, themselves in array format
-     *
-     * @return mixed
-     */
-    public function index()
+    protected $format = 'json';
+
+    public function get_all_courses()
     {
-        //
+        if ($this->request->getVar('category')) {
+            $slug_category = $this->request->getVar('category');
+            $course_by_category = $this->model_course->get_course_by_category($slug_category);
+            return $this->respond(get_response($course_by_category));
+        }
+        $list_course = $this->model_course->home_page_course();
+        return $this->respond(get_response($list_course));
     }
 
-    /**
-     * Return the properties of a resource object
-     *
-     * @return mixed
-     */
-    public function show($id = null)
+    public function get_all_category()
     {
-        //
+        $list_category = $this->model_category->list_category_home();
+        return $this->respond(get_response($list_category));
     }
 
-    /**
-     * Return a new resource object, with default properties
-     *
-     * @return mixed
-     */
-    public function new()
+    public function chart_list()
     {
-        //
+        $id_user = $this->request->getVar('users');
+        if (!is_null($id_user)) {
+            $item_wishlist = $this->model_wishlist->get_user_wishlist($id_user);
+            return $this->respond(get_response($item_wishlist));
+        } else {
+            return $this->respond([
+                'status' => 200,
+                'error' => false,
+                'data' => [
+                    'messages' => 'Wishlist Empty !'
+                ]
+            ]);
+        }
     }
-
-    /**
-     * Create a new resource object, from "posted" parameters
-     *
-     * @return mixed
-     */
-    public function create()
+    public function add_to_chart()
     {
-        //
+        try {
+            $wishlist_item = $this->request->getJSON();
+            $this->model_wishlist->insert($wishlist_item);
+            return $this->respondCreated([
+                'status' => 201,
+                'error' => false,
+                'data' => [
+                    'messages' => 'Wishlist Success Added !'
+                ]
+            ]);
+        } catch (\Throwable $th) {
+            return $this->failNotFound();
+        }
     }
-
-    /**
-     * Return the editable properties of a resource object
-     *
-     * @return mixed
-     */
-    public function edit($id = null)
+    public function users_detail($id_user)
     {
-        //
-    }
-
-    /**
-     * Add or update a model resource, from "posted" properties
-     *
-     * @return mixed
-     */
-    public function update($id = null)
-    {
-        //
-    }
-
-    /**
-     * Delete the designated resource object from the model
-     *
-     * @return mixed
-     */
-    public function delete($id = null)
-    {
-        //
+        $user_detail = $this->model_users->get_detail_users($id_user);
+        return $this->respond(get_response($user_detail));
     }
 }

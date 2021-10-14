@@ -18,7 +18,7 @@ class CoursesModel extends Model
 
     // Dates
     protected $useTimestamps        = true;
-    protected $dateFormat           = 'datetime';
+    protected $dateFormat           = 'int';
     protected $createdField         = 'create_at';
     protected $updatedField         = 'update_at';
     protected $deletedField         = 'deleted_at';
@@ -59,5 +59,14 @@ class CoursesModel extends Model
     public function get_pagging_data($limit, $offset)
     {
         return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->limit($limit, $offset)->get()->getResult();
+    }
+    public function home_page_course()
+    {
+        return $this->db->table('courses a')->select("a.title,a.price,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->get()->getResult();
+    }
+
+    public function get_course_by_category($slug_category)
+    {
+        return $this->db->table('courses a')->select("a.title,a.short_description,a.price,concat(c.first_name,' ',c.last_name) as instructor_name,a.discount_flag,a.discount_price,a.thumbnail,a.level_course,COUNT(b.course_id) as total_lesson")->join('lesson b', 'b.course_id = a.id')->join('users c', 'c.id = a.user_id')->where('a.category_id', $slug_category)->groupBy('b.course_id,b.duration')->get()->getResult();
     }
 }
