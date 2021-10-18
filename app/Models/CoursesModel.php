@@ -67,33 +67,18 @@ class CoursesModel extends Model
 
     public function get_course_by_category($id_category)
     {
-        $course_by_category =  $this->db->table('courses a')->select("a.title,a.short_description,a.price,concat(c.first_name,' ',c.last_name) as instructor_name,a.discount_flag,a.discount_price,a.thumbnail,a.level_course,COUNT(b.course_id) as total_lesson,a.id,b.duration")->join('lesson b', 'b.course_id = a.id')->join('users c', 'c.id = a.user_id')->where('a.category_id', $id_category)->groupBy('b.course_id,b.duration')->get()->getResult();
-        $total_course_find_by_category = $this->db->table('courses')->where('category_id', $id_category)->countAllResults();
-        return [
-            'data_course' => $course_by_category,
-            'total' => $total_course_find_by_category,
-        ];
+        return $this->db->table('courses a')->select("a.title,a.short_description,a.price,concat(c.first_name,' ',c.last_name) as instructor_name,a.discount_flag,a.discount_price,a.thumbnail,a.level_course,COUNT(b.course_id) as total_lesson,a.id")->join('lesson b', 'b.course_id = a.id')->join('users c', 'c.id = a.user_id')->where('a.category_id', $id_category)->groupBy('b.course_id')->get()->getResultArray();
     }
 
-    public function get_duration($id_course)
+
+
+    public function get_prices_for_cart($id_course)
     {
-        $total_duration = 0;
-        $get_duration = $this->db->table('lesson')->select('*')->where('course_id', $id_course)->get()->getResult();
-        if ($get_duration['lesson_type'] != 'other') {
-            $duration = explode(':', $get_duration['duration']);
-            $hours_to_second = $duration[0] * 60 * 60;
-            $minute_to_second = $duration[1] * 60;
-            $second = $duration[2];
-            $total_duration = $hours_to_second + $minute_to_second + $second;
-        }
+        return $this->db->table('courses')->select('*')->where('id', $id_course)->get()->getRowObject();
+    }
 
-        $hours = floor($total_duration / 3600);
-        $minute = floor(($total_duration % 3600) / 60);
-        $second = $total_duration % 60;
-
-        $h = $hours > 0 ? $hours . ($hours == 1 ? "j" : "j") : "";
-        $m = $minute > 0 ? $minute . ($minute == 1 ? "m" : "m") : "";
-        $s = $second > 0 ? $second . ($second == 1 ? "d" : "d") : "";
-        return $h . $m . $s;
+    public function get_lesson_duration($id_course)
+    {
+        return $this->db->table('lesson')->select('*')->where('course_id', $id_course)->get();
     }
 }

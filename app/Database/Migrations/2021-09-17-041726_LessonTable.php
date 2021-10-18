@@ -78,6 +78,15 @@ class LessonTable extends Migration
                 'constraint' => 255
 
             ],
+
+            'create_at' => [
+                'type' => 'INT',
+
+            ],
+            'update_at' => [
+                'type' => 'INT',
+
+            ],
         ]);
 
         $this->forge->addKey('id', true);
