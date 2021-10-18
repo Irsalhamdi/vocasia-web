@@ -13,11 +13,12 @@ class Home extends FrontendController
         if ($this->request->getVar('category')) {
             $slug_category = $this->request->getVar('category');
             $course_by_category = $this->model_course->get_course_by_category($slug_category);
-            foreach ($course_by_category as $cbc) {
+            $data= array();
+            foreach ($course_by_category as $key => $cbc) {
 
                 $lesson = $this->model_course->get_lesson_duration($cbc['id']);
                 $duration = $this->get_duration($lesson);
-                $data = [
+                $data[$key] = [
                     "title" =>  $cbc['title'],
                     "short_description" => $cbc['short_description'],
                     "price" => $cbc['price'],
