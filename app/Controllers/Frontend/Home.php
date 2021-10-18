@@ -30,12 +30,11 @@ class Home extends FrontendController
                     "duration" => $duration
 
                 ];
-
-                return $this->respond(get_response($data));
             }
+        } else {
+            $data = $this->model_course->home_page_course();
         }
-        $list_course = $this->model_course->home_page_course();
-        return $this->respond(get_response($list_course));
+        return $this->respond(get_response($data));
     }
 
     public function get_all_category()
