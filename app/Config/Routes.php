@@ -72,11 +72,11 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => '
     $routes->get('community/(:num)', 'Community::show/$1');
     $routes->put('community/(:num)', 'Community::update/$1');
     $routes->delete('community/(:num)', 'Community::delete/$1');
-    $routes->get('lessons-admin', 'Lesson-Admin::index');
-    $routes->get('lesson-admin/(:num)', 'Lesson-Admin::show_detail/$1');
-    $routes->post('lesson-admin', 'Lesson-Admin::create');
-    $routes->put('lesson-admin/(:num)', 'Lesson-Admin::update/$1');
-    $routes->delete('lesson-admin/(:num)', 'Lesson-Admin::delete/$1');
+    $routes->get('lessons-admin', 'LessonAdmin::index');
+    $routes->get('lesson-admin/(:num)', 'LessonAdmin::show_detail/$1');
+    $routes->post('lesson-admin', 'LessonAdmin::create');
+    $routes->put('lesson-admin/(:num)', 'LessonAdmin::update/$1');
+    $routes->delete('lesson-admin/(:num)', 'LessonAdmin::delete/$1');
 });
 $routes->group('auth', ['namespace' => 'App\Controllers', 'filter' => 'cors'], function ($routes) {
     $routes->post('register', 'Auth::register');
