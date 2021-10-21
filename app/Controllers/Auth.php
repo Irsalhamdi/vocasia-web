@@ -83,21 +83,11 @@ class Auth extends ResourceController
                 'secure' => true,
                 'httponly' => true,
             ];
-            $access_token = [
-                'name'   => 'ACCESSTOKEN',
-                'value'  => $generate_token['access_token'],
-                'expire' => 172800, // masa berlaku 2 hari //172800
-                'path'   => '/',
-                'prefix' => '',
-                'secure' => true,
-                'httponly' => false,
-                'samesite' => Cookie::SAMESITE_NONE
-            ];
             $this->response->setCookie($cookie);
-            $this->response->setCookie($access_token);
             $response_data = [
                 'is_mobile' => false,
                 'exp' => $generate_token['expired_at'],
+                'token' => $generate_token["access_token"]
             ];
             return $this->respond(response_login($response_data));
         } else {

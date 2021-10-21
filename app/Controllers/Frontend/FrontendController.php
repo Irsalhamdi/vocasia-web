@@ -2,7 +2,6 @@
 
 namespace App\Controllers\Frontend;
 
-use CodeIgniter\Controller;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
@@ -33,5 +32,11 @@ class FrontendController extends ResourceController
         $this->model_section = model('SectionModel');
         $this->model_question = model('QuestionModel');
         $this->model_payment_balance = model('PaymentBalanceModel');
+        $this->model_course = model('CoursesModel');
+        $this->model_category = model('CategoryModel');
+        $this->model_wishlist = model('WishlistModel');
+        $this->model_users = model('UsersModel');
+        $this->model_cart = model('CartModel');
+        $this->model_enrol = model('EnrolModel');
     }
 }

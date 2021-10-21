@@ -103,6 +103,7 @@ function response_login($data)
             'error' => false,
             'data' => [
                 'messages' => 'Login Success!',
+                'token' => $data["token"],
                 'expire_at' => $data['exp']
             ],
         ];

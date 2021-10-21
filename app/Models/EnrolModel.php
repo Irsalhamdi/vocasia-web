@@ -76,4 +76,9 @@ class EnrolModel extends Model
     {
         return $this->db->table('enrol')->select("enrol.*,concat(users.first_name,' ',users.last_name)as Name,courses.title as Title,")->join('users', 'users.id = enrol.user_id')->join('courses', 'courses.id = enrol.course_id')->limit($limit, $offset)->get()->getResult();
     }
+
+    public function get_count_enrols_courses($id_course)
+    {
+        return $this->db->table('enrol')->select('COUNT(user_id) as total_students')->where('course_id', $id_course)->groupBy('course_id')->get()->getResult();
+    }
 }
