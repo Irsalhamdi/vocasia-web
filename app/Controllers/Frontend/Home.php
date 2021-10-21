@@ -27,7 +27,7 @@ class Home extends FrontendController
                     "instructor_name" => $cbc['instructor_name'],
                     "discount_flag" => $cbc['discount_flag'],
                     "discount_price" => $cbc['discount_price'],
-                    "thumbnail" => $cbc['thumbnail'],
+                    "thumbnail" => $this->model_course->get_thumbnail($cbc['id']),
                     "level_course" => $cbc['level_course'],
                     "total_lesson" => $cbc['total_lesson'],
                     "duration" => $duration,
@@ -37,7 +37,22 @@ class Home extends FrontendController
                 ];
             }
         } else {
-            $data = $this->model_course->home_page_course();
+            $course = $this->model_course->home_page_course();
+            foreach ($course as $key => $all_course) {
+                $total_students = $this->model_enrol->get_count_enrols_courses($all_course['id']);
+                $rating_review = $this->model_course->get_rating_courses($all_course['id']);
+                $data[$key] = [
+                    "title" =>  $all_course['title'],
+                    "price" => $all_course['price'],
+                    "instructor_name" => $all_course['instructor_name'],
+                    "discount_flag" => $all_course['discount_flag'],
+                    "discount_price" => $all_course['discount_price'],
+                    "thumbnail" => $this->model_course->get_thumbnail($all_course['id']),
+                    "students" => $total_students,
+                    "rating" => $rating_review
+
+                ];
+            }
         }
         return $this->respond(get_response($data));
     }
@@ -224,7 +239,7 @@ class Home extends FrontendController
                     "instructor_name" => $cd['instructor_name'],
                     "discount_flag" => $cd['discount_flag'],
                     "discount_price" => $cd['discount_price'],
-                    "thumbnail" => $cd['thumbnail'],
+                    "thumbnail" => $this->model_course->get_thumbnail($cd['id']),
                     "level_course" => $cd['level_course'],
                     "total_lesson" => $cd['total_lesson'],
                     "language" => $cd['language'],
