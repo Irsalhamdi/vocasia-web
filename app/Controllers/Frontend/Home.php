@@ -13,10 +13,12 @@ class Home extends FrontendController
         if ($this->request->getVar('category')) {
             $slug_category = $this->request->getVar('category');
             $course_by_category = $this->model_course->get_course_by_category($slug_category);
-            $data= array();
+            $data = array();
             foreach ($course_by_category as $key => $cbc) {
 
                 $lesson = $this->model_course->get_lesson_duration($cbc['id']);
+                $total_students = $this->model_enrol->get_count_enrols_courses($cbc['id']);
+                $rating_review = $this->model_course->get_rating_courses($cbc['id']);
                 $duration = $this->get_duration($lesson);
                 $data[$key] = [
                     "title" =>  $cbc['title'],
@@ -28,7 +30,9 @@ class Home extends FrontendController
                     "thumbnail" => $cbc['thumbnail'],
                     "level_course" => $cbc['level_course'],
                     "total_lesson" => $cbc['total_lesson'],
-                    "duration" => $duration
+                    "duration" => $duration,
+                    "students" => $total_students,
+                    "rating" => $rating_review
 
                 ];
             }
@@ -156,5 +160,88 @@ class Home extends FrontendController
         $s = $seconds > 0 ? $seconds . ($seconds == 1 ? "d" : "d") : "";
 
         return $h . $m . $s;
+    }
+
+    public function filter()
+    {
+        if ($this->request->getVar('category')) {
+            $filter = [
+                'a.category_id' => $this->request->getVar()
+            ];
+            $data_filter = $this->model_course->advanced_filter($filter);
+            $data = $this->course_data($data_filter);
+            return $this->respond(get_response($data));
+        } else if ($this->request->getVar('price')) {
+            $filter = [
+                'a.is_free_course' => $this->request->getVar('price')
+            ];
+            $data_filter_price = $this->model_course->advanced_filter($filter);
+            $data = $this->course_data($data_filter_price);
+            return $this->respond(get_response($data));
+        } else if ($this->request->getVar('level')) {
+            $filter = [
+                'a.level_course' => $this->request->getVar('level')
+            ];
+            $data_filter_level = $this->model_course->advanced_filter($filter);
+            $data = $this->course_data($data_filter_level);
+            return $this->respond(get_response($data));
+        } else if ($this->request->getVar('language')) {
+            $filter = [
+                'a.language' => $this->request->getVar('language')
+            ];
+            $data_filter_language = $this->model_course->advanced_filter($filter);
+            $data = $this->course_data($data_filter_language);
+            return $this->respond(get_response($data));
+        } else if ($this->request->getVar('rating')) {
+            $filter = [
+                'rating' => $this->request->getVar('rating')
+            ];
+            $data_filter_rating = $this->model_course->get_rating_from_filter($filter);
+            $data = $this->course_data($data_filter_rating);
+            return $this->respond(get_response($data));
+        } else {
+            $data_filter = [
+                'category' => $this->request->getVar('category'),
+                'price' => $this->request->getVar('price'),
+                'language' => $this->request->getVar('language')
+            ];
+        }
+    }
+
+    public function course_data($course_data)
+    {
+        try {
+            foreach ($course_data as $key => $cd) {
+
+                $lesson = $this->model_course->get_lesson_duration($cd['id']);
+                $total_students = $this->model_enrol->get_count_enrols_courses($cd['id']);
+                $rating_review = $this->model_course->get_rating_courses($cd['id']);
+                $duration = $this->get_duration($lesson);
+                $data[$key] = [
+                    "title" =>  $cd['title'],
+                    "short_description" => $cd['short_description'],
+                    "price" => $cd['price'],
+                    "instructor_name" => $cd['instructor_name'],
+                    "discount_flag" => $cd['discount_flag'],
+                    "discount_price" => $cd['discount_price'],
+                    "thumbnail" => $cd['thumbnail'],
+                    "level_course" => $cd['level_course'],
+                    "total_lesson" => $cd['total_lesson'],
+                    "language" => $cd['language'],
+                    "duration" => $duration,
+                    "students" => $total_students,
+                    "rating" => $rating_review
+
+                ];
+            }
+            return $data;
+        } catch (\Throwable $th) {
+            return $this->failNotFound('Data Not Found !');
+        }
+    }
+
+    public function multiple_filter()
+    {
+        # code...
     }
 }

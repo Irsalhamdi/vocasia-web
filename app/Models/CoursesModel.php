@@ -81,4 +81,19 @@ class CoursesModel extends Model
     {
         return $this->db->table('lesson')->select('*')->where('course_id', $id_course)->get();
     }
+
+    public function get_rating_courses($id_course)
+    {
+        return $this->db->table('rating')->selectCount('user_id', 'total_review')->selectAvg('rating', 'avg_rating')->where('ratable_id', $id_course)->get()->getResult();
+    }
+
+    public function advanced_filter($data)
+    {
+        return $this->db->table('courses a')->select("a.title,a.short_description,a.price,concat(c.first_name,' ',c.last_name) as instructor_name,a.discount_flag,a.discount_price,a.thumbnail,a.level_course,COUNT(b.course_id) as total_lesson,a.id,a.language")->join('lesson b', 'b.course_id = a.id')->join('users c', 'c.id = a.user_id')->where($data)->groupBy('b.course_id')->get()->getResultArray();
+    }
+
+    public function get_rating_from_filter($data)
+    {
+        return $this->db->table('courses a')->select("a.title,a.short_description,a.price,concat(c.first_name,' ',c.last_name) as instructor_name,a.discount_flag,a.discount_price,a.thumbnail,a.level_course,COUNT(b.course_id) as total_lesson,a.id,a.language")->join('lesson b', 'b.course_id = a.id')->join('users c', 'c.id = a.user_id')->join('rating d', 'd.ratable_id = a.id')->groupBy('a.id')->having('AVG(rating)', $data)->get()->getResultArray();
+    }
 }

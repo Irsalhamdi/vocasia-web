@@ -37,5 +37,6 @@ class FrontendController extends ResourceController
         $this->model_wishlist = model('WishlistModel');
         $this->model_users = model('UsersModel');
         $this->model_cart = model('CartModel');
+        $this->model_enrol = model('EnrolModel');
     }
 }

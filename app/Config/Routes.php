@@ -103,6 +103,7 @@ $routes->group('homepage', ['namespace' => 'App\Controllers\Frontend'], function
     $routes->get('carts/(:num)', 'Home::cart_list/$1');
     $routes->delete('wishlist/delete/(:num)', 'Home::delete_wishlist/$1');
     $routes->get('users-info/(:num)', 'Home::users_detail/$1');
+    $routes->get('filter', 'Home::filter');
 });
 /*
  * --------------------------------------------------------------------
