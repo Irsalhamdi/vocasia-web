@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use Config\Services;
 
 class CoursesModel extends Model
 {
@@ -62,7 +63,7 @@ class CoursesModel extends Model
     }
     public function home_page_course()
     {
-        return $this->db->table('courses a')->select("a.title,a.price,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->get()->getResult();
+        return $this->db->table('courses a')->select("a.title,a.short_description,a.price,concat(c.first_name,' ',c.last_name) as instructor_name,a.discount_flag,a.discount_price,a.thumbnail,a.level_course,COUNT(b.course_id) as total_lesson,a.id")->join('lesson b', 'b.course_id = a.id')->join('users c', 'c.id = a.user_id')->groupBy('b.course_id')->get()->getResultArray();
     }
 
     public function get_course_by_category($id_category)
@@ -95,5 +96,15 @@ class CoursesModel extends Model
     public function get_rating_from_filter($data)
     {
         return $this->db->table('courses a')->select("a.title,a.short_description,a.price,concat(c.first_name,' ',c.last_name) as instructor_name,a.discount_flag,a.discount_price,a.thumbnail,a.level_course,COUNT(b.course_id) as total_lesson,a.id,a.language")->join('lesson b', 'b.course_id = a.id')->join('users c', 'c.id = a.user_id')->join('rating d', 'd.ratable_id = a.id')->groupBy('a.id')->having('AVG(rating)', $data)->get()->getResultArray();
+    }
+
+    public function get_thumbnail($id_course)
+    {
+        $folder = "uploads/courses_thumbnail/course_thumbnail_default_$id_course.jpg";
+        if (file_exists($folder)) {
+            return base_url() . '/' . $folder;
+        } else {
+            return null;
+        }
     }
 }
