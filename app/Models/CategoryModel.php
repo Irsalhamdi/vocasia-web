@@ -54,4 +54,9 @@ class CategoryModel extends Model
             return $this->where('id', $params)->first();
         }
     }
+
+    public function list_category_home()
+    {
+        return $this->db->table($this->table)->select('id,name_category,slug_category')->get()->getResult();
+    }
 }

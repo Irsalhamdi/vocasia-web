@@ -94,6 +94,17 @@ $routes->group('instructor', ['namespace' => 'App\Controllers\Frontend'], functi
     $routes->get('paymentbalance/(:num)', 'PaymentBalance::index/$1');
     $routes->post('paymentbalance', 'PaymentBalance::create');
 });
+$routes->group('homepage', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
+    $routes->get('courses', 'Home::get_all_courses');
+    $routes->get('categories', 'Home::get_all_category');
+    $routes->get('wishlist', 'Home::wishlist');
+    $routes->post('wishlist', 'Home::add_to_wishlist');
+    $routes->post('add-to-cart', 'Home::add_to_cart');
+    $routes->get('carts/(:num)', 'Home::cart_list/$1');
+    $routes->delete('wishlist/delete/(:num)', 'Home::delete_wishlist/$1');
+    $routes->get('users-info/(:num)', 'Home::users_detail/$1');
+    $routes->get('filter', 'Home::filter');
+});
 /*
  * --------------------------------------------------------------------
  * Additional Routing
