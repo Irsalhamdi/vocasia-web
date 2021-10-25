@@ -104,6 +104,8 @@ $routes->group('homepage', ['namespace' => 'App\Controllers\Frontend'], function
     $routes->delete('wishlist/delete/(:num)', 'Home::delete_wishlist/$1');
     $routes->get('users-info/(:num)', 'Home::users_detail/$1');
     $routes->get('filter', 'Home::filter');
+    $routes->get('course/(:num)', 'Home::detail_courses/$1');
+    $routes->get('course/detail/instructor/(:num)', 'Home::get_instructor_student/$1');
 });
 /*
  * --------------------------------------------------------------------
