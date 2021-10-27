@@ -3,6 +3,7 @@
 namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
+use phpDocumentor\Reflection\Types\Null_;
 
 class UserDetailTable extends Migration
 {
@@ -17,6 +18,10 @@ class UserDetailTable extends Migration
             'id_user' => [
                 'type' => 'INT',
                 'constraint' => 11,
+            ],
+            'foto_profile' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255
             ],
             'biography' => [
                 'type' => 'LONGTEXT',

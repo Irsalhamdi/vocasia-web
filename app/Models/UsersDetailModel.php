@@ -4,23 +4,23 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class UsersModel extends Model
+class UsersDetailModel extends Model
 {
     protected $DBGroup              = 'default';
-    protected $table                = 'users';
+    protected $table                = 'user_detail';
     protected $primaryKey           = 'id';
     protected $useAutoIncrement     = true;
     protected $insertID             = 0;
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['first_name', 'email', 'password', 'username', 'role_id', 'is_verified', 'create_at', 'update_at'];
+    protected $allowedFields        = ['id_user', 'foto_profile', 'biography', 'datebirth', 'phone', 'bank_account_id', 'is_instructor', 'jenis_kel'];
 
     // Dates
     protected $useTimestamps        = false;
     protected $dateFormat           = 'datetime';
-    protected $createdField         = 'create_at';
-    protected $updatedField         = 'update_at';
+    protected $createdField         = 'created_at';
+    protected $updatedField         = 'updated_at';
     protected $deletedField         = 'deleted_at';
 
     // Validation
@@ -39,19 +39,4 @@ class UsersModel extends Model
     protected $afterFind            = [];
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
-
-    public function validate_user($email)
-    {
-        $get_email = $this->db->table('users a')->select("a.email,concat(a.first_name,' ',a.last_name) as fullname,a.id as uid,a.role_id,b.role_name")->join('role_user b', 'a.role_id=b.id')->where('a.email', $email)->get()->getRow();
-        if ($get_email) {
-            return $get_email;
-        } else {
-            return null;
-        }
-    }
-
-    public function get_detail_users($id_user)
-    {
-        return $this->db->table('users a')->select("concat(a.first_name,' ',a.last_name) as fullname,b.biography,b.datebrith,b.phone")->join('user_detail b', 'b.id_user = a.id')->where('a.id', $id_user)->get()->getRow();
-    }
 }
