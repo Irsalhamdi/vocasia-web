@@ -58,4 +58,13 @@ class LessonModel extends Model
                 ->get()
                 ->getRow();            
     }
+
+    public function get_count_lesson()
+    {
+        return $this->db->table('lesson')->select("
+                lesson.*")
+                ->join('courses', 'courses.id = lesson.course_id')
+                ->join('section', 'section.id = lesson.section_id')
+                ->countAllResults();
+    }
 }

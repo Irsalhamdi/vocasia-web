@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use DateTime;
 
 class UsersModel extends Model
 {
@@ -55,4 +56,20 @@ class UsersModel extends Model
     {
         return $this->db->table('users a')->select("concat(a.first_name,' ',a.last_name) as fullname,b.biography,b.datebrith,b.phone")->join('user_detail b', 'b.id_user = a.id')->where('a.id', $id_user)->get()->getRow();
     }
+
+    public function get_count_user()
+    {
+        return $this->db->table('users a')->select("a.email,concat(a.first_name,' ',a.last_name) as fullname,a.id as uid,a.role_id")->countAllResults();
+    }
+
+    public function get_data_instructor()
+    {
+        return $this->db->table('users a')->select("a.id,concat(a.first_name,' ',a.last_name) as fullname,a.email,b.is_instructor,c.title,payment.instructor_revenue")->join('user_detail b', 'b.id_user = a.id')->join('courses c', 'c.user_id = a.id')->join('payment', 'payment.id_user = a.id')->get()->getResult();
+    }
+
+    public function get_count_new_user()
+    {   
+        return $this->db->table('users')->select("FROM_UNIXTIME(users.create_at) as time,users.id", false)->groupBy('month(time)')->countAllResults();
+    }
+
 }
