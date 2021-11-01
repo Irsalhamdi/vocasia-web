@@ -35,5 +35,7 @@ class BackendController extends ResourceController
         $this->model_enrol = model('EnrolModel');
         $this->model_payment = model('PaymentModel');
         $this->model_community = model('CommunityModel');
+        $this->model_lesson = model('LessonModel');
+        $this->model_section = model('SectionModel');
     }
 }
