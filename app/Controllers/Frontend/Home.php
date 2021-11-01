@@ -332,4 +332,50 @@ class Home extends FrontendController
 
         return $this->respond(get_response($data));
     }
+
+    public function get_sections_duration($course_id)
+    {
+        $arr_data = array();
+        $data = $this->model_course->get_section_duration($course_id);
+        foreach ($data as $key => $section) {
+            $string_to_array_section = preg_split('/[[,\]]/', $section);
+            for ($i = 0; $i < count($string_to_array_section); $i++) {
+                if ($string_to_array_section[$i] == null) {
+                    continue;
+                }
+                $duration_by_section = $this->model_course->get_lesson_duration(['section' => $string_to_array_section[$i]]);
+                $total_duration_section = $this->get_duration($duration_by_section);
+                $arr_data[] = $total_duration_section;
+            }
+        }
+        return $arr_data;
+    }
+
+    public function get_sections($id_course)
+    {
+        $data = array();
+        $total_duration = $this->get_sections_duration($id_course);
+        $section_title = $this->model_course->get_section_title($id_course);
+        foreach ($section_title as $key => $st) {
+            $course_by_section  = $this->model_course->lesson_title_from_section($st->id);
+            $data[$key] = [
+                'title' => $st->title,
+                'duration' => !empty($total_duration[$key]) ? $total_duration[$key] : null,
+                'data_lesson' => [
+                    $course_by_section
+                ]
+            ];
+        }
+        return $this->respond(get_response($data));
+    }
+    public function get_rating($course_id)
+    {
+        if ($this->request->getVar('star')) {
+            $star = $this->request->getVar('star');
+            $data_rating = $this->model_course->get_rating_by_star($course_id, $star);
+            return $this->respond(get_response($data_rating));
+        }
+        $data_rating = $this->model_course->get_rating_course($course_id);
+        return $this->respond($data_rating);
+    }
 }

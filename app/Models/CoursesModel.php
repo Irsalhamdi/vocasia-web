@@ -80,9 +80,9 @@ class CoursesModel extends Model
 
     public function get_lesson_duration($data)
     {
-        if (!is_null($data['course_id'])) {
+        if (!empty($data['course_id'])) {
             return $this->db->table('lesson')->select('*')->where('course_id', $data)->get();
-        } else if (!is_null($data['section'])) {
+        } else if (!empty($data['section'])) {
             return $this->db->table('lesson')->select('*')->where('section_id', $data)->get();
         }
     }
@@ -141,10 +141,59 @@ class CoursesModel extends Model
     {
         $total_review =  $this->db->table('courses a')->select("CONCAT(b.first_name,' ',b.last_name) as instructor_name,COUNT(c.ratable_id) as total_review")->join('users b', 'b.id = a.user_id')->join('rating c', 'c.ratable_id = a.id')->where('b.id', $id_user)->get()->getRowObject();
         $total_course = $this->db->table('courses')->selectCount('user_id', 'total_course')->where('user_id', $id_user)->get()->getRowObject();
+        $total_students = $this->db->table('enrol a')->selectCount('a.user_id', 'total_student')->join('courses b', 'b.id = a.course_id')->join('users c', 'c.id = b.user_id')->where('c.id', $id_user)->get()->getRowObject();
         return [
             'instructor_name' => $total_review->instructor_name,
             'total_review' => $total_review->total_review,
-            'total_course' => $total_course->total_course
+            'total_course' => $total_course->total_course,
+            'total_students' => $total_students->total_student
         ];
+    }
+    public function get_section_duration($id_course)
+    {
+        $section = $this->db->table('courses')->select('section')->where('id', $id_course)->get()->getRowArray();
+        return $section;
+    }
+    public function get_section_title($id_course)
+    {
+        return $this->db->table('section')->select('title,id')->where('course_id', $id_course)->get()->getResultObject();
+    }
+    public function lesson_title_from_section($id_section)
+    {
+        return $this->db->table('lesson')->select('title as title_lesson,duration')->where('section_id', $id_section)->get()->getResultObject();
+    }
+
+    public function get_rating_course($id_course)
+    {
+        $data_rating = $this->db->table('rating a')->select("CONCAT(b.first_name,' ',b.last_name) as user,a.review,a.rating")->join('users b', 'b.id = a.user_id')->where('ratable_id', $id_course)->get()->getResultObject();
+        $rating = $this->db->table('rating')->selectAvg('rating', 'total_rating')->where('ratable_id', $id_course)->having('AVG(rating) = 5')->get()->getRowObject();
+        $total_review = $this->db->table('rating')->selectCount('user_id', 'total_review')->where('ratable_id', $id_course)->get()->getRow();
+
+        $rating_1 = $rating->total_rating == 1 ? ($rating->total_rating / $total_review->total_review) * 100 : '0';
+        $rating_2 = $rating->total_rating == 2 ? ($rating->total_rating / $total_review->total_review) * 100 : '0';
+        $rating_3 = $rating->total_rating == 3 ? ($rating->total_rating / $total_review->total_review) * 100 : '0';
+        $rating_4 = $rating->total_rating == 4 ? ($rating->total_rating / $total_review->total_review) * 100 : '0';
+        $rating_5 = $rating->total_rating == 5 ? ($rating->total_rating / $total_review->total_review) * 100 : '0';
+        return [
+            'status' => 200,
+            'error' => false,
+            'data' => [
+                'avg_rating' => $rating->total_rating,
+                'precentage_rating' => [
+                    'rating_1' => $rating_1 . '%',
+                    'rating_2' => $rating_2 . '%',
+                    'rating_3' => $rating_3 . '%',
+                    'rating_4' => $rating_4 . '%',
+                    'rating_5' => $rating_5 . '%'
+                ],
+            ],
+            'data_review' => [
+                $data_rating
+            ]
+        ];
+    }
+    public function get_rating_by_star($id_course, $star)
+    {
+        return $this->db->table('rating a')->select("CONCAT(b.first_name,' ',b.last_name) as user,a.review,a.rating")->join('users b', 'b.id = a.user_id')->where(['ratable_id' => $id_course, 'rating' => $star])->get()->getResultObject();
     }
 }

@@ -106,6 +106,8 @@ $routes->group('homepage', ['namespace' => 'App\Controllers\Frontend'], function
     $routes->get('filter', 'Home::filter');
     $routes->get('course/(:num)', 'Home::detail_courses/$1');
     $routes->get('course/detail/instructor/(:num)', 'Home::get_instructor_student/$1');
+    $routes->get('section/(:num)', 'Home::get_sections/$1');
+    $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
 });
 /*
  * --------------------------------------------------------------------
