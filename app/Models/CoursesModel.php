@@ -56,6 +56,11 @@ class CoursesModel extends Model
     {
         return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->countAllResults();
     }
+    
+    public function get_count_course_active()
+    {
+        return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where('a.status_course','publish')->countAllResults();
+    }
 
     public function get_pagging_data($limit, $offset)
     {
