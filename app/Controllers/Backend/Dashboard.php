@@ -19,19 +19,17 @@ class Dashboard extends BackendController
         $data_new_users = $this->model_users->get_count_new_user();
 
         return $this->respond([
-        'status' => 201,
-        'error' => false,
-        'data' => [
-            'courses' => $data_courses,
-            'courses-active' => $data_courses_active,
-            'lessons' => $data_lessons,
-            'enrols' => $data_enrols,
-            'users' => $data_users,
-            'new-users' => $data_new_users,
-            'data-instructor' => $data_instructor
+            'status' => 201,
+            'error' => false,
+            'data' => [
+                'courses' => $data_courses,
+                'courses-active' => $data_courses_active,
+                'lessons' => $data_lessons,
+                'enrols' => $data_enrols,
+                'users' => $data_users,
+                'new-users' => $data_new_users,
+                'data-instructor' => $data_instructor
             ]
         ]);
     }
-    
-    
 }

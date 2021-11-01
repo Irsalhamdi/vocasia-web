@@ -33,7 +33,7 @@ $routes->setAutoRoute(false);
 // route since we don't have to scan directories.
 // $routes->get('/', 'Home::index');
 
-$routes->group('admin', ['namespace' => 'App\Controllers\Backend','filter' => 'auth'], function ($routes) {
+$routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($routes) {
     $routes->get('courses', 'Courses::index');
     $routes->get('course/(:num)', 'Courses::show_detail/$1');
     $routes->post('course', 'Courses::create');
@@ -108,15 +108,18 @@ $routes->group('homepage', ['namespace' => 'App\Controllers\Frontend'], function
     $routes->post('add-to-cart', 'Home::add_to_cart');
     $routes->get('carts/(:num)', 'Home::cart_list/$1');
     $routes->delete('wishlist/delete/(:num)', 'Home::delete_wishlist/$1');
-    $routes->get('users-info/(:num)', 'Home::users_detail/$1');
-    $routes->put('profile/user_profile/(:num)', 'Home::user_profile/$1');
-    $routes->put('profile/user_credentials/(:num)', 'Home::user_credentials/$1');
-    $routes->put('profile/user_photo/(:num)', 'Home::user_photo/$1');
     $routes->get('filter', 'Home::filter');
     $routes->get('course/(:num)', 'Home::detail_courses/$1');
     $routes->get('course/detail/instructor/(:num)', 'Home::get_instructor_student/$1');
     $routes->get('section/(:num)', 'Home::get_sections/$1');
     $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
+});
+
+$routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user'] . function ($routes) {
+    $routes->put('profile/user_profile/(:num)', 'Home::user_profile/$1');
+    $routes->put('profile/user_credentials/(:num)', 'Home::user_credentials/$1');
+    $routes->put('profile/user_photo/(:num)', 'Home::user_photo/$1');
+    $routes->get('users-info/(:num)', 'Home::users_detail/$1');
 });
 /*
  * --------------------------------------------------------------------
