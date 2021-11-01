@@ -46,6 +46,10 @@ class UserDetailTable extends Migration
                 'constraint' => ['pria', 'wanita'],
                 'default' => 'pria'
             ],
+            'referal_code' => [
+                'type' => 'VARCHAR',
+                'constraint' => 60,
+            ],
             [
                 'create_at' => [
                     'type' => 'INT',

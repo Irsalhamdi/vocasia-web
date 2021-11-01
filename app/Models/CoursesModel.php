@@ -83,9 +83,13 @@ class CoursesModel extends Model
         return $this->db->table('courses')->select('*')->where('id', $id_course)->get()->getRowObject();
     }
 
-    public function get_lesson_duration($id_course)
+    public function get_lesson_duration($data)
     {
-        return $this->db->table('lesson')->select('*')->where('course_id', $id_course)->get();
+        if (!empty($data['course_id'])) {
+            return $this->db->table('lesson')->select('*')->where('course_id', $data)->get();
+        } else if (!empty($data['section'])) {
+            return $this->db->table('lesson')->select('*')->where('section_id', $data)->get();
+        }
     }
 
     public function get_rating_courses($id_course)
@@ -95,12 +99,23 @@ class CoursesModel extends Model
 
     public function advanced_filter($data)
     {
-        return $this->db->table('courses a')->select("a.title,a.short_description,a.price,concat(c.first_name,' ',c.last_name) as instructor_name,a.discount_flag,a.discount_price,a.thumbnail,a.level_course,COUNT(b.course_id) as total_lesson,a.id,a.language")->join('lesson b', 'b.course_id = a.id')->join('users c', 'c.id = a.user_id')->where($data)->groupBy('b.course_id')->get()->getResultArray();
+        $data_filters =  $this->db->table('courses a')->select("a.title,a.short_description,a.price,concat(c.first_name,' ',c.last_name) as instructor_name,a.discount_flag,a.discount_price,a.thumbnail,a.level_course,COUNT(b.course_id) as total_lesson,a.id,a.language")->join('lesson b', 'b.course_id = a.id')->join('users c', 'c.id = a.user_id')->where($data)->groupBy('b.course_id')->get()->getResultArray();
+
+        if (is_null($data_filters)) {
+            return null;
+        } else {
+            return $data_filters;
+        }
     }
 
     public function get_rating_from_filter($data)
     {
-        return $this->db->table('courses a')->select("a.title,a.short_description,a.price,concat(c.first_name,' ',c.last_name) as instructor_name,a.discount_flag,a.discount_price,a.thumbnail,a.level_course,COUNT(b.course_id) as total_lesson,a.id,a.language")->join('lesson b', 'b.course_id = a.id')->join('users c', 'c.id = a.user_id')->join('rating d', 'd.ratable_id = a.id')->groupBy('a.id')->having('AVG(rating)', $data)->get()->getResultArray();
+        if ($data['a.category_id']) {
+            return $this->db->table('courses a')->select("a.title,a.short_description,a.price,concat(c.first_name,' ',c.last_name) as instructor_name,a.discount_flag,a.discount_price,a.thumbnail,a.level_course,COUNT(b.course_id) as total_lesson,a.id,a.language")->join('lesson b', 'b.course_id = a.id')->join('users c', 'c.id = a.user_id')->join('rating d', 'd.ratable_id = a.id')->groupBy('a.id')->having('AVG(rating)', $data['d.rating'])->where($data)->get()->getResultArray();
+        } else {
+
+            return $this->db->table('courses a')->select("a.title,a.short_description,a.price,concat(c.first_name,' ',c.last_name) as instructor_name,a.discount_flag,a.discount_price,a.thumbnail,a.level_course,COUNT(b.course_id) as total_lesson,a.id,a.language")->join('lesson b', 'b.course_id = a.id')->join('users c', 'c.id = a.user_id')->join('rating d', 'd.ratable_id = a.id')->groupBy('a.id')->having('AVG(rating)', $data)->get()->getResultArray();
+        }
     }
 
     public function get_thumbnail($id_course)
@@ -111,5 +126,79 @@ class CoursesModel extends Model
         } else {
             return null;
         }
+    }
+
+    public function detail_course_for_homepage($id_course)
+    {
+        return $this->db->table('courses a')->select("a.id,CONCAT(b.first_name,' ',b.last_name) as instructor_name,a.level_course,COUNT(d.course_id) as total_lesson,a.description,a.outcomes,a.requirement,a.bio_status,a.price,a.discount_price,a.video_url,a.bio_instructor,b.id as uid")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->join('lesson d', 'd.course_id = a.id')->where('a.id', $id_course)->get()->getResult();
+    }
+    public function get_bio_instructor($data)
+    {
+        if ($data['bio_status'] == 1) {
+            return $data['bio_instructor'];
+        } else {
+            $bio = $this->db->table('user_detail')->select('biography')->where('id_user', $data['id_user'])->get()->getRowObject();
+            return $bio->biography;
+        }
+    }
+
+    public function detail_intructor_by_courses($id_user)
+    {
+        $total_review =  $this->db->table('courses a')->select("CONCAT(b.first_name,' ',b.last_name) as instructor_name,COUNT(c.ratable_id) as total_review")->join('users b', 'b.id = a.user_id')->join('rating c', 'c.ratable_id = a.id')->where('b.id', $id_user)->get()->getRowObject();
+        $total_course = $this->db->table('courses')->selectCount('user_id', 'total_course')->where('user_id', $id_user)->get()->getRowObject();
+        $total_students = $this->db->table('enrol a')->selectCount('a.user_id', 'total_student')->join('courses b', 'b.id = a.course_id')->join('users c', 'c.id = b.user_id')->where('c.id', $id_user)->get()->getRowObject();
+        return [
+            'instructor_name' => $total_review->instructor_name,
+            'total_review' => $total_review->total_review,
+            'total_course' => $total_course->total_course,
+            'total_students' => $total_students->total_student
+        ];
+    }
+    public function get_section_duration($id_course)
+    {
+        $section = $this->db->table('courses')->select('section')->where('id', $id_course)->get()->getRowArray();
+        return $section;
+    }
+    public function get_section_title($id_course)
+    {
+        return $this->db->table('section')->select('title,id')->where('course_id', $id_course)->get()->getResultObject();
+    }
+    public function lesson_title_from_section($id_section)
+    {
+        return $this->db->table('lesson')->select('title as title_lesson,duration')->where('section_id', $id_section)->get()->getResultObject();
+    }
+
+    public function get_rating_course($id_course)
+    {
+        $data_rating = $this->db->table('rating a')->select("CONCAT(b.first_name,' ',b.last_name) as user,a.review,a.rating")->join('users b', 'b.id = a.user_id')->where('ratable_id', $id_course)->get()->getResultObject();
+        $rating = $this->db->table('rating')->selectAvg('rating', 'total_rating')->where('ratable_id', $id_course)->having('AVG(rating) = 5')->get()->getRowObject();
+        $total_review = $this->db->table('rating')->selectCount('user_id', 'total_review')->where('ratable_id', $id_course)->get()->getRow();
+
+        $rating_1 = $rating->total_rating == 1 ? ($rating->total_rating / $total_review->total_review) * 100 : '0';
+        $rating_2 = $rating->total_rating == 2 ? ($rating->total_rating / $total_review->total_review) * 100 : '0';
+        $rating_3 = $rating->total_rating == 3 ? ($rating->total_rating / $total_review->total_review) * 100 : '0';
+        $rating_4 = $rating->total_rating == 4 ? ($rating->total_rating / $total_review->total_review) * 100 : '0';
+        $rating_5 = $rating->total_rating == 5 ? ($rating->total_rating / $total_review->total_review) * 100 : '0';
+        return [
+            'status' => 200,
+            'error' => false,
+            'data' => [
+                'avg_rating' => $rating->total_rating,
+                'precentage_rating' => [
+                    'rating_1' => $rating_1 . '%',
+                    'rating_2' => $rating_2 . '%',
+                    'rating_3' => $rating_3 . '%',
+                    'rating_4' => $rating_4 . '%',
+                    'rating_5' => $rating_5 . '%'
+                ],
+            ],
+            'data_review' => [
+                $data_rating
+            ]
+        ];
+    }
+    public function get_rating_by_star($id_course, $star)
+    {
+        return $this->db->table('rating a')->select("CONCAT(b.first_name,' ',b.last_name) as user,a.review,a.rating")->join('users b', 'b.id = a.user_id')->where(['ratable_id' => $id_course, 'rating' => $star])->get()->getResultObject();
     }
 }

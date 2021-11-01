@@ -79,6 +79,7 @@ class EnrolModel extends Model
 
     public function get_count_enrols_courses($id_course)
     {
-        return $this->db->table('enrol')->select('COUNT(user_id) as total_students')->where('course_id', $id_course)->groupBy('course_id')->get()->getResult();
+        $data = $this->db->table('enrol')->select('COUNT(user_id) as total_students')->where('course_id', $id_course)->groupBy('course_id')->get()->getRowObject();
+        return $data->total_students;
     }
 }
