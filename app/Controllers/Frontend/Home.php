@@ -41,7 +41,7 @@ class Home extends FrontendController
             foreach ($course as $key => $all_course) {
                 $total_students = $this->model_enrol->get_count_enrols_courses($all_course['id']);
                 $rating_review = $this->model_course->get_rating_courses($all_course['id']);
-                $get_discount_percent = ($all_course['dicount_price'] / $all_course['price']) * 100;
+                $get_discount_percent = ($all_course['discount_price'] / $all_course['price']) * 100;
                 $discount = intval($get_discount_percent);
                 $data[$key] = [
                     "title" =>  $all_course['title'],
@@ -378,132 +378,27 @@ class Home extends FrontendController
         $data_rating = $this->model_course->get_rating_course($course_id);
         return $this->respond($data_rating);
     }
-    public function user_profile($id = null){
-       
+    public function user_profile($id = null)
+    {
+
         $user_id = $this->model_users->find($id);
 
         $rules = [
             'first_name' => [
                 'rules' => 'required'
-                ],
+            ],
             'last_name' => [
-                'rules' => 'required'
-                ],
+                'rules' => 'required' // last name ngga digunain lagi 
+            ],
             'biography' => [
                 'rules' => 'required'
-                ],
+            ],
             'phone' => [
                 'rules' => 'required'
-                ],
-            'facebook_link' => [
-                'rules' => 'required'
-                ],
-            'twitter_link' => [
-                'rules' => 'required'
-                ],
-            'instragram' => [
-                'rules' => 'required'
-                ],
-            ];
+            ],
+        ];
 
-            if(!$this->validate($rules)) {
-                return $this->respond([
-                    'status' => 403,
-                    'error' => false,
-                    'data' => [
-                        'message' => $this->validator->getErrors()
-                        ]
-                    ], 403);
-            }else{
-                if(!empty($user_id)){
-
-                    $update = $this->request->getJSON();
-                    $this->model_users->update($id, $update);
-
-                    $user_detail = $this->model_users_detail->find($id);
-
-                    if($user_detail){
-
-                        $user['id_user'] = $id;
-                        $user['biography'] = $update->biography;
-                        $user['phone'] = $update->phone;
-                        $this->model_users_detail->update($id, $user);
-
-                        $user_social_link = $this->model_users_social_link->find($id);
-
-                        if($user_social_link){
-                            $user['id_user'] = $id;
-                            $user['facebook_link'] = $update->facebook_link;
-                            $user['instragram'] = $update->instragram;
-                            $user['twitter_link'] = $update->twitter_link;
-                            $this->model_users_social_link->update($id, $user);
-                        }
-
-                    }else{
-                        $user['id_user'] = $id;
-                        $user['biography'] = $update->biography;
-                        $user['phone'] = $update->phone;
-                        $this->model_users_detail->save($user);
-
-                        $user['id_user'] = $id;
-                        $user['facebook_link'] = $update->facebook_link;
-                        $user['instragram'] = $update->instragram;
-                        $user['twitter_link'] = $update->twitter_link;
-                        $this->model_users_social_link->save($user);
-                    }
-
-                    return $this->respondUpdated(response_update());
-
-                }else{
-                    return $this->failNotFound();
-                }
-            }
-    }
-    public function user_credentials($id = null){
-        
-        $user_id = $this->model_users->find($id);
-
-        $rules = [
-            'email' => [
-                'rules' => 'required|valid_email|is_unique[users.email]'
-                ],
-            'old_password' => [
-                'rules' => 'required|min_length[8]'
-                ],
-            'password' => [
-                'rules' => 'required|min_length[8]'
-                ],
-            'new_password_confirm' => [
-                'rules' => 'required|matches[password]'
-                ]
-            ];
-
-            if(!$this->validate($rules)) {
-                return $this->respond([
-                    'status' => 403,
-                    'error' => false,
-                    'data' => [
-                        'message' => $this->validator->getErrors()
-                        ]
-                    ], 403);
-            }else{
-                $update = $this->request->getJSON();
-                $data['email'] = $update->email;
-                $data['password'] = sha1($update->password);
-                $this->model_users->update($id, $data);
-                return $this->respondUpdated(response_update());
-            }
-    }
-    public function user_photo($id = null){
-        $user = $this->model_users_detail->find($id);
-
-        $rules = [
-            'foto_profile' => [
-                'rules' => 'required'
-                ]
-            ];
-
-        if(!$this->validate($rules)){
+        if (!$this->validate($rules)) {
             return $this->respond([
                 'status' => 403,
                 'error' => false,
@@ -511,13 +406,110 @@ class Home extends FrontendController
                     'message' => $this->validator->getErrors()
                 ]
             ], 403);
-        }else{
+        } else {
+            if (!empty($user_id)) {
 
-            if(!empty($user)){
+                $update = $this->request->getJSON();
+                $this->model_users->update($id, $update);
+
+                $user_detail = $this->model_users_detail->find($id);
+
+                if ($user_detail) {
+
+                    $user['id_user'] = $id;
+                    $user['biography'] = $update->biography;
+                    $user['phone'] = $update->phone;
+                    $this->model_users_detail->update($id, $user);
+
+                    $user_social_link = $this->model_users_social_link->find($id);
+
+                    if ($user_social_link) {
+                        $user['id_user'] = $id;
+                        $user['facebook_link'] = $update->facebook_link;
+                        $user['instragram'] = $update->instragram;
+                        $user['twitter_link'] = $update->twitter_link;
+                        $this->model_users_social_link->update($id, $user);
+                    }
+                } else {
+                    $user['id_user'] = $id;
+                    $user['biography'] = $update->biography;
+                    $user['phone'] = $update->phone;
+                    $this->model_users_detail->save($user);
+
+                    $user['id_user'] = $id;
+                    $user['facebook_link'] = $update->facebook_link;
+                    $user['instragram'] = $update->instragram;
+                    $user['twitter_link'] = $update->twitter_link;
+                    $this->model_users_social_link->save($user);
+                }
+
+                return $this->respondUpdated(response_update());
+            } else {
+                return $this->failNotFound();
+            }
+        }
+    }
+    public function user_credentials($id = null)
+    {
+
+        $user_id = $this->model_users->find($id);
+
+        $rules = [
+            'email' => [
+                'rules' => 'required|valid_email|is_unique[users.email]'
+            ],
+            'old_password' => [
+                'rules' => 'required|min_length[6]'
+            ],
+            'password' => [
+                'rules' => 'required|min_length[6]'
+            ],
+            'new_password_confirm' => [
+                'rules' => 'required|matches[password]'
+            ]
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->respond([
+                'status' => 403,
+                'error' => false,
+                'data' => [
+                    'message' => $this->validator->getErrors()
+                ]
+            ], 403);
+        } else {
+            $update = $this->request->getJSON();
+            $data['email'] = $update->email;
+            $data['password'] = sha1($update->password);
+            $this->model_users->update($id, $data);
+            return $this->respondUpdated(response_update());
+        }
+    }
+    public function user_photo($id = null)
+    {
+        $user = $this->model_users_detail->find($id);
+
+        $rules = [
+            'foto_profile' => [
+                'rules' => 'required'
+            ]
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->respond([
+                'status' => 403,
+                'error' => false,
+                'data' => [
+                    'message' => $this->validator->getErrors()
+                ]
+            ], 403);
+        } else {
+
+            if (!empty($user)) {
                 $data = $this->request->getJSON();
                 $this->model_users_detail->update($id, $data);
                 return $this->respondUpdated(response_update());
-            }else{
+            } else {
                 return $this->failNotFound();
             }
         }
