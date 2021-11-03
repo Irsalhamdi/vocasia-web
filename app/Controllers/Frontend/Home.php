@@ -514,4 +514,59 @@ class Home extends FrontendController
             }
         }
     }
+
+    public function redeem_voucher()
+    {
+        $voucher = $this->request->getVar('voucher');
+        $course_id = $this->request->getVar('course_id');
+        $id_user = $this->request->getVar('user_id');
+        $verify_voucher = $this->model_course->verify_redeem_voucher($voucher, $course_id);
+        if (!is_null($verify_voucher)) {
+            $this->model_cart->insert([
+                'id_user' => $id_user,
+                'cart_item' => $course_id,
+                'cart_price' => $verify_voucher
+            ]);
+            return $this->respondCreated([
+                'status' => 201,
+                'error' => false,
+                'data' => [
+                    'messages' => 'voucher redeem !'
+                ]
+            ]);
+        } else {
+            return $this->failNotFound('Voucher invalid !');
+        }
+    }
+
+    public function my_course($user_id)
+    {
+        $data = array();
+        $my_course = $this->model_course->my_course($user_id);
+        foreach ($my_course as $key => $values) {
+            $data[$key] = [
+                'instructor' => $values->instructor_name,
+                'title' => $values->title,
+                'thumbnail' => $this->model_course->get_thumbnail($values->cid),
+                'rating' => $this->model_course->rating_from_user($user_id, $values->cid)
+            ];
+        }
+
+        return $this->respond(get_response($data));
+    }
+
+    public function course_payment()
+    {
+        $payment = $this->request->getJSON();
+        $payment_insert = $this->model_payment->insert([
+            'payment_id' => rand(0, 9999999999),
+        ]);
+        return $this->respondCreated(response_create());
+    }
+
+    public function my_lesson($course_id, $user_id = null)
+    {
+        $data_lesson = $this->model_course->get_my_lesson($course_id);
+        return $this->respond(get_response($data_lesson));
+    }
 }

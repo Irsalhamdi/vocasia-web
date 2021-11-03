@@ -18,7 +18,7 @@ class PaymentModel extends Model
 
     // Dates
     protected $useTimestamps        = true;
-    protected $dateFormat           = 'datetime';
+    protected $dateFormat           = 'int';
     protected $createdField         = 'create_at';
     protected $updatedField         = 'update_at';
     protected $deletedField         = 'deleted_at';

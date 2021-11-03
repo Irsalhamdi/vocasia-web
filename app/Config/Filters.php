@@ -3,6 +3,7 @@
 namespace Config;
 
 use App\Filters\AuthFilter;
+use App\Filters\AuthUsers;
 use CodeIgniter\Config\BaseConfig;
 use CodeIgniter\Filters\CSRF;
 use CodeIgniter\Filters\DebugToolbar;

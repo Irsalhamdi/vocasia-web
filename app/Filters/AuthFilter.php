@@ -53,7 +53,11 @@ class AuthFilter implements FilterInterface
                     $decode_jwt = JWT::decode($token, $secret_key, array('HS256'));
                     $validate_user = $user_model->validate_user($decode_jwt->email);
                     if ($validate_user->role_id == $decode_jwt->role) {
-                        return $request;
+                        if ($arguments[0] == 'admin') {
+                            return $request;
+                        } else if ($arguments[0] == 'user') {
+                            return $request;
+                        }
                     }
                     $response_invalid = [
                         'status' => 401,
