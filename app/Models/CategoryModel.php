@@ -18,7 +18,7 @@ class CategoryModel extends Model
 
     // Dates
     protected $useTimestamps        = true;
-    protected $dateFormat           = 'datetime';
+    protected $dateFormat           = 'int';
     protected $createdField         = 'create_at';
     protected $updatedField         = 'update_at';
     protected $deletedField         = 'deleted_at';
@@ -29,7 +29,6 @@ class CategoryModel extends Model
         'name_category' => 'required',
         'parent_category' => 'required',
         'font_awesome_class' => 'required',
-        'thumbnail' => 'required',
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -58,5 +57,15 @@ class CategoryModel extends Model
     public function list_category_home()
     {
         return $this->db->table($this->table)->select('id,name_category,slug_category')->get()->getResult();
+    }
+
+    public function get_thumbnail($params)
+    {
+        $folder = "uploads/category_thumbnail/category_thumbnail_default_$params.jpg";
+        if (file_exists($folder)) {
+            return base_url() . '/' . $folder;
+        } else {
+            return null;
+        }
     }
 }
