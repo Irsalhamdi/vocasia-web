@@ -17,9 +17,25 @@ class Courses extends BackendController
             $pagging = $this->pagging($page, $limit);
             return $this->respond(response_pagging($pagging['total_page'], $pagging['data']));
         }
-        $course_list = $this->model_course->get_course_list();
 
-        return $this->respond(get_response($course_list));
+        $data_courses_active = $this->model_course->get_count_course_active();
+        $data_courses_pending = $this->model_course->get_count_course_pending();
+        $data_courses_free = $this->model_course->get_count_course_free();
+        $data_courses_paid = $this->model_course->get_count_course_paid();
+        $data_courses_list = $this->model_course->get_course_list();
+        $data_courses_list = $this->model_course->get_course_list();
+        
+        return $this->respond([
+            'status' => 201,
+            'error' => false,
+            'data' => [
+                'courses-active' => $data_courses_active,
+                'courses-pending' => $data_courses_pending,
+                'courses-free' => $data_courses_free,
+                'courses-paid' => $data_courses_paid,
+                'courses-list' => $data_courses_list
+            ]
+        ]);
     }
 
     public function show_detail($id_course)

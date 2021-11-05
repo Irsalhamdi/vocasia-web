@@ -115,10 +115,10 @@ $routes->group('homepage', ['namespace' => 'App\Controllers\Frontend'], function
     $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
 });
 
-$routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user'] . function ($routes) {
+$routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth'], function ($routes) {
     $routes->put('profile/user_profile/(:num)', 'Home::user_profile/$1');
     $routes->put('profile/user_credentials/(:num)', 'Home::user_credentials/$1');
-    $routes->put('profile/user_photo/(:num)', 'Home::user_photo/$1');
+    $routes->post('profile/user_photo/(:num)', 'Home::user_photo/$1');
     $routes->get('users-info/(:num)', 'Home::users_detail/$1');
 });
 /*
