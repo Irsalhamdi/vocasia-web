@@ -66,44 +66,44 @@ class Courses extends BackendController
         if (is_null($course_list_by_id)) {
             return $this->failNotFound();
         }
-            $data = [
-                "id" => $course_list_by_id->id,
-                'title' => $course_list_by_id->title,
-                'short_description' => $course_list_by_id->short_description,
-                'description' => $course_list_by_id->description,
-                'bio_instructor' => $course_list_by_id->bio_instructor,
-                'bio_status' => $course_list_by_id->bio_status,
-                'outcomes' => $course_list_by_id->outcomes,
-                'language' => $course_list_by_id->language,
-                'category_id' => $course_list_by_id->category_id,
-                'sub_category_id' => $course_list_by_id->sub_category_id,
-                'section' => $course_list_by_id->section,
-                'requirement' => $course_list_by_id->requirement,
-                'price' => $course_list_by_id->price,
-                'discount_flag' => $course_list_by_id->discount_flag,
-                'discount_price' => $course_list_by_id->discount_price,
-                'level_course' => $course_list_by_id->level_course,
-                'user_id' => $course_list_by_id->user_id,
-                'thumbnail' => $this->model_course->get_thumbnail($course_list_by_id->id),
-                'video_url' => $course_list_by_id->video_url,
-                'visibility' => $course_list_by_id->visibility,
-                'is_top_course' => $course_list_by_id->is_top_course,
-                'is_admin' => $course_list_by_id->is_admin,
-                'status_course' => 'pending',
-                'course_overview_provider' => $course_list_by_id->course_overview_provider,
-                'meta_keyword' => $course_list_by_id->meta_keyword,
-                'meta_description' => $course_list_by_id->meta_description,
-                'is_free_course' => $course_list_by_id->is_free_course,
-                'is_prakerja' => $course_list_by_id->is_prakerja,
-                'instructor_revenue' => $course_list_by_id->instructor_revenue,
-                'create_at' => $course_list_by_id->create_at,
-                'update_at' => $course_list_by_id->update_at,
-                'delete_at' => $course_list_by_id->delete_at,
-                'instructor_name' => $course_list_by_id->instructor_name,
-                'name_category' => $course_list_by_id->name_category,
-                'parent_category' => $course_list_by_id->parent_category,
-            ];
-        
+        $data = [
+            "id" => $course_list_by_id->id,
+            'title' => $course_list_by_id->title,
+            'short_description' => $course_list_by_id->short_description,
+            'description' => $course_list_by_id->description,
+            'bio_instructor' => $course_list_by_id->bio_instructor,
+            'bio_status' => $course_list_by_id->bio_status,
+            'outcomes' => $course_list_by_id->outcomes,
+            'language' => $course_list_by_id->language,
+            'category_id' => $course_list_by_id->category_id,
+            'sub_category_id' => $course_list_by_id->sub_category_id,
+            'section' => $course_list_by_id->section,
+            'requirement' => $course_list_by_id->requirement,
+            'price' => $course_list_by_id->price,
+            'discount_flag' => $course_list_by_id->discount_flag,
+            'discount_price' => $course_list_by_id->discount_price,
+            'level_course' => $course_list_by_id->level_course,
+            'user_id' => $course_list_by_id->user_id,
+            'thumbnail' => $this->model_course->get_thumbnail($course_list_by_id->id),
+            'video_url' => $course_list_by_id->video_url,
+            'visibility' => $course_list_by_id->visibility,
+            'is_top_course' => $course_list_by_id->is_top_course,
+            'is_admin' => $course_list_by_id->is_admin,
+            'status_course' => 'pending',
+            'course_overview_provider' => $course_list_by_id->course_overview_provider,
+            'meta_keyword' => $course_list_by_id->meta_keyword,
+            'meta_description' => $course_list_by_id->meta_description,
+            'is_free_course' => $course_list_by_id->is_free_course,
+            'is_prakerja' => $course_list_by_id->is_prakerja,
+            'instructor_revenue' => $course_list_by_id->instructor_revenue,
+            'create_at' => $course_list_by_id->create_at,
+            'update_at' => $course_list_by_id->update_at,
+            'delete_at' => $course_list_by_id->delete_at,
+            'instructor_name' => $course_list_by_id->instructor_name,
+            'name_category' => $course_list_by_id->name_category,
+            'parent_category' => $course_list_by_id->parent_category,
+        ];
+
         return $this->respond(get_response($data));
     }
 
@@ -154,26 +154,26 @@ class Courses extends BackendController
         ];
         if (!$this->validate($rules)) {
             return $this->fail('Failed To Upload Image Please Try Again');
-        }else {
+        } else {
             if ($data_course) {
+                $id_course_thumbnail = $data_course['id'];
+                $thumbnail = $this->request->getFile('thumbnail');
+                $name = "course_thumbnail_default_$id_course_thumbnail.jpg";
 
-            $thumbnail = $this->request->getFile('thumbnail');
-            $name = "course_thumbnail_default_$id_course.jpg";
-    
-            $data = [
-                'id'=> $id_course,
-                'thumbnail'  => $name
-            ];
-            if ($data_course['thumbnail']) {
-                unlink('uploads/courses_thumbnail/' . $data_course['thumbnail']);    
+                $data = [
+                    'id' => $id_course,
+                    'thumbnail'  => $name
+                ];
+                if ($data_course['thumbnail']) {
+                    unlink('uploads/courses_thumbnail/' . $data_course['thumbnail']);
+                }
+                $thumbnail->move('uploads/courses_thumbnail/', $name);
+                $this->model_course->update($id_course, $data);
+
+                return $this->respondCreated(response_create());
+            } else {
+                return $this->failNotFound();
             }
-            $thumbnail->move('uploads/courses_thumbnail/', $name);
-            $this->model_course->update($id_course, $data);
-            
-            return $this->respondCreated(response_create());
-        }else {
-            return $this->failNotFound();
-        }
         }
     }
 
