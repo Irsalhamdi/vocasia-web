@@ -17,6 +17,7 @@ class Courses extends BackendController
             $pagging = $this->pagging($page, $limit);
             return $this->respond(response_pagging($pagging['total_page'], $pagging['data']));
         }
+
         $course_list = $this->model_course->get_course_list();
         foreach ($course_list as $courses) {
             $data[] = [
@@ -188,5 +189,24 @@ class Courses extends BackendController
             'data' => $get_pagging_data
         ];
         return $return_data;
+    }
+
+    public function info_courses()
+    {
+        $data_courses_active = $this->model_course->get_count_course_active();
+        $data_courses_pending = $this->model_course->get_count_course_pending();
+        $data_courses_free = $this->model_course->get_count_course_free();
+        $data_courses_paid = $this->model_course->get_count_course_paid();
+
+        return $this->respond([
+            'status' => 201,
+            'error' => false,
+            'data' => [
+                'courses-active' => $data_courses_active,
+                'courses-pending' => $data_courses_pending,
+                'courses-free' => $data_courses_free,
+                'courses-paid' => $data_courses_paid,
+            ]
+        ]);
     }
 }

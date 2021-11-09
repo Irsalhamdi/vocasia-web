@@ -80,6 +80,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => '
     $routes->put('lesson-admin/(:num)', 'LessonAdmin::update/$1');
     $routes->delete('lesson-admin/(:num)', 'LessonAdmin::delete/$1');
     $routes->get('dashboard-admin', 'Dashboard::index');
+    $routes->get('course/info', 'Courses::info_courses');
 });
 $routes->group('auth', ['namespace' => 'App\Controllers', 'filter' => 'cors'], function ($routes) {
     $routes->post('register', 'Auth::register');
