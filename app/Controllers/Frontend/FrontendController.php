@@ -41,5 +41,6 @@ class FrontendController extends ResourceController
         $this->model_users_social_link = model('UsersSocialLink');
         $this->model_users_detail = model('UsersDetailModel');
         $this->model_payment = model('PaymentModel');
+        $this->model_watch = model('WatchHistoryModel');
     }
 }

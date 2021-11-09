@@ -564,9 +564,47 @@ class Home extends FrontendController
         return $this->respondCreated(response_create());
     }
 
-    public function my_lesson($course_id, $user_id = null)
+    public function my_lesson($course_id)
     {
         $data_lesson = $this->model_course->get_my_lesson($course_id);
         return $this->respond(get_response($data_lesson));
+    }
+
+    public function watch_history()
+    {
+        $watch_history = $this->request->getJSON();
+        $update_progress = $this->model_watch->insert($watch_history);
+        return $this->respondCreated(response_create());
+    }
+
+    public function get_watch_history($user_id)
+    {
+        $watch_history = $this->model_watch->where('id_user', $user_id)->get()->getResult();
+        return $this->respond(get_response($watch_history));
+    }
+
+    public function payment()
+    {
+        $data_payment = $this->request->getJSON();
+        $find_course_instructor = $this->model_course->where('id', $data_payment->course_id)->first();
+        $instructor_revenue = $find_course_instructor['instructor_revenue'] == 0 ? 0 : $data_payment->amount * $find_course_instructor['instructor_revenue'] / 100;
+        $admin_revenue = $data_payment->amount - $instructor_revenue;
+        $this->model_payment->insert([
+            'id_payment' => rand(0, 99999),
+            'id_user' => $data_payment->user_id,
+            'payment_type' => $data_payment->payment_type,
+            'payment_bank' => $data_payment->payment_bank,
+            'payment_va' => $data_payment->payment_va,
+            'coupon' => $data_payment->coupon,
+            'course_id' => $data_payment->course_id,
+            'amount' => $data_payment->amount,
+            'admin_revenue' => $admin_revenue,
+            'instructor_revenue' => $instructor_revenue,
+            'instructor_payment_status' => 0,
+            'status_payment' => 2,
+            'status' => 0
+
+        ]);
+        return $this->respondCreated(response_create());
     }
 }

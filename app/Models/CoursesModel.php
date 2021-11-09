@@ -237,6 +237,6 @@ class CoursesModel extends Model
 
     public function get_my_lesson($course_id)
     {
-        return $this->db->table('lesson')->where('course_id', $course_id)->get()->getResult();
+        return $this->db->table('lesson a')->select('a.title as lesson_title,a.*,b.title as section_title')->join('section b', 'a.section_id = b.id')->where('a.course_id', $course_id)->get()->getResult();
     }
 }

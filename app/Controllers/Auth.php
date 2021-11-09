@@ -146,13 +146,14 @@ class Auth extends ResourceController
             $iat = strtotime($time->now('Asia/Jakarta', 'en_US')); //masa berlaku dalam timestamp
             $nbf = $iat + 10;
             $exp = $iat + 43200; //30 hari masa aktif refresh_token
-            $exp_access_token = $iat + 2880; // 2 hari masa aktif access_token 
+            $exp_access_token = $iat + 172800; // 2 hari masa aktif access_token 
 
             $payload_access_token = [
                 'name' => $valid_credentials["fullname"],
                 'email' => $valid_credentials["email"],
                 'role' => $valid_credentials["role"],
-                'expire_at' => $exp_access_token
+                'expire_at' => $exp_access_token,
+                'role_name' => $valid_credentials['role'] == 1 ? 'admin' : 'user'
             ];
             $payload_refresh_token = [
                 'id' => $valid_credentials["id"]
