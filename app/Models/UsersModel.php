@@ -67,8 +67,7 @@ class UsersModel extends Model
     }
 
     public function get_count_new_user()
-    {   
+    {
         return $this->db->table('users')->select("FROM_UNIXTIME(users.create_at) as time,users.id", false)->groupBy('month(time)')->countAllResults();
     }
-
 }

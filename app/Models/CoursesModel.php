@@ -56,7 +56,7 @@ class CoursesModel extends Model
     {
         return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->countAllResults();
     }
-    
+
     public function get_count_course_active()
     {
         return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where('a.status_course','active')->countAllResults();
@@ -212,5 +212,43 @@ class CoursesModel extends Model
     public function get_rating_by_star($id_course, $star)
     {
         return $this->db->table('rating a')->select("CONCAT(b.first_name,' ',b.last_name) as user,a.review,a.rating")->join('users b', 'b.id = a.user_id')->where(['ratable_id' => $id_course, 'rating' => $star])->get()->getResultObject();
+    }
+
+    public function verify_redeem_voucher($code_voucher, $course_id)
+    {
+        $voucher = $this->db->table('coupon')->where(['code_coupon' => $code_voucher, 'is_active' => 1])->get()->getRowObject();
+        if (is_null($voucher)) {
+            return null;
+        }
+        $courses = $this->get_course_list($course_id);
+        $course_id = preg_split('/[[""\]]/', $voucher->course_id);
+        for ($i = 0; $i < count($course_id); $i++) {
+            if ($course_id[$i] == null || $course_id[$i] == ",") {
+                continue;
+            }
+            $price_course = $courses->discount_price != 0 ? $courses->discount_price : $courses->price;
+            if (!is_null($voucher) && !is_null($courses)) {
+                if ($course_id[$i] == $courses->id) {
+                    $cutting_price = $price_course - $voucher->value;
+                    return $cutting_price;
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
+
+    public function my_course($user_id)
+    {
+        return $this->db->table('enrol a')->select("CONCAT(d.first_name,' ',d.last_name) as instructor_name,b.title,b.thumbnail,b.id as cid")->join('courses b', 'b.id = a.course_id')->join('users c', 'c.id = a.user_id')->join('users d', 'd.id = b.user_id')->where('a.user_id', $user_id)->get()->getResult();
+    }
+    public function rating_from_user($user_id, $course_id)
+    {
+        return $this->db->table('rating')->select('ratable_id,rating,review')->where(['user_id' => $user_id, 'ratable_id' => $course_id])->get()->getResult();
+    }
+
+    public function get_my_lesson($course_id)
+    {
+        return $this->db->table('lesson a')->select('a.title as lesson_title,a.*,b.title as section_title')->join('section b', 'a.section_id = b.id')->where('a.course_id', $course_id)->get()->getResult();
     }
 }

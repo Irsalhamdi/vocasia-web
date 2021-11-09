@@ -4,17 +4,17 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class PaymentModel extends Model
+class WatchHistoryModel extends Model
 {
     protected $DBGroup              = 'default';
-    protected $table                = 'payment';
-    protected $primaryKey           = 'id_payment';
+    protected $table                = 'watch_history';
+    protected $primaryKey           = 'id';
     protected $useAutoIncrement     = true;
     protected $insertID             = 0;
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['id_user', 'payment_type', 'payment_bank', 'payment_va', 'coupon', 'course_id', 'amount', 'admin_revenue', 'instructor_revenue', 'instructor_payment_status', 'code_trans', 'status_payment', 'status'];
+    protected $allowedFields        = ['id_user', 'course_id', 'lesson_id', 'progress'];
 
     // Dates
     protected $useTimestamps        = true;
@@ -39,33 +39,4 @@ class PaymentModel extends Model
     protected $afterFind            = [];
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
-
-    protected $db;
-    public function __construct()
-    {
-        $this->db = db_connect();
-    }
-    public function get_admin_revenue()
-    {
-        return $this->db->table('payment')
-            ->selectSUM("payment.admin_revenue")
-            ->get()
-            ->getResult();
-    }
-    public function get_instructor_revenue($id = null)
-    {
-        return $this->db->table('payment')
-            ->selectSUM("payment.instructor_revenue")
-            ->where('payment.id_user', $id)
-            ->get()
-            ->getRow();
-    }
-    // public function update_admin_revenue()
-    // {
-    //     $builder = $this->db->table('payment');
-    //     $builder->set('payment.admin_revenue', '0');
-    //     $builder->insert();
-
-    //     return $builder;
-    // }
 }

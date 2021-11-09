@@ -53,7 +53,27 @@ class AuthFilter implements FilterInterface
                     $decode_jwt = JWT::decode($token, $secret_key, array('HS256'));
                     $validate_user = $user_model->validate_user($decode_jwt->email);
                     if ($validate_user->role_id == $decode_jwt->role) {
-                        return $request;
+                        if ($arguments[0] == 'admin') {
+                            if ($decode_jwt->role_name == 'admin') {
+                                return $request;
+                            } else {
+                                $response_invalid = [
+                                    'status' => 401,
+                                    'messages' => 'Cannot Acces This Resources! Invalid Users !'
+                                ];
+                                return Services::response()->setStatusCode('401')->setJSON($response_invalid);
+                            }
+                        } else if ($arguments[0] == 'user') {
+                            if ($decode_jwt->role_name == 'user') {
+                                return $request;
+                            } else {
+                                $response_invalid = [
+                                    'status' => 401,
+                                    'messages' => 'Cannot Acces This Resources! Invalid Users !'
+                                ];
+                                return Services::response()->setStatusCode('401')->setJSON($response_invalid);
+                            }
+                        }
                     }
                     $response_invalid = [
                         'status' => 401,

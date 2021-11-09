@@ -557,4 +557,97 @@ class Home extends FrontendController
             } 
         }
     }
+
+    public function redeem_voucher()
+    {
+        $voucher = $this->request->getVar('voucher');
+        $course_id = $this->request->getVar('course_id');
+        $id_user = $this->request->getVar('user_id');
+        $verify_voucher = $this->model_course->verify_redeem_voucher($voucher, $course_id);
+        if (!is_null($verify_voucher)) {
+            $this->model_cart->insert([
+                'id_user' => $id_user,
+                'cart_item' => $course_id,
+                'cart_price' => $verify_voucher
+            ]);
+            return $this->respondCreated([
+                'status' => 201,
+                'error' => false,
+                'data' => [
+                    'messages' => 'voucher redeem !'
+                ]
+            ]);
+        } else {
+            return $this->failNotFound('Voucher invalid !');
+        }
+    }
+
+    public function my_course($user_id)
+    {
+        $data = array();
+        $my_course = $this->model_course->my_course($user_id);
+        foreach ($my_course as $key => $values) {
+            $data[$key] = [
+                'instructor' => $values->instructor_name,
+                'title' => $values->title,
+                'thumbnail' => $this->model_course->get_thumbnail($values->cid),
+                'rating' => $this->model_course->rating_from_user($user_id, $values->cid)
+            ];
+        }
+
+        return $this->respond(get_response($data));
+    }
+
+    public function course_payment()
+    {
+        $payment = $this->request->getJSON();
+        $payment_insert = $this->model_payment->insert([
+            'payment_id' => rand(0, 9999999999),
+        ]);
+        return $this->respondCreated(response_create());
+    }
+
+    public function my_lesson($course_id)
+    {
+        $data_lesson = $this->model_course->get_my_lesson($course_id);
+        return $this->respond(get_response($data_lesson));
+    }
+
+    public function watch_history()
+    {
+        $watch_history = $this->request->getJSON();
+        $update_progress = $this->model_watch->insert($watch_history);
+        return $this->respondCreated(response_create());
+    }
+
+    public function get_watch_history($user_id)
+    {
+        $watch_history = $this->model_watch->where('id_user', $user_id)->get()->getResult();
+        return $this->respond(get_response($watch_history));
+    }
+
+    public function payment()
+    {
+        $data_payment = $this->request->getJSON();
+        $find_course_instructor = $this->model_course->where('id', $data_payment->course_id)->first();
+        $instructor_revenue = $find_course_instructor['instructor_revenue'] == 0 ? 0 : $data_payment->amount * $find_course_instructor['instructor_revenue'] / 100;
+        $admin_revenue = $data_payment->amount - $instructor_revenue;
+        $this->model_payment->insert([
+            'id_payment' => rand(0, 99999),
+            'id_user' => $data_payment->user_id,
+            'payment_type' => $data_payment->payment_type,
+            'payment_bank' => $data_payment->payment_bank,
+            'payment_va' => $data_payment->payment_va,
+            'coupon' => $data_payment->coupon,
+            'course_id' => $data_payment->course_id,
+            'amount' => $data_payment->amount,
+            'admin_revenue' => $admin_revenue,
+            'instructor_revenue' => $instructor_revenue,
+            'instructor_payment_status' => 0,
+            'status_payment' => 2,
+            'status' => 0
+
+        ]);
+        return $this->respondCreated(response_create());
+    }
 }

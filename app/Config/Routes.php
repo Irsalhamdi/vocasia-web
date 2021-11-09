@@ -33,7 +33,7 @@ $routes->setAutoRoute(false);
 // route since we don't have to scan directories.
 // $routes->get('/', 'Home::index');
 
-$routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($routes) {
+$routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => 'auth:admin'], function ($routes) {
     $routes->get('courses', 'Courses::index');
     $routes->get('course/(:num)', 'Courses::show_detail/$1');
     $routes->post('course', 'Courses::create');
@@ -122,6 +122,12 @@ $routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 
     $routes->put('profile/user_credentials/(:num)', 'Home::user_credentials/$1');
     $routes->post('profile/user_photo/(:num)', 'Home::user_photo/$1');
     $routes->get('users-info/(:num)', 'Home::users_detail/$1');
+    $routes->post('voucher', 'Home::redeem_voucher');
+    $routes->post('payment/course', 'Home::payment');
+    $routes->get('course/my/(:num)', 'Home::my_course/$1');
+    $routes->get('course/my/lesson/(:num)', 'Home::my_lesson/$1');
+    $routes->post('lesson/update/progress', 'Home::watch_history');
+    $routes->get('lesson/progress/(:num)', 'Home::get_watch_history/$1');
 });
 /*
  * --------------------------------------------------------------------
