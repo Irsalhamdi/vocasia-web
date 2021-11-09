@@ -380,20 +380,25 @@ class Home extends FrontendController
     }
     public function user_profile($id = null)
     {
-
         $user_id = $this->model_users->find($id);
 
         $rules = [
             'first_name' => [
                 'rules' => 'required'
             ],
-            'last_name' => [
-                'rules' => 'required' // last name ngga digunain lagi 
-            ],
             'biography' => [
                 'rules' => 'required'
             ],
             'phone' => [
+                'rules' => 'required'
+            ],
+            'facebook_link' => [
+                'rules' => 'required'
+            ],
+            'instragram' => [
+                'rules' => 'required'
+            ],
+            'twitter_link' => [
                 'rules' => 'required'
             ],
         ];
@@ -451,8 +456,7 @@ class Home extends FrontendController
     }
     public function user_credentials($id = null)
     {
-
-        $user_id = $this->model_users->find($id);
+        $user = $this->model_users->find($id);
 
         $rules = [
             'email' => [
@@ -480,22 +484,48 @@ class Home extends FrontendController
         } else {
             $update = $this->request->getJSON();
             $data['email'] = $update->email;
+            $data['old_password'] = sha1($update->old_password);
             $data['password'] = sha1($update->password);
-            $this->model_users->update($id, $data);
-            return $this->respondUpdated(response_update());
+            $data['new_password_confirm'] = sha1($update->new_password_confirm);
+
+            if($data['old_password'] !== $user['password'] ){
+                return $this->respond([
+                    'status' => 403,
+                    'error' => false,
+                    'data' => [
+                        'message' => 'Wrong current password'
+                    ]
+                ], 403);
+            }else{
+                if($data['new_password_confirm'] === $user['password']){
+                    return $this->respond([
+                    'status' => 403,
+                    'error' => false,
+                    'data' => [
+                        'message' => 'New Password cannot be the same as current password'
+                    ]
+                    ], 403);
+                }else{
+                    $this->model_users->update($id, $data);
+                    return $this->respondUpdated(response_update());
+                }
+            }
         }
     }
-    public function user_photo($id = null)
+     public function user_photo($id = null)
     {
-        $user = $this->model_users_detail->find($id);
-
         $rules = [
             'foto_profile' => [
-                'rules' => 'required'
+                'rules' => 'uploaded[foto_profile]|is_image[foto_profile]',
+                'errors' => [
+                    'uploaded' => 'foto_profile must be uploaded',
+                    'is_image' => 'what you choose is not a picture',
+                    'mime_in' => 'what you choose is not a picture'
+                ]
             ]
         ];
-
-        if (!$this->validate($rules)) {
+            
+        if(!$this->validate($rules)){
             return $this->respond([
                 'status' => 403,
                 'error' => false,
@@ -503,15 +533,28 @@ class Home extends FrontendController
                     'message' => $this->validator->getErrors()
                 ]
             ], 403);
-        } else {
+        }else{
+            $user = $this->model_users_detail->find($id);
+            if ($user) {
+                $foto_profile = $this->request->getFile('foto_profile');
+                $name = "foto_profile_default_$id.jpg";
+        
+                $data = [
+                    'id' => $id,
+                    'foto_profile'  => $name
+                ];
 
-            if (!empty($user)) {
-                $data = $this->request->getJSON();
+                if ($user['foto_profile']) {
+                    unlink('uploads/foto_profile/' . $user['foto_profile']);    
+                }
+                $foto_profile->move('uploads/foto_profile/', $name);
                 $this->model_users_detail->update($id, $data);
-                return $this->respondUpdated(response_update());
-            } else {
+            
+                return $this->respondCreated(response_create());
+
+            }else {
                 return $this->failNotFound();
-            }
+            } 
         }
     }
 

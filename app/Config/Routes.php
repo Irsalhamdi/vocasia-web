@@ -37,11 +37,13 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => '
     $routes->get('courses', 'Courses::index');
     $routes->get('course/(:num)', 'Courses::show_detail/$1');
     $routes->post('course', 'Courses::create');
+    $routes->post('course-thumbnail/(:num)', 'Courses::thumbnail/$1');
     $routes->put('course/(:num)', 'Courses::update/$1');
     $routes->delete('course/(:num)', 'Courses::delete/$1');
     $routes->get('categories', 'Category::index');
     $routes->get('category/(:num)', 'Category::show/$1');
     $routes->post('category', 'Category::create');
+    $routes->post('category-thumbnail/(:num)', 'Category::thumbnail/$1');
     $routes->put('category/(:num)', 'Category::update/$1');
     $routes->delete('category/(:num)', 'Category::delete/$1');
     $routes->get('coupons', 'Coupon::index');
@@ -118,7 +120,7 @@ $routes->group('homepage', ['namespace' => 'App\Controllers\Frontend'], function
 $routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user'], function ($routes) {
     $routes->put('profile/user_profile/(:num)', 'Home::user_profile/$1');
     $routes->put('profile/user_credentials/(:num)', 'Home::user_credentials/$1');
-    $routes->put('profile/user_photo/(:num)', 'Home::user_photo/$1');
+    $routes->post('profile/user_photo/(:num)', 'Home::user_photo/$1');
     $routes->get('users-info/(:num)', 'Home::users_detail/$1');
     $routes->post('voucher', 'Home::redeem_voucher');
     $routes->post('payment/course', 'Home::payment');

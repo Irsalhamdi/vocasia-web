@@ -39,4 +39,14 @@ class UsersDetailModel extends Model
     protected $afterFind            = [];
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
+
+    public function get_profile_users($id_user)
+    {
+        $folder = "uploads/foto_profile/foto_profile_default_$id_user.jpg";
+        if (file_exists($folder)) {
+            return base_url() . '/' . $folder;
+        } else {
+            return null;
+        }
+    }
 }

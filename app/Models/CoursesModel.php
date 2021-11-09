@@ -15,7 +15,7 @@ class CoursesModel extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = [];
+    protected $allowedFields        = ['thumbnail'];
 
     // Dates
     protected $useTimestamps        = true;
@@ -59,9 +59,21 @@ class CoursesModel extends Model
 
     public function get_count_course_active()
     {
-        return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where('a.status_course', 'publish')->countAllResults();
+        return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where('a.status_course','active')->countAllResults();
     }
 
+    public function get_count_course_pending()
+    {
+        return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where('a.status_course','pending')->countAllResults();
+    }
+    public function get_count_course_paid()
+    {
+        return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where('a.is_free_course','0')->countAllResults();
+    }
+    public function get_count_course_free()
+    {
+        return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where('a.is_free_course','1')->countAllResults();
+    }    
     public function get_pagging_data($limit, $offset)
     {
         return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->limit($limit, $offset)->get()->getResult();
