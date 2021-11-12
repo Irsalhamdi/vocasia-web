@@ -130,6 +130,13 @@ $routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 
     $routes->post('lesson/update/progress', 'Home::watch_history');
     $routes->get('lesson/progress/(:num)', 'Home::get_watch_history/$1');
 });
+
+$routes->group('affiliate', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
+    $routes->get('access/(:num)', 'Affiliate::access/$1');
+    $routes->get('saldo/(:num)', 'Affiliate::saldo/$1');
+    $routes->post('saldo/(:num)', 'Affiliate::pull/$1');
+    $routes->get('subscription/(:num)', 'Affiliate::subscription/$1');
+});
 /*
  * --------------------------------------------------------------------
  * Additional Routing
