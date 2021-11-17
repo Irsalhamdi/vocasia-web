@@ -251,4 +251,11 @@ class CoursesModel extends Model
     {
         return $this->db->table('lesson a')->select('a.title as lesson_title,a.*,b.title as section_title')->join('section b', 'a.section_id = b.id')->where('a.course_id', $course_id)->get()->getResult();
     }
+
+    public function get_courses()
+    {
+        return $this->db->table('courses')->select('id,title')
+        ->where('status_course', 'active')
+        ->where('(is_free_course is null OR is_free_course = 0)')->get()->getResultArray();
+    }
 }

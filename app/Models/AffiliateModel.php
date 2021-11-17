@@ -18,7 +18,7 @@ class AffiliateModel extends Model
 
     // Dates
     protected $useTimestamps        = true;
-    protected $dateFormat           = 'datetime';
+    protected $dateFormat           = 'int';
     protected $createdField         = 'create_at';
     protected $updatedField         = 'update_at';
     protected $deletedField         = 'deleted_at';
@@ -46,6 +46,11 @@ class AffiliateModel extends Model
             return $this->db->table('affiliate')->select("affiliate.*,concat(users.first_name,' ',users.last_name) as name")->join('users', 'users.id = affiliate.user_id')->get()->getResult();
         }
         return $this->db->table('affiliate')->select("affiliate.*,concat(users.first_name,' ',users.last_name) as name")->join('users', 'users.id = affiliate.user_id')->where('affiliate.id_affiliate', $id)->get()->getRow();
+    }
+
+    public function get_code_reff($user = null)
+    {
+        return $this->db->table('affiliate')->select("affiliate.*,concat(users.first_name,' ',users.last_name) as name")->join('users', 'users.id = affiliate.user_id')->where('affiliate.user_id', $user)->get()->getRow();
     }
 
     public function get_count_affiliate()
