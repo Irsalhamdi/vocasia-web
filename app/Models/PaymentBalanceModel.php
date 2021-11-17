@@ -55,4 +55,30 @@ class PaymentBalanceModel extends Model
             ->get()
             ->getRow();
     }
+
+    public function get_commition($user_id = null, $filter = null)
+    {
+      $this->db->table('payment_balance')->selectSum('pb_nominal');
+      if ($filter == 'daily') {
+        $this->db->table('payment_balance')->where('YEAR(FROM_UNIXTIME(pb_date)) = YEAR(CURRENT_DATE())');
+        $this->db->table('payment_balance')->where('MONTH(FROM_UNIXTIME(pb_date)) = MONTH(CURRENT_DATE())');
+        $this->db->table('payment_balance')->where('DAY(FROM_UNIXTIME(pb_date)) = DAY(CURRENT_DATE())');
+      } 
+      else if ($filter == 'monthly') {
+        $this->db->table('payment_balance')->where('YEAR(FROM_UNIXTIME(pb_date)) = YEAR(CURRENT_DATE())');
+        $this->db->table('payment_balance')->where('MONTH(FROM_UNIXTIME(pb_date)) = MONTH(CURRENT_DATE())');
+      }
+      return $this->db->table('payment_balance')->where('id_users', $user_id)->where('pb_payment', 'Komisi Penjualan kursus')->get()->getRowArray();
+    }
+
+    public function get_top_affiliates()
+    {
+      return $this->db->table('payment_balance a')->select('*, count(*) as jumlah')
+      ->join('users b', 'a.id_users = b.id')
+      ->where('a.pb_affiliate', 1)
+      ->where('a.pb_payment', 'Komisi Penjualan kursus')
+      ->groupBy('a.id_users')
+      ->orderBy('jumlah', 'desc')
+      ->limit(10)->get()->getResultArray();
+    }
 }

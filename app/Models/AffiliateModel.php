@@ -18,7 +18,7 @@ class AffiliateModel extends Model
 
     // Dates
     protected $useTimestamps        = true;
-    protected $dateFormat           = 'datetime';
+    protected $dateFormat           = 'int';
     protected $createdField         = 'create_at';
     protected $updatedField         = 'update_at';
     protected $deletedField         = 'deleted_at';
@@ -115,6 +115,11 @@ class AffiliateModel extends Model
 
     public function tarik_saldo($data){
         return $this->db->table('payment_balance')->insert($data);
+    }
+
+    public function get_code_reff($user = null)
+    {
+        return $this->db->table('affiliate')->select("affiliate.*,concat(users.first_name,' ',users.last_name) as name")->join('users', 'users.id = affiliate.user_id')->where('affiliate.user_id', $user)->get()->getRow();
     }
 
 }

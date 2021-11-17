@@ -33,7 +33,7 @@ $routes->setAutoRoute(false);
 // route since we don't have to scan directories.
 // $routes->get('/', 'Home::index');
 
-$routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => 'auth:admin'], function ($routes) {
+$routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($routes) {
     $routes->get('courses', 'Courses::index');
     $routes->get('course/(:num)', 'Courses::show_detail/$1');
     $routes->post('course', 'Courses::create');
@@ -136,6 +136,11 @@ $routes->group('affiliate', ['namespace' => 'App\Controllers\Frontend'], functio
     $routes->get('saldo/(:num)', 'Affiliate::saldo/$1');
     $routes->post('saldo/(:num)', 'Affiliate::pull/$1');
     $routes->get('subscription/(:num)', 'Affiliate::subscription/$1');
+    $routes->get('komisi-affiliate/(:num)', 'Affiliate::commitions/$1');
+    $routes->get('dashboard-affiliate/(:num)', 'Affiliate::dashboard_affiliate/$1');
+    $routes->get('courses', 'Affiliate::courses');
+    $routes->get('courses/(:num)', 'Affiliate::share_link/$1');
+    $routes->post('add-affiliator', 'Affiliate::add_affiliator');
 });
 /*
  * --------------------------------------------------------------------
