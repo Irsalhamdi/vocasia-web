@@ -60,6 +60,12 @@ class PaymentModel extends Model
             ->get()
             ->getRow();
     }
+    public function get_detail_payment($id){
+        return $this->db->table('payment')->select('payment.*')
+                        ->where('id_user', $id)
+                        ->get()
+                        ->getRow();
+    }
     // public function update_admin_revenue()
     // {
     //     $builder = $this->db->table('payment');
