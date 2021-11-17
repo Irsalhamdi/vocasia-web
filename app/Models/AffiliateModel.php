@@ -64,11 +64,6 @@ class AffiliateModel extends Model
         return $this->db->table('affiliate')->select("affiliate.*,concat(users.first_name,' ',users.last_name) as name")->join('users', 'users.id = affiliate.user_id')->where('affiliate.id_affiliate', $id)->get()->getRow();
     }
 
-    public function get_code_reff($user = null)
-    {
-        return $this->db->table('affiliate')->select("affiliate.*,concat(users.first_name,' ',users.last_name) as name")->join('users', 'users.id = affiliate.user_id')->where('affiliate.user_id', $user)->get()->getRow();
-    }
-
     public function get_count_affiliate()
     {
         return $this->db->table('affiliate')->select("affiliate.*,concat(users.first_name,' ',users.last_name) as name")->join('users', 'users.id = affiliate.user_id')->countAllResults();
@@ -120,6 +115,11 @@ class AffiliateModel extends Model
 
     public function tarik_saldo($data){
         return $this->db->table('payment_balance')->insert($data);
+    }
+
+    public function get_code_reff($user = null)
+    {
+        return $this->db->table('affiliate')->select("affiliate.*,concat(users.first_name,' ',users.last_name) as name")->join('users', 'users.id = affiliate.user_id')->where('affiliate.user_id', $user)->get()->getRow();
     }
 
 }

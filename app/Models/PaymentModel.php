@@ -60,7 +60,21 @@ class PaymentModel extends Model
             ->get()
             ->getRow();
     }
-    
+    public function get_detail_payment($id){
+        return $this->db->table('payment')->select('payment.*')
+                        ->where('id_user', $id)
+                        ->get()
+                        ->getRow();
+    }
+    // public function update_admin_revenue()
+    // {
+    //     $builder = $this->db->table('payment');
+    //     $builder->set('payment.admin_revenue', '0');
+    //     $builder->insert();
+
+    //     return $builder;
+    // }
+
     public function get_leads($code_reff = null, $filter = null)
     {
     if ($filter == 'daily') {
@@ -133,19 +147,4 @@ class PaymentModel extends Model
       ->join('courses c', 'a.course_id = c.id')
       ->like('a.id_payment', $reff_code)->get()->getResultArray();
     }
-
-    public function get_detail_payment($id){
-        return $this->db->table('payment')->select('payment.*')
-                        ->where('id_user', $id)
-                        ->get()
-                        ->getRow();
-    }
-    // public function update_admin_revenue()
-    // {
-    //     $builder = $this->db->table('payment');
-    //     $builder->set('payment.admin_revenue', '0');
-    //     $builder->insert();
-
-    //     return $builder;
-    // }
 }

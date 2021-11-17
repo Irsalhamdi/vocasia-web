@@ -132,15 +132,15 @@ $routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 
 });
 
 $routes->group('affiliate', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
+    $routes->get('access/(:num)', 'Affiliate::access/$1');
+    $routes->get('saldo/(:num)', 'Affiliate::saldo/$1');
+    $routes->post('saldo/(:num)', 'Affiliate::pull/$1');
+    $routes->get('subscription/(:num)', 'Affiliate::subscription/$1');
     $routes->get('komisi-affiliate/(:num)', 'Affiliate::commitions/$1');
     $routes->get('dashboard-affiliate/(:num)', 'Affiliate::dashboard_affiliate/$1');
     $routes->get('courses', 'Affiliate::courses');
     $routes->get('courses/(:num)', 'Affiliate::share_link/$1');
     $routes->post('add-affiliator', 'Affiliate::add_affiliator');
-    $routes->get('access/(:num)', 'Affiliate::access/$1');
-    $routes->get('saldo/(:num)', 'Affiliate::saldo/$1');
-    $routes->post('saldo/(:num)', 'Affiliate::pull/$1');
-    $routes->get('subscription/(:num)', 'Affiliate::subscription/$1');
 });
 /*
  * --------------------------------------------------------------------
