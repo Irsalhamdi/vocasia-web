@@ -60,7 +60,7 @@ class PaymentModel extends Model
             ->get()
             ->getRow();
     }
-
+    
     public function get_leads($code_reff = null, $filter = null)
     {
     if ($filter == 'daily') {
@@ -112,28 +112,34 @@ class PaymentModel extends Model
     return $this->db->table('payment')->like('id_payment', $code_reff)->get()->getResult();
     }
 
-  public function get_top_courses($filter = "")
-  {
-    if ($filter == 'monthly') {
-      $this->db->table('payment')->where('YEAR(FROM_UNIXTIME(create_at)) = YEAR(CURRENT_DATE())');$this->db->table('payment')->where('MONTH(FROM_UNIXTIME(create_at)) = MONTH(CURRENT_DATE())');
+    public function get_top_courses($filter = "")
+    {
+      if ($filter == 'monthly') {
+        $this->db->table('payment')->where('YEAR(FROM_UNIXTIME(create_at)) = YEAR(CURRENT_DATE())');$this->db->table('payment')->where('MONTH(FROM_UNIXTIME(create_at)) = MONTH(CURRENT_DATE())');
+      }
+      return $this->db->table('payment a')->select('*, COUNT(*) as jumlah')
+      ->join('courses b', 'a.course_id = b.id')
+      ->where('b.status_course', 'active')
+      ->where('(b.is_free_course = 0 OR b.is_free_course is null)')
+      ->groupBy('a.course_id')
+      ->orderBy('jumlah', 'desc')
+      ->limit('10')
+      ->get()->getResultArray();
     }
-    return $this->db->table('payment a')->select('*, COUNT(*) as jumlah')
-    ->join('courses b', 'a.course_id = b.id')
-    ->where('b.status_course', 'active')
-    ->where('(b.is_free_course = 0 OR b.is_free_course is null)')
-    ->groupBy('a.course_id')
-    ->orderBy('jumlah', 'desc')
-    ->limit('10')
-    ->get()->getResultArray();
-  }
 
-  public function get_detail_commitions($reff_code = ""){
-    return $this->db->table('payment a')->select('c.title as title, b.first_name as first_name, b.last_name as last_name, a.status_payment as status, a.amount as amount, b.email as email')
-    ->join('users b', 'a.id_user = b.id')
-    ->join('courses c', 'a.course_id = c.id')
-    ->like('a.id_payment', $reff_code)->get()->getResultArray();
-  }
+    public function get_detail_commitions($reff_code = ""){
+      return $this->db->table('payment a')->select('c.title as title, b.first_name as first_name, b.last_name as last_name, a.status_payment as status, a.amount as amount, b.email as email')
+      ->join('users b', 'a.id_user = b.id')
+      ->join('courses c', 'a.course_id = c.id')
+      ->like('a.id_payment', $reff_code)->get()->getResultArray();
+    }
 
+    public function get_detail_payment($id){
+        return $this->db->table('payment')->select('payment.*')
+                        ->where('id_user', $id)
+                        ->get()
+                        ->getRow();
+    }
     // public function update_admin_revenue()
     // {
     //     $builder = $this->db->table('payment');

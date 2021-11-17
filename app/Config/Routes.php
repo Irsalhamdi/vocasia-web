@@ -137,8 +137,11 @@ $routes->group('affiliate', ['namespace' => 'App\Controllers\Frontend'], functio
     $routes->get('courses', 'Affiliate::courses');
     $routes->get('courses/(:num)', 'Affiliate::share_link/$1');
     $routes->post('add-affiliator', 'Affiliate::add_affiliator');
+    $routes->get('access/(:num)', 'Affiliate::access/$1');
+    $routes->get('saldo/(:num)', 'Affiliate::saldo/$1');
+    $routes->post('saldo/(:num)', 'Affiliate::pull/$1');
+    $routes->get('subscription/(:num)', 'Affiliate::subscription/$1');
 });
-
 /*
  * --------------------------------------------------------------------
  * Additional Routing
