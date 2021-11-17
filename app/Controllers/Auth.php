@@ -8,6 +8,7 @@ use Config\Services;
 use \Firebase\JWT\JWT;
 use CodeIgniter\I18n\Time;
 use CodeIgniter\Cookie\Cookie;
+use CodeIgniter\Cookie\CookieStore;
 
 class Auth extends ResourceController
 {
@@ -82,6 +83,7 @@ class Auth extends ResourceController
                 'prefix' => '',
                 'secure' => true,
                 'httponly' => true,
+                'samesite' => Cookie::SAMESITE_LAX,
             ];
             $this->response->setCookie($cookie);
             $response_data = [
@@ -149,6 +151,7 @@ class Auth extends ResourceController
             $exp_access_token = $iat + 172800; // 2 hari masa aktif access_token 
 
             $payload_access_token = [
+                'id_user' => $valid_credentials["id"],
                 'name' => $valid_credentials["fullname"],
                 'email' => $valid_credentials["email"],
                 'role' => $valid_credentials["role"],
@@ -156,7 +159,8 @@ class Auth extends ResourceController
                 'role_name' => $valid_credentials['role'] == 1 ? 'admin' : 'user'
             ];
             $payload_refresh_token = [
-                'id' => $valid_credentials["id"]
+                'id' => $valid_credentials["id"],
+                'token_refresh' => true
             ];
 
             $jwt_refresh_token = JWT::encode($payload_refresh_token, $key);

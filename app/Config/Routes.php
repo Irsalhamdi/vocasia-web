@@ -87,6 +87,7 @@ $routes->group('auth', ['namespace' => 'App\Controllers', 'filter' => 'cors'], f
     $routes->post('web/login', 'Auth::login');
     $routes->get('web/logout', 'Auth::logout');
     $routes->post('mobile/login', 'Auth::login_mobile');
+    $routes->get('refreshtoken', 'Auth::get_refresh_token');
 });
 $routes->group('instructor', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
     $routes->get('lessons', 'Lesson::index');
@@ -117,7 +118,6 @@ $routes->group('homepage', ['namespace' => 'App\Controllers\Frontend'], function
     $routes->get('section/(:num)', 'Home::get_sections/$1');
     $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
 });
-
 $routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user'], function ($routes) {
     $routes->put('profile/user_profile/(:num)', 'Home::user_profile/$1');
     $routes->put('profile/user_credentials/(:num)', 'Home::user_credentials/$1');
