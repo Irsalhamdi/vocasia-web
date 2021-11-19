@@ -33,7 +33,7 @@ $routes->setAutoRoute(false);
 // route since we don't have to scan directories.
 // $routes->get('/', 'Home::index');
 
-$routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($routes) {
+$routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => 'auth:admin'], function ($routes) {
     $routes->get('courses', 'Courses::index');
     $routes->get('course/(:num)', 'Courses::show_detail/$1');
     $routes->post('course', 'Courses::create');
@@ -89,7 +89,7 @@ $routes->group('auth', ['namespace' => 'App\Controllers', 'filter' => 'cors'], f
     $routes->post('mobile/login', 'Auth::login_mobile');
     $routes->get('refreshtoken', 'Auth::get_refresh_token');
 });
-$routes->group('instructor', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
+$routes->group('instructor', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user'], function ($routes) {
     $routes->get('lessons', 'Lesson::index');
     $routes->get('lesson/(:num)', 'Lesson::show_detail/$1');
     $routes->post('lesson', 'Lesson::create');
@@ -107,9 +107,17 @@ $routes->group('instructor', ['namespace' => 'App\Controllers\Frontend'], functi
 $routes->group('homepage', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
     $routes->get('courses', 'Home::get_all_courses');
     $routes->get('categories', 'Home::get_all_category');
-    $routes->get('wishlist', 'Home::wishlist');
     $routes->post('wishlist', 'Home::add_to_wishlist');
-    $routes->post('add-to-cart', 'Home::add_to_cart');
+    $routes->delete('wishlist/delete/(:num)', 'Home::delete_wishlist/$1');
+    $routes->get('filter', 'Home::filter');
+    $routes->get('course/(:num)', 'Home::detail_courses/$1');
+    $routes->get('course/detail/instructor/(:num)', 'Home::get_instructor_student/$1');
+    $routes->get('section/(:num)', 'Home::get_sections/$1');
+    $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
+});
+$routes->group('mobile', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
+    $routes->get('courses', 'Home::get_all_courses');
+    $routes->get('categories', 'Home::get_all_category');
     $routes->get('carts/(:num)', 'Home::cart_list/$1');
     $routes->delete('wishlist/delete/(:num)', 'Home::delete_wishlist/$1');
     $routes->get('filter', 'Home::filter');
@@ -119,8 +127,12 @@ $routes->group('homepage', ['namespace' => 'App\Controllers\Frontend'], function
     $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
 });
 $routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user'], function ($routes) {
-    $routes->put('profile/user_profile/(:num)', 'Home::user_profile/$1');
-    $routes->put('profile/user_credentials/(:num)', 'Home::user_credentials/$1');
+    $routes->get('wishlist', 'Home::wishlist');
+    $routes->post('wishlist', 'Home::add_to_wishlist');
+    $routes->post('add-to-cart', 'Home::add_to_cart');
+    $routes->get('carts/(:num)', 'Home::cart_list/$1');
+    $routes->put('profile/user-profile/(:num)', 'Home::user_profile/$1');
+    $routes->put('profile/user-credentials/(:num)', 'Home::user_credentials/$1');
     $routes->post('profile/user_photo/(:num)', 'Home::user_photo/$1');
     $routes->get('users-info/(:num)', 'Home::users_detail/$1');
     $routes->post('voucher', 'Home::redeem_voucher');
@@ -131,7 +143,7 @@ $routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 
     $routes->get('lesson/progress/(:num)', 'Home::get_watch_history/$1');
 });
 
-$routes->group('affiliate', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
+$routes->group('affiliate', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user'], function ($routes) {
     $routes->get('access/(:num)', 'Affiliate::access/$1');
     $routes->get('saldo/(:num)', 'Affiliate::saldo/$1');
     $routes->post('saldo/(:num)', 'Affiliate::pull/$1');

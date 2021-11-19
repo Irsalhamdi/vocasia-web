@@ -59,33 +59,33 @@ class CoursesModel extends Model
 
     public function get_count_course_active()
     {
-        return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where('a.status_course','active')->countAllResults();
+        return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where('a.status_course', 'active')->countAllResults();
     }
 
     public function get_count_course_pending()
     {
-        return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where('a.status_course','pending')->countAllResults();
+        return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where('a.status_course', 'pending')->countAllResults();
     }
     public function get_count_course_paid()
     {
-        return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where('a.is_free_course','0')->countAllResults();
+        return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where('a.is_free_course', '0')->countAllResults();
     }
     public function get_count_course_free()
     {
-        return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where('a.is_free_course','1')->countAllResults();
-    }    
+        return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where('a.is_free_course', '1')->countAllResults();
+    }
     public function get_pagging_data($limit, $offset)
     {
         return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->limit($limit, $offset)->get()->getResult();
     }
     public function home_page_course()
     {
-        return $this->db->table('courses a')->select("a.title,a.short_description,a.price,concat(c.first_name,' ',c.last_name) as instructor_name,a.discount_flag,a.discount_price,a.thumbnail,a.level_course,COUNT(b.course_id) as total_lesson,a.id")->join('lesson b', 'b.course_id = a.id')->join('users c', 'c.id = a.user_id')->groupBy('b.course_id')->get()->getResultArray();
+        return $this->db->table('courses a')->select("a.title,a.short_description,a.price,concat(c.first_name,' ',c.last_name) as instructor_name,a.discount_flag,a.discount_price,a.thumbnail,a.level_course,COUNT(b.course_id) as total_lesson,a.id,c.id as instructor_id")->join('lesson b', 'b.course_id = a.id')->join('users c', 'c.id = a.user_id')->groupBy('b.course_id')->get()->getResultArray();
     }
 
     public function get_course_by_category($id_category)
     {
-        return $this->db->table('courses a')->select("a.title,a.short_description,a.price,concat(c.first_name,' ',c.last_name) as instructor_name,a.discount_flag,a.discount_price,a.thumbnail,a.level_course,COUNT(b.course_id) as total_lesson,a.id")->join('lesson b', 'b.course_id = a.id')->join('users c', 'c.id = a.user_id')->where('a.category_id', $id_category)->groupBy('b.course_id')->get()->getResultArray();
+        return $this->db->table('courses a')->select("a.title,a.short_description,a.price,concat(c.first_name,' ',c.last_name) as instructor_name,a.discount_flag,a.discount_price,a.thumbnail,a.level_course,COUNT(b.course_id) as total_lesson,a.id,c.id as instructor_id")->join('lesson b', 'b.course_id = a.id')->join('users c', 'c.id = a.user_id')->where('a.category_id', $id_category)->groupBy('b.course_id')->get()->getResultArray();
     }
 
 
@@ -255,7 +255,7 @@ class CoursesModel extends Model
     public function get_courses()
     {
         return $this->db->table('courses')->select('id,title')
-        ->where('status_course', 'active')
-        ->where('(is_free_course is null OR is_free_course = 0)')->get()->getResultArray();
+            ->where('status_course', 'active')
+            ->where('(is_free_course is null OR is_free_course = 0)')->get()->getResultArray();
     }
 }

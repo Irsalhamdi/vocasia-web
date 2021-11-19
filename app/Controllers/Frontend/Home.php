@@ -21,6 +21,8 @@ class Home extends FrontendController
                 $rating_review = $this->model_course->get_rating_courses($cbc['id']);
                 $duration = $this->get_duration($lesson);
                 $data[$key] = [
+                    "id_course" => $cbc['id'],
+                    "instructor_id" => $cbc["instructor_id"],
                     "title" =>  $cbc['title'],
                     "short_description" => $cbc['short_description'],
                     "price" => $cbc['price'],
@@ -41,9 +43,15 @@ class Home extends FrontendController
             foreach ($course as $key => $all_course) {
                 $total_students = $this->model_enrol->get_count_enrols_courses($all_course['id']);
                 $rating_review = $this->model_course->get_rating_courses($all_course['id']);
-                $get_discount_percent = ($all_course['discount_price'] / $all_course['price']) * 100;
+                if ($all_course['discount_price'] != 0) {
+                    $get_discount_percent = ($all_course['discount_price'] / $all_course['price']) * 100;
+                } elseif ($all_course['discount_price'] == 0) {
+                    $get_discount_percent = 0;
+                }
                 $discount = intval($get_discount_percent);
                 $data[$key] = [
+                    "id_course" => $all_course['id'],
+                    "instructor_id" => $all_course["instructor_id"],
                     "title" =>  $all_course['title'],
                     "price" => $all_course['price'],
                     "instructor_name" => $all_course['instructor_name'],
@@ -307,6 +315,7 @@ class Home extends FrontendController
             $discount = intval($get_discount_percent);
             $data[$key] = [
                 'id' => $courses->id,
+                'instructor_id' => $courses->uid,
                 'instructor' => $courses->instructor_name,
                 'level_course' => $courses->level_course,
                 'total_lesson' => $courses->total_lesson,
@@ -395,7 +404,7 @@ class Home extends FrontendController
             'facebook_link' => [
                 'rules' => 'required'
             ],
-            'instragram' => [
+            'instagram' => [
                 'rules' => 'required'
             ],
             'twitter_link' => [
@@ -415,37 +424,39 @@ class Home extends FrontendController
             if (!empty($user_id)) {
 
                 $update = $this->request->getJSON();
+                // var_dump($update);
+                // die;
                 $this->model_users->update($id, $update);
 
-                $user_detail = $this->model_users_detail->find($id);
+                $user_detail = $this->model_users_detail->where('id_user', $id)->first();
 
                 if ($user_detail) {
-
                     $user['id_user'] = $id;
                     $user['biography'] = $update->biography;
                     $user['phone'] = $update->phone;
-                    $this->model_users_detail->update($id, $user);
+                    $user['datebirth'] = $update->datebirth;
+                    $this->model_users_detail->where('id_user', $id)->set($user)->update();;
 
-                    $user_social_link = $this->model_users_social_link->find($id);
+                    $user_social_link = $this->model_users_social_link->where('id_user', $id)->first();
 
                     if ($user_social_link) {
                         $user['id_user'] = $id;
                         $user['facebook_link'] = $update->facebook_link;
-                        $user['instragram'] = $update->instragram;
+                        $user['instagram'] = $update->instagram;
                         $user['twitter_link'] = $update->twitter_link;
-                        $this->model_users_social_link->update($id, $user);
+                        $this->model_users_social_link->where('id_user', $id)->set($user)->update();
+                    } else {
+                        $user['id_user'] = $id;
+                        $user['facebook_link'] = $update->facebook_link;
+                        $user['instagram'] = $update->instagram;
+                        $user['twitter_link'] = $update->twitter_link;
+                        $this->model_users_social_link->save($user);
                     }
                 } else {
                     $user['id_user'] = $id;
                     $user['biography'] = $update->biography;
                     $user['phone'] = $update->phone;
                     $this->model_users_detail->save($user);
-
-                    $user['id_user'] = $id;
-                    $user['facebook_link'] = $update->facebook_link;
-                    $user['instragram'] = $update->instragram;
-                    $user['twitter_link'] = $update->twitter_link;
-                    $this->model_users_social_link->save($user);
                 }
 
                 return $this->respondUpdated(response_update());
@@ -488,7 +499,7 @@ class Home extends FrontendController
             $data['password'] = sha1($update->password);
             $data['new_password_confirm'] = sha1($update->new_password_confirm);
 
-            if($data['old_password'] !== $user['password'] ){
+            if ($data['old_password'] !== $user['password']) {
                 return $this->respond([
                     'status' => 403,
                     'error' => false,
@@ -496,23 +507,23 @@ class Home extends FrontendController
                         'message' => 'Wrong current password'
                     ]
                 ], 403);
-            }else{
-                if($data['new_password_confirm'] === $user['password']){
+            } else {
+                if ($data['new_password_confirm'] === $user['password']) {
                     return $this->respond([
-                    'status' => 403,
-                    'error' => false,
-                    'data' => [
-                        'message' => 'New Password cannot be the same as current password'
-                    ]
+                        'status' => 403,
+                        'error' => false,
+                        'data' => [
+                            'message' => 'New Password cannot be the same as current password'
+                        ]
                     ], 403);
-                }else{
+                } else {
                     $this->model_users->update($id, $data);
                     return $this->respondUpdated(response_update());
                 }
             }
         }
     }
-     public function user_photo($id = null)
+    public function user_photo($id = null)
     {
         $rules = [
             'foto_profile' => [
@@ -524,8 +535,8 @@ class Home extends FrontendController
                 ]
             ]
         ];
-            
-        if(!$this->validate($rules)){
+
+        if (!$this->validate($rules)) {
             return $this->respond([
                 'status' => 403,
                 'error' => false,
@@ -533,28 +544,27 @@ class Home extends FrontendController
                     'message' => $this->validator->getErrors()
                 ]
             ], 403);
-        }else{
+        } else {
             $user = $this->model_users_detail->find($id);
             if ($user) {
                 $foto_profile = $this->request->getFile('foto_profile');
                 $name = "foto_profile_default_$id.jpg";
-        
+
                 $data = [
                     'id' => $id,
                     'foto_profile'  => $name
                 ];
 
                 if ($user['foto_profile']) {
-                    unlink('uploads/foto_profile/' . $user['foto_profile']);    
+                    unlink('uploads/foto_profile/' . $user['foto_profile']);
                 }
                 $foto_profile->move('uploads/foto_profile/', $name);
                 $this->model_users_detail->update($id, $data);
-            
-                return $this->respondCreated(response_create());
 
-            }else {
+                return $this->respondCreated(response_create());
+            } else {
                 return $this->failNotFound();
-            } 
+            }
         }
     }
 

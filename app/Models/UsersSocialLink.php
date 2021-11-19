@@ -14,7 +14,7 @@ class UsersSocialLink extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['id', 'id_user', 'facebook_link', 'instragram', 'twitter_link'];
+    protected $allowedFields        = ['id_user', 'facebook_link', 'instagram', 'twitter_link'];
 
     // Dates
     protected $useTimestamps        = false;
