@@ -70,4 +70,15 @@ class UsersModel extends Model
     {
         return $this->db->table('users')->select("FROM_UNIXTIME(users.create_at) as time,users.id", false)->groupBy('month(time)')->countAllResults();
     }
+
+    public function get_foto_profile($id_user)
+    {
+        $name = "foto_profile_default_$id_user.jpg";
+        $folder_path = 'uploads/foto_profile/' . $name;
+        if (file_exists($folder_path)) {
+            return base_url() . '/' . $folder_path;
+        } else {
+            return null;
+        }
+    }
 }

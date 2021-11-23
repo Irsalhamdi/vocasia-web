@@ -136,7 +136,7 @@ $routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 
     $routes->delete('cart/delete/(:num)', 'Home::delete_cart/$1');
     $routes->put('profile/user-profile/(:num)', 'Home::user_profile/$1');
     $routes->put('profile/user-credentials/(:num)', 'Home::user_credentials/$1');
-    $routes->post('profile/user_photo/(:num)', 'Home::user_photo/$1');
+    $routes->post('profile/user-photo/(:num)', 'Home::user_photo/$1');
     $routes->get('users-info/(:num)', 'Home::users_detail/$1');
     $routes->post('voucher', 'Home::redeem_voucher');
     $routes->post('payment/course', 'Home::payment');

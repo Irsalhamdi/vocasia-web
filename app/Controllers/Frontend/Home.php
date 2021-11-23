@@ -15,7 +15,8 @@ class Home extends FrontendController
         $data_response = [
             'id_user' => $data_user['id'],
             'fullname' => $data_user['first_name'] . ' ' . $data_user['last_name'],
-            'email' => $data_user['email']
+            'email' => $data_user['email'],
+            'foto_profile' => $this->model_users->get_foto_profile($data_user['id'])
         ];
         return $this->respond(get_response($data_response));
     }
@@ -573,23 +574,35 @@ class Home extends FrontendController
                 ]
             ], 403);
         } else {
-            $user = $this->model_users_detail->find($id);
+            $user = $this->model_users->find($id);
+            $id_user = $user['id'];
             if ($user) {
                 $foto_profile = $this->request->getFile('foto_profile');
-                $name = "foto_profile_default_$id.jpg";
+                $name = "foto_profile_default_$id_user.jpg";
+                $folder_path = 'uploads/foto_profile/' . $name;
 
                 $data = [
                     'id' => $id,
                     'foto_profile'  => $name
                 ];
 
-                if ($user['foto_profile']) {
-                    unlink('uploads/foto_profile/' . $user['foto_profile']);
-                }
-                $foto_profile->move('uploads/foto_profile/', $name);
-                $this->model_users_detail->update($id, $data);
+                if (file_exists('uploads/foto_profile')) {
+                    if (file_exists($folder_path)) {
+                        unlink('uploads/foto_profile/' . $name);
+                    }
+                    $foto_profile->move('uploads/foto_profile/', $name);
+                    // $this->model_users_detail->update($id, $data);
+                    return $this->respondCreated(response_create());
+                } else {
+                    mkdir('uploads/foto_profile');
+                    if (file_exists($name)) {
+                        unlink('uploads/foto_profile/' . $name);
+                    }
+                    $foto_profile->move('uploads/foto_profile/', $name);
+                    // $this->model_users_detail->update($id, $data);
 
-                return $this->respondCreated(response_create());
+                    return $this->respondCreated(response_create());
+                }
             } else {
                 return $this->failNotFound();
             }
