@@ -123,6 +123,22 @@ class Home extends FrontendController
         }
     }
 
+    public function delete_cart($id_cart)
+    {
+        $cart_data = $this->model_cart->find($id_cart);
+        if (!is_null($cart_data)) {
+            $this->model_cart->delete($id_cart);
+            return $this->respondDeleted([
+
+                'status' => 200,
+                'error' => false,
+                'data' => [
+                    'messages' => 'cart deleted !'
+                ]
+            ]);
+        }
+    }
+
     public function cart_list($id_user)
     {
         $cart_items = $this->model_cart->cart_item_list($id_user);

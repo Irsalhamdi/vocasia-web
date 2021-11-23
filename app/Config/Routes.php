@@ -129,8 +129,10 @@ $routes->group('mobile', ['namespace' => 'App\Controllers\Frontend'], function (
 $routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user'], function ($routes) {
     $routes->get('wishlist', 'Home::wishlist');
     $routes->post('wishlist', 'Home::add_to_wishlist');
-    $routes->post('add-to-cart', 'Home::add_to_cart');
+    $routes->delete('wishlist/delete/(:num)', 'Home::delete_wishlist/$1');
     $routes->get('carts/(:num)', 'Home::cart_list/$1');
+    $routes->post('add-to-cart', 'Home::add_to_cart');
+    $routes->delete('cart/delete/(:num)', 'Home::delete_cart/$1');
     $routes->put('profile/user-profile/(:num)', 'Home::user_profile/$1');
     $routes->put('profile/user-credentials/(:num)', 'Home::user_credentials/$1');
     $routes->post('profile/user_photo/(:num)', 'Home::user_photo/$1');
