@@ -127,6 +127,7 @@ $routes->group('mobile', ['namespace' => 'App\Controllers\Frontend'], function (
     $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
 });
 $routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user'], function ($routes) {
+    $routes->get('me', 'Home::detail_users_login');
     $routes->get('wishlist', 'Home::wishlist');
     $routes->post('wishlist', 'Home::add_to_wishlist');
     $routes->delete('wishlist/delete/(:num)', 'Home::delete_wishlist/$1');

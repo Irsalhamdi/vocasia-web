@@ -89,7 +89,8 @@ class Auth extends ResourceController
             $response_data = [
                 'is_mobile' => false,
                 'exp' => $generate_token['expired_at'],
-                'token' => $generate_token["access_token"]
+                'token' => $generate_token["access_token"],
+                'email' => $generate_token["email"]
             ];
             return $this->respond(response_login($response_data));
         } else {
@@ -169,13 +170,15 @@ class Auth extends ResourceController
                 $tokens = [
                     'access_token' => $jwt_access_token,
                     'refresh_token' => $jwt_refresh_token,
-                    'expired_at' => $exp_access_token
+                    'expired_at' => $exp_access_token,
+                    'email' => $valid_credentials["email"],
                 ];
                 return $tokens;
             } else if ($type == 'mobile') {
                 $tokens = [
                     'token' => $jwt_access_token,
-                    'expired_at' => $exp
+                    'expired_at' => $exp,
+                    'email' => $valid_credentials["email"],
                 ];
 
                 return $tokens;

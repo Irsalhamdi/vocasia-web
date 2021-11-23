@@ -104,7 +104,8 @@ function response_login($data)
             'data' => [
                 'messages' => 'Login Success!',
                 'token' => $data["token"],
-                'expire_at' => $data['exp']
+                'expire_at' => $data['exp'],
+                'email' => $data['email']
             ],
         ];
         return $response;

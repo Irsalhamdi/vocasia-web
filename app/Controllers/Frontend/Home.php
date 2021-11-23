@@ -8,6 +8,18 @@ class Home extends FrontendController
 {
     protected $format = 'json';
 
+    public function detail_users_login()
+    {
+        $emai = $this->request->getVar('email');
+        $data_user = $this->model_users->where('email', $emai)->first();
+        $data_response = [
+            'id_user' => $data_user['id'],
+            'fullname' => $data_user['first_name'] . ' ' . $data_user['last_name'],
+            'email' => $data_user['email']
+        ];
+        return $this->respond(get_response($data_response));
+    }
+
     public function get_all_courses()
     {
         if ($this->request->getVar('category')) {
