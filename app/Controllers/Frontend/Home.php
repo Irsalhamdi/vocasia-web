@@ -245,13 +245,18 @@ class Home extends FrontendController
             }
             if (empty($this->request->getVar('rating'))) {
                 $data_filter = $this->model_course->advanced_filter($filter[0]);
+                if (is_null($data_filter)) {
+                    return $this->failNotFound('not found!');
+                }
                 $data_response = $this->course_data($data_filter);
                 return $this->respond(get_response($data_response));
             } else {
                 $data_filter_rating = $this->model_course->get_rating_from_filter($filter[0]);
+                if (is_null($data_filter_rating)) {
+                    return $this->failNotFound('not found!');
+                }
                 $data_response = $this->course_data($data_filter_rating);
                 return $this->respond(get_response($data_response));
-                return $this->respond(get_response($data_filter_rating));
             }
         } else {
             return $this->failNotFound('not found !');
