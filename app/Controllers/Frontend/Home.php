@@ -222,32 +222,36 @@ class Home extends FrontendController
     {
         $filter = array();
 
-        if ($this->request->getVar('category')) {
-            $category = $this->request->getVar('category');
-            $filter[0]["a.category_id"] = $category;
-        }
-        if ($this->request->getVar('price')) {
-            $price = $this->request->getVar('price');
-            $filter[0]["a.is_free_course"] = $price;
-        }
-        if ($this->request->getVar('level')) {
-            $level = $this->request->getVar('level');
-            $filter[0]["a.level_course"] = $level;
-        }
-        if ($this->request->getVar('language')) {
-            $language = $this->request->getVar('language');
-            $filter[0]["a.language"] = $language;
-        }
-        if ($this->request->getVar('rating')) {
-            $rating = $this->request->getVar('rating');
-            $filter[0]["d.rating"] = $rating;
-        }
-        if (empty($this->request->getVar('rating'))) {
-            $data_filter = $this->model_course->advanced_filter($filter[0]);
-            return $this->respond(get_response($data_filter));
+        if ($this->request->getVar()) {
+            if ($this->request->getVar('category')) {
+                $category = $this->request->getVar('category');
+                $filter[0]["a.category_id"] = $category;
+            }
+            if ($this->request->getVar('price')) {
+                $price = $this->request->getVar('price');
+                $filter[0]["a.is_free_course"] = $price;
+            }
+            if ($this->request->getVar('level')) {
+                $level = $this->request->getVar('level');
+                $filter[0]["a.level_course"] = $level;
+            }
+            if ($this->request->getVar('language')) {
+                $language = $this->request->getVar('language');
+                $filter[0]["a.language"] = $language;
+            }
+            if ($this->request->getVar('rating')) {
+                $rating = $this->request->getVar('rating');
+                $filter[0]["d.rating"] = $rating;
+            }
+            if (empty($this->request->getVar('rating'))) {
+                $data_filter = $this->model_course->advanced_filter($filter[0]);
+                return $this->respond(get_response($data_filter));
+            } else {
+                $data_filter_rating = $this->model_course->get_rating_from_filter($filter[0]);
+                return $this->respond(get_response($data_filter_rating));
+            }
         } else {
-            $data_filter_rating = $this->model_course->get_rating_from_filter($filter[0]);
-            return $this->respond(get_response($data_filter_rating));
+            return $this->failNotFound('not found !');
         }
     }
 
