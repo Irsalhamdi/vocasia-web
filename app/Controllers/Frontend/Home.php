@@ -220,81 +220,123 @@ class Home extends FrontendController
     public function filter()
     {
         $filter = array();
-        if ($this->request->getVar('category')) { //get berdasarkan category
-            if ($this->request->getVar('price')) { //category -> price
-                if ($this->request->getVar('level')) { // cateogry -> price ->
-                    if ($this->request->getVar('language')) {
-                        if ($this->request->getVar('rating')) {
-                            $filter = [
-                                'a.is_free_course' => $this->request->getVar('price'),
-                                'a.category_id' => $this->request->getVar('category'),
-                                'a.level_course' => $this->request->getVar('level'),
-                                'a.language' => $this->request->getVar('language'),
-                                'd.rating' => $this->request->getVar('rating')
+        $search_by = $this->request->getVar();
 
-                            ];
-                            $data_filter_rating = $this->model_course->get_rating_from_filter($filter);
-                            $data = $this->course_data($data_filter_rating);
-                            return $this->respond(get_response($data));
-                        } else {
-                            $filter = [
-                                'a.is_free_course' => $this->request->getVar('price'),
-                                'a.category_id' => $this->request->getVar('category'),
-                                'a.level_course' => $this->request->getVar('level'),
-                                'a.language' => $this->request->getVar('language')
-
-                            ];
-                            var_dump($filter);
-                            die;
-                        }
-                    } else {
-                        $filter = [
-                            'a.is_free_course' => $this->request->getVar('price'),
-                            'a.category_id' => $this->request->getVar('category'),
-                            'a.level_course' => $this->request->getVar('level')
-
-                        ];
-                    }
-                } else {
-                    $filter = [
-                        'a.is_free_course' => $this->request->getVar('price'),
-                        'a.category_id' => $this->request->getVar('category')
-
-                    ];
-                }
-            } else {
-                $filter = [
-                    'a.category_id' => $this->request->getVar('category')
-                ];
-            }
-        } else if ($this->request->getVar('price')) {
-            $filter = [
-                'a.is_free_course' => $this->request->getVar('price')
-            ];
-        } else if ($this->request->getVar('level')) {
-            $filter = [
-                'a.level_course' => $this->request->getVar('level')
-            ];
-        } else if ($this->request->getVar('language')) {
-            $filter = [
-                'a.language' => $this->request->getVar('language')
-            ];
-        } else if ($this->request->getVar('rating')) {
-            $filter = [
-                'rating' => $this->request->getVar('rating')
-            ];
-            $data_filter_rating = $this->model_course->get_rating_from_filter($filter);
-            $data = $this->course_data($data_filter_rating);
-            return $this->respond(get_response($data));
+        if ($this->request->getVar('category')) {
+            $category = $this->request->getVar('category');
+            $filter[0]["a.category_id"] = $category;
         }
-        $data_filter = $this->model_course->advanced_filter($filter);
-        $data = $this->course_data($data_filter);
-        if (!is_null($data)) {
-
-            return $this->respond(get_response($data));
+        if ($this->request->getVar('price')) {
+            $price = $this->request->getVar('price');
+            $filter[0]["a.is_free_course"] = $price;
+        }
+        if ($this->request->getVar('level')) {
+            $level = $this->request->getVar('level');
+            $filter[0]["a.level_course"] = $level;
+        }
+        if ($this->request->getVar('language')) {
+            $language = $this->request->getVar('language');
+            $filter[0]["a.language"] = $language;
+        }
+        if ($this->request->getVar('rating')) {
+            $rating = $this->request->getVar('rating');
+            $filter[0]["d.rating"] = $rating;
+        }
+        if (empty($this->request->getVar('rating'))) {
+            $data_filter = $this->model_course->advanced_filter($filter[0]);
+            return $this->respond(get_response($data_filter));
         } else {
-            return $this->failNotFound();
+            $data_filter_rating = $this->model_course->get_rating_from_filter($filter[0]);
+            return $this->respond(get_response($data_filter_rating));
         }
+        // $data_filter = $this->model_course->advanced_filter($new_filter[1]);
+
+
+        // $data_filter = $this->model_course->advanced_filter($search_by);
+        // return $this->respond(get_response($data_filter));
+        // if ($this->request->getVar()) {
+        //     $filter = [
+        //         'a.category_id' => !empty($search_by['category']) ? $this->request->getVar('category') : null,
+        //         'a.is_free_course' => !empty($search_by['price']) ? $this->request->getVar('price') : null,
+        //     ];
+        // }
+
+        // $data_filter = $this->model_course->advanced_filter($filter);
+        // return $this->respond(get_response($data_filter));
+
+        // if ($this->request->getVar('category')) { //get berdasarkan category
+        //     if ($this->request->getVar('price')) { //category -> price
+        //         if ($this->request->getVar('level')) { // cateogry -> price ->
+        //             if ($this->request->getVar('language')) {
+        //                 if ($this->request->getVar('rating')) {
+        //                     $filter = [
+        //                         'a.is_free_course' => $this->request->getVar('price'),
+        //                         'a.category_id' => $this->request->getVar('category'),
+        //                         'a.level_course' => $this->request->getVar('level'),
+        //                         'a.language' => $this->request->getVar('language'),
+        //                         'd.rating' => $this->request->getVar('rating')
+
+        //                     ];
+        //                     $data_filter_rating = $this->model_course->get_rating_from_filter($filter);
+        //                     $data = $this->course_data($data_filter_rating);
+        //                     return $this->respond(get_response($data));
+        //                 } else {
+        //                     $filter = [
+        //                         'a.is_free_course' => $this->request->getVar('price'),
+        //                         'a.category_id' => $this->request->getVar('category'),
+        //                         'a.level_course' => $this->request->getVar('level'),
+        //                         'a.language' => $this->request->getVar('language')
+
+        //                     ];
+        //                 }
+        //             } else {
+        //                 $filter = [
+        //                     'a.is_free_course' => $this->request->getVar('price'),
+        //                     'a.category_id' => $this->request->getVar('category'),
+        //                     'a.level_course' => $this->request->getVar('level')
+
+        //                 ];
+        //             }
+        //         } else {
+        //             $filter = [
+        //                 'a.is_free_course' => $this->request->getVar('price'),
+        //                 'a.category_id' => $this->request->getVar('category')
+
+        //             ];
+        //         }
+        //     } else {
+        //         $filter = [
+        //             'a.category_id' => $this->request->getVar('category')
+        //         ];
+        //     }
+        // } else if ($this->request->getVar('price')) {
+        //     $filter = [
+        //         'a.is_free_course' => $this->request->getVar('price')
+        //     ];
+        // } else if ($this->request->getVar('level')) {
+        //     $filter = [
+        //         'a.level_course' => $this->request->getVar('level')
+        //     ];
+        // } else if ($this->request->getVar('language')) {
+        //     $filter = [
+        //         'a.language' => $this->request->getVar('language')
+        //     ];
+        // } else if ($this->request->getVar('rating')) {
+        //     $filter = [
+        //         'rating' => $this->request->getVar('rating')
+        //     ];
+        //     $data_filter_rating = $this->model_course->get_rating_from_filter($filter);
+        //     $data = $this->course_data($data_filter_rating);
+        //     return $this->respond(get_response($data));
+        // }
+        // $data_filter = $this->model_course->advanced_filter($filter);
+        // $data = $this->course_data($data_filter);
+        // if (!is_null($data)) {
+
+        //     return $this->respond(get_response($data));
+        // } else {
+        //     return $this->failNotFound();
+        // }
     }
 
     public function course_data($course_data)
