@@ -30,7 +30,7 @@ class Home extends FrontendController
             $data = array();
             foreach ($course_by_category as $key => $cbc) {
 
-                $lesson = $this->model_course->get_lesson_duration($cbc['id']);
+                $lesson = $this->model_course->get_lesson_duration(['course_id' => $cbc['id']]);
                 $total_students = $this->model_enrol->get_count_enrols_courses($cbc['id']);
                 $rating_review = $this->model_course->get_rating_courses($cbc['id']);
                 $duration = $this->get_duration($lesson);
@@ -245,9 +245,12 @@ class Home extends FrontendController
             }
             if (empty($this->request->getVar('rating'))) {
                 $data_filter = $this->model_course->advanced_filter($filter[0]);
-                return $this->respond(get_response($data_filter));
+                $data_response = $this->course_data($data_filter);
+                return $this->respond(get_response($data_response));
             } else {
                 $data_filter_rating = $this->model_course->get_rating_from_filter($filter[0]);
+                $data_response = $this->course_data($data_filter_rating);
+                return $this->respond(get_response($data_response));
                 return $this->respond(get_response($data_filter_rating));
             }
         } else {
@@ -257,38 +260,37 @@ class Home extends FrontendController
 
     public function course_data($course_data)
     {
-        $data = NULL;
-        try {
-            foreach ($course_data as $key => $cd) {
-
-                $lesson = $this->model_course->get_lesson_duration($cd['id']);
-                $total_students = $this->model_enrol->get_count_enrols_courses($cd['id']);
-                $rating_review = $this->model_course->get_rating_courses($cd['id']);
-                $duration = $this->get_duration($lesson);
-                $get_discount_percent = ($cd['dicount_price'] / $cd['price']) * 100;
-                $discount = intval($get_discount_percent);
-                $data[$key] = [
-                    "title" =>  $cd['title'],
-                    "short_description" => $cd['short_description'],
-                    "price" => $cd['price'],
-                    "instructor_name" => $cd['instructor_name'],
-                    "discount_flag" => $cd['discount_flag'],
-                    "discount_price" => $cd['discount_price'],
-                    "thumbnail" => $this->model_course->get_thumbnail($cd['id']),
-                    "level_course" => $cd['level_course'],
-                    "total_lesson" => $cd['total_lesson'],
-                    "language" => $cd['language'],
-                    "duration" => $duration,
-                    "students" => $total_students,
-                    "rating" => $rating_review,
-                    "total_discount" => $discount
-
-                ];
+        $data = array();
+        foreach ($course_data as $key => $cd) {
+            $lesson = $this->model_course->get_lesson_duration(['course_id' => $cd['id']]);
+            $total_students = $this->model_enrol->get_count_enrols_courses($cd['id']);
+            $rating_review = $this->model_course->get_rating_courses($cd['id']);
+            $duration = $this->get_duration($lesson);
+            if ($cd['discount_price'] != 0) {
+                $get_discount_percent = ($cd['discount_price'] / $cd['price']) * 100;
+            } elseif ($cd['discount_price'] == 0) {
+                $get_discount_percent = 0;
             }
-            return $data;
-        } catch (\Throwable $th) {
-            return $this->failNotFound('Data Not Found !');
+            $discount = intval($get_discount_percent);
+            $data[$key] = [
+                "title" =>  $cd['title'],
+                "short_description" => $cd['short_description'],
+                "price" => $cd['price'],
+                "instructor_name" => $cd['instructor_name'],
+                "discount_flag" => $cd['discount_flag'],
+                "discount_price" => $cd['discount_price'],
+                "thumbnail" => $this->model_course->get_thumbnail($cd['id']),
+                "level_course" => $cd['level_course'],
+                "total_lesson" => $cd['total_lesson'],
+                "language" => $cd['language'],
+                "duration" => $duration,
+                "students" => $total_students,
+                "rating" => $rating_review,
+                "total_discount" => $discount
+
+            ];
         }
+        return $data;
     }
     public function detail_courses($id_course)
     {
