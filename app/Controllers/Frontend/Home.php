@@ -278,6 +278,8 @@ class Home extends FrontendController
             }
             $discount = intval($get_discount_percent);
             $data[$key] = [
+                "id_course" => $cd['id'],
+                "instructor_id" => $cd["instructor_id"],
                 "title" =>  $cd['title'],
                 "short_description" => $cd['short_description'],
                 "price" => $cd['price'],
