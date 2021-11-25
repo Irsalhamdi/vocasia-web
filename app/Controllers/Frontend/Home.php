@@ -604,16 +604,19 @@ class Home extends FrontendController
     {
         $data = array();
         $my_course = $this->model_course->my_course($user_id);
-        foreach ($my_course as $key => $values) {
-            $data[$key] = [
-                'instructor' => $values->instructor_name,
-                'title' => $values->title,
-                'thumbnail' => $this->model_course->get_thumbnail($values->cid),
-                'rating' => $this->model_course->rating_from_user($user_id, $values->cid)
-            ];
+        if (!empty($my_course)) {
+            foreach ($my_course as $key => $values) {
+                $data[$key] = [
+                    'instructor' => $values->instructor_name,
+                    'title' => $values->title,
+                    'thumbnail' => $this->model_course->get_thumbnail($values->cid),
+                    'rating' => $this->model_course->rating_from_user($user_id, $values->cid)
+                ];
+            }
+            return $this->respond(get_response($data));
+        } else {
+            return $this->failNotFound();
         }
-
-        return $this->respond(get_response($data));
     }
 
     public function course_payment()
