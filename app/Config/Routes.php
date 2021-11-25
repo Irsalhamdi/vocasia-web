@@ -126,7 +126,7 @@ $routes->group('mobile', ['namespace' => 'App\Controllers\Frontend'], function (
     $routes->get('section/(:num)', 'Home::get_sections/$1');
     $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
 });
-$routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user'], function ($routes) {
+$routes->group('users', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
     $routes->get('me', 'Home::detail_users_login');
     $routes->get('wishlist', 'Home::wishlist');
     $routes->post('wishlist', 'Home::add_to_wishlist');
@@ -141,7 +141,7 @@ $routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 
     $routes->post('voucher', 'Home::redeem_voucher');
     $routes->post('payment/course', 'Home::payment');
     $routes->get('course/my/(:num)', 'Home::my_course/$1');
-    $routes->get('course/my/lesson/(:num)', 'Home::my_lesson/$1');
+    $routes->get('course/my/lesson', 'Home::my_lesson');
     $routes->post('lesson/update/progress', 'Home::watch_history');
     $routes->get('lesson/progress/(:num)', 'Home::get_watch_history/$1');
 });

@@ -607,6 +607,7 @@ class Home extends FrontendController
         if (!empty($my_course)) {
             foreach ($my_course as $key => $values) {
                 $data[$key] = [
+                    'course_id' => $values->cid,
                     'instructor' => $values->instructor_name,
                     'title' => $values->title,
                     'thumbnail' => $this->model_course->get_thumbnail($values->cid),
@@ -628,10 +629,21 @@ class Home extends FrontendController
         return $this->respondCreated(response_create());
     }
 
-    public function my_lesson($course_id)
+    public function my_lesson()
     {
-        $data_lesson = $this->model_course->get_my_lesson($course_id);
-        return $this->respond(get_response($data_lesson));
+        $course_id = $this->request->getVar('course');
+        $user_id = $this->request->getVar('user');
+        $where = [
+            'course_id' => $course_id,
+            'user_id' => $user_id
+        ];
+        $check_user = $this->model_enrol->where($where)->first();
+        if (!is_null($check_user)) {
+            $data_lesson = $this->model_course->get_my_lesson($course_id);
+            return $this->respond(get_response($data_lesson));
+        } else {
+            return $this->failForbidden('Cannot Access This Course');
+        }
     }
 
     public function watch_history()
