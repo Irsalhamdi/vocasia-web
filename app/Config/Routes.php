@@ -33,7 +33,7 @@ $routes->setAutoRoute(false);
 // route since we don't have to scan directories.
 // $routes->get('/', 'Home::index');
 
-$routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => 'cors'], function ($routes) {
+$routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => 'auth:admin,cors'], function ($routes) {
     $routes->get('instructors', 'Instructor::index');
     $routes->get('courses', 'Courses::index');
     $routes->get('course/(:num)', 'Courses::show_detail/$1');
