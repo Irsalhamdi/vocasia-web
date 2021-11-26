@@ -33,7 +33,7 @@ $routes->setAutoRoute(false);
 // route since we don't have to scan directories.
 // $routes->get('/', 'Home::index');
 
-$routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => 'auth:admin'], function ($routes) {
+$routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => 'auth:admin,cors'], function ($routes) {
     $routes->get('courses', 'Courses::index');
     $routes->get('course/(:num)', 'Courses::show_detail/$1');
     $routes->post('course', 'Courses::create');
@@ -89,7 +89,7 @@ $routes->group('auth', ['namespace' => 'App\Controllers', 'filter' => 'cors'], f
     $routes->post('mobile/login', 'Auth::login_mobile');
     $routes->get('refreshtoken', 'Auth::get_refresh_token');
 });
-$routes->group('instructor', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user'], function ($routes) {
+$routes->group('instructor', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user,cors',], function ($routes) {
     $routes->get('lessons', 'Lesson::index');
     $routes->get('lesson/(:num)', 'Lesson::show_detail/$1');
     $routes->post('lesson', 'Lesson::create');
@@ -104,7 +104,7 @@ $routes->group('instructor', ['namespace' => 'App\Controllers\Frontend', 'filter
     $routes->get('paymentbalance/(:num)', 'PaymentBalance::index/$1');
     $routes->post('paymentbalance', 'PaymentBalance::create');
 });
-$routes->group('homepage', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
+$routes->group('homepage', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'cors'], function ($routes) {
     $routes->get('courses', 'Home::get_all_courses');
     $routes->get('categories', 'Home::get_all_category');
     $routes->post('wishlist', 'Home::add_to_wishlist');
@@ -115,7 +115,7 @@ $routes->group('homepage', ['namespace' => 'App\Controllers\Frontend'], function
     $routes->get('section/(:num)', 'Home::get_sections/$1');
     $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
 });
-$routes->group('mobile', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
+$routes->group('mobile', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'cors'], function ($routes) {
     $routes->get('courses', 'Home::get_all_courses');
     $routes->get('categories', 'Home::get_all_category');
     $routes->get('carts/(:num)', 'Home::cart_list/$1');
@@ -126,7 +126,7 @@ $routes->group('mobile', ['namespace' => 'App\Controllers\Frontend'], function (
     $routes->get('section/(:num)', 'Home::get_sections/$1');
     $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
 });
-$routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user'], function ($routes) {
+$routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user,cors'], function ($routes) {
     $routes->get('me', 'Home::detail_users_login');
     $routes->get('wishlist', 'Home::wishlist');
     $routes->post('wishlist', 'Home::add_to_wishlist');
@@ -146,7 +146,7 @@ $routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 
     $routes->get('lesson/progress/(:num)', 'Home::get_watch_history/$1');
 });
 
-$routes->group('affiliate', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user'], function ($routes) {
+$routes->group('affiliate', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user,cors'], function ($routes) {
     $routes->get('access/(:num)', 'Affiliate::access/$1');
     $routes->get('saldo/(:num)', 'Affiliate::saldo/$1');
     $routes->post('saldo/(:num)', 'Affiliate::pull/$1');
