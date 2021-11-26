@@ -33,7 +33,7 @@ $routes->setAutoRoute(false);
 // route since we don't have to scan directories.
 // $routes->get('/', 'Home::index');
 
-$routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => 'auth:admin'], function ($routes) {
+$routes->group('admin', ['namespace' => 'App\Controllers\Backend'], function ($routes) {
     $routes->get('courses', 'Courses::index');
     $routes->get('course/(:num)', 'Courses::show_detail/$1');
     $routes->post('course', 'Courses::create');
@@ -81,6 +81,25 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => '
     $routes->delete('lesson-admin/(:num)', 'LessonAdmin::delete/$1');
     $routes->get('dashboard-admin', 'Dashboard::index');
     $routes->get('course/info', 'Courses::info_courses');
+    $routes->get('system-settings', 'Setting::system_settings');
+    $routes->put('update-system-settings', 'Setting::update_system_settings');
+    $routes->get('frontend-settings', 'Setting::frontend_settings');
+    $routes->put('update-frontend-settings', 'Setting::update_frontend_settings');
+    $routes->post('update-light-logo', 'Setting::update_light_logo_settings');
+    $routes->post('update-dark-logo', 'Setting::update_dark_logo_settings');
+    $routes->post('update-small-logo', 'Setting::update_small_logo_settings');
+    $routes->post('update-favicon-logo', 'Setting::update_favicon_logo_settings');
+    $routes->get('payment-settings', 'Setting::payment_settings');
+    $routes->put('update-payment-settings', 'Setting::update_payment_settings');
+    $routes->put('update-paypal-settings', 'Setting::update_paypal_settings');    
+    $routes->put('update-stripe-settings', 'Setting::update_stripe_settings');
+    $routes->get('instructor-settings', 'Setting::instructor_settings');
+    $routes->put('update-instructor-settings', 'Setting::update_instructor_settings');
+    $routes->get('manage-language', 'Setting::manage_language');    
+    $routes->get('smtp-settings', 'Setting::smtp_settings');
+    $routes->put('update-smtp-settings', 'Setting::update_smtp_settings');
+    $routes->get('theme-settings', 'Setting::theme_settings');
+    $routes->get('mobile-settings', 'Setting::mobile_settings');
 });
 $routes->group('auth', ['namespace' => 'App\Controllers', 'filter' => 'cors'], function ($routes) {
     $routes->post('register', 'Auth::register');
