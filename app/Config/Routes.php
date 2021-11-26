@@ -158,7 +158,7 @@ $routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 
     $routes->post('voucher', 'Home::redeem_voucher');
     $routes->post('payment/course', 'Home::payment');
     $routes->get('course/my/(:num)', 'Home::my_course/$1');
-    $routes->get('course/my/lesson/(:num)', 'Home::my_lesson/$1');
+    $routes->get('course/my/lesson', 'Home::my_lesson');
     $routes->post('lesson/update/progress', 'Home::watch_history');
     $routes->get('lesson/progress/(:num)', 'Home::get_watch_history/$1');
     $routes->get('comments', 'Comment::index');

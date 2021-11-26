@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\UsersDetailModel;
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\UsersModel;
 use Config\Services;
@@ -16,6 +17,7 @@ class Auth extends ResourceController
     public function __construct()
     {
         $this->model = new UsersModel();
+        $this->model_users_detail = new UsersDetailModel();
         helper(['response', 'cookie']);
         $this->validation = \Config\Services::validation();
     }
@@ -63,6 +65,16 @@ class Auth extends ResourceController
                 'is_verified' => 'deactive',
                 'create_at' => strtotime(date('D,d-M-Y'))
             ]);
+            $search_latest_user = $this->model->where('email', $register_data->email)->first();
+
+            if (!is_null($search_latest_user)) {
+                $this->model_users_detail->insert([
+                    'id_user' => $search_latest_user['id'],
+                    'is_instructor' => 0
+                ]);
+            } else {
+                return $this->failValidationErrors('failed create!');
+            }
 
             return $this->respondCreated(response_register());
         }

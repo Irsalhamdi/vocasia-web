@@ -49,4 +49,10 @@ class UsersDetailModel extends Model
             return null;
         }
     }
+
+    public function is_instructor_user($id_user)
+    {
+        $find_instructor = $this->db->table($this->table)->select('is_instructor')->where('id_user', $id_user)->get()->getRowObject();
+        return $find_instructor->is_instructor;
+    }
 }

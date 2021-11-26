@@ -16,7 +16,8 @@ class Home extends FrontendController
             'id_user' => $data_user['id'],
             'fullname' => $data_user['first_name'] . ' ' . $data_user['last_name'],
             'email' => $data_user['email'],
-            'foto_profile' => $this->model_users->get_foto_profile($data_user['id'])
+            'foto_profile' => $this->model_users->get_foto_profile($data_user['id']),
+            'is_instructor' => $this->model_users_detail->is_instructor_user($data_user['id']),
         ];
         return $this->respond(get_response($data_response));
     }
@@ -29,7 +30,7 @@ class Home extends FrontendController
             $data = array();
             foreach ($course_by_category as $key => $cbc) {
 
-                $lesson = $this->model_course->get_lesson_duration($cbc['id']);
+                $lesson = $this->model_course->get_lesson_duration(['course_id' => $cbc['id']]);
                 $total_students = $this->model_enrol->get_count_enrols_courses($cbc['id']);
                 $rating_review = $this->model_course->get_rating_courses($cbc['id']);
                 $duration = $this->get_duration($lesson);
@@ -220,117 +221,83 @@ class Home extends FrontendController
     public function filter()
     {
         $filter = array();
-        if ($this->request->getVar('category')) { //get berdasarkan category
-            if ($this->request->getVar('price')) { //category -> price
-                if ($this->request->getVar('level')) { // cateogry -> price ->
-                    if ($this->request->getVar('language')) {
-                        if ($this->request->getVar('rating')) {
-                            $filter = [
-                                'a.is_free_course' => $this->request->getVar('price'),
-                                'a.category_id' => $this->request->getVar('category'),
-                                'a.level_course' => $this->request->getVar('level'),
-                                'a.language' => $this->request->getVar('language'),
-                                'd.rating' => $this->request->getVar('rating')
 
-                            ];
-                            $data_filter_rating = $this->model_course->get_rating_from_filter($filter);
-                            $data = $this->course_data($data_filter_rating);
-                            return $this->respond(get_response($data));
-                        } else {
-                            $filter = [
-                                'a.is_free_course' => $this->request->getVar('price'),
-                                'a.category_id' => $this->request->getVar('category'),
-                                'a.level_course' => $this->request->getVar('level'),
-                                'a.language' => $this->request->getVar('language')
-
-                            ];
-                            var_dump($filter);
-                            die;
-                        }
-                    } else {
-                        $filter = [
-                            'a.is_free_course' => $this->request->getVar('price'),
-                            'a.category_id' => $this->request->getVar('category'),
-                            'a.level_course' => $this->request->getVar('level')
-
-                        ];
-                    }
-                } else {
-                    $filter = [
-                        'a.is_free_course' => $this->request->getVar('price'),
-                        'a.category_id' => $this->request->getVar('category')
-
-                    ];
-                }
-            } else {
-                $filter = [
-                    'a.category_id' => $this->request->getVar('category')
-                ];
+        if ($this->request->getVar()) {
+            if ($this->request->getVar('category')) {
+                $category = $this->request->getVar('category');
+                $filter[0]["a.category_id"] = $category;
             }
-        } else if ($this->request->getVar('price')) {
-            $filter = [
-                'a.is_free_course' => $this->request->getVar('price')
-            ];
-        } else if ($this->request->getVar('level')) {
-            $filter = [
-                'a.level_course' => $this->request->getVar('level')
-            ];
-        } else if ($this->request->getVar('language')) {
-            $filter = [
-                'a.language' => $this->request->getVar('language')
-            ];
-        } else if ($this->request->getVar('rating')) {
-            $filter = [
-                'rating' => $this->request->getVar('rating')
-            ];
-            $data_filter_rating = $this->model_course->get_rating_from_filter($filter);
-            $data = $this->course_data($data_filter_rating);
-            return $this->respond(get_response($data));
-        }
-        $data_filter = $this->model_course->advanced_filter($filter);
-        $data = $this->course_data($data_filter);
-        if (!is_null($data)) {
-
-            return $this->respond(get_response($data));
+            if ($this->request->getVar('price')) {
+                $price = $this->request->getVar('price');
+                $filter[0]["a.is_free_course"] = $price;
+            }
+            if ($this->request->getVar('level')) {
+                $level = $this->request->getVar('level');
+                $filter[0]["a.level_course"] = $level;
+            }
+            if ($this->request->getVar('language')) {
+                $language = $this->request->getVar('language');
+                $filter[0]["a.language"] = $language;
+            }
+            if ($this->request->getVar('rating')) {
+                $rating = $this->request->getVar('rating');
+                $filter[0]["d.rating"] = $rating;
+            }
+            if (empty($this->request->getVar('rating'))) {
+                $data_filter = $this->model_course->advanced_filter($filter[0]);
+                if (is_null($data_filter)) {
+                    return $this->failNotFound('not found!');
+                }
+                $data_response = $this->course_data($data_filter);
+                return $this->respond(get_response($data_response));
+            } else {
+                $data_filter_rating = $this->model_course->get_rating_from_filter($filter[0]);
+                if (is_null($data_filter_rating)) {
+                    return $this->failNotFound('not found!');
+                }
+                $data_response = $this->course_data($data_filter_rating);
+                return $this->respond(get_response($data_response));
+            }
         } else {
-            return $this->failNotFound();
+            return $this->failNotFound('not found !');
         }
     }
 
     public function course_data($course_data)
     {
-        $data = NULL;
-        try {
-            foreach ($course_data as $key => $cd) {
-
-                $lesson = $this->model_course->get_lesson_duration($cd['id']);
-                $total_students = $this->model_enrol->get_count_enrols_courses($cd['id']);
-                $rating_review = $this->model_course->get_rating_courses($cd['id']);
-                $duration = $this->get_duration($lesson);
-                $get_discount_percent = ($cd['dicount_price'] / $cd['price']) * 100;
-                $discount = intval($get_discount_percent);
-                $data[$key] = [
-                    "title" =>  $cd['title'],
-                    "short_description" => $cd['short_description'],
-                    "price" => $cd['price'],
-                    "instructor_name" => $cd['instructor_name'],
-                    "discount_flag" => $cd['discount_flag'],
-                    "discount_price" => $cd['discount_price'],
-                    "thumbnail" => $this->model_course->get_thumbnail($cd['id']),
-                    "level_course" => $cd['level_course'],
-                    "total_lesson" => $cd['total_lesson'],
-                    "language" => $cd['language'],
-                    "duration" => $duration,
-                    "students" => $total_students,
-                    "rating" => $rating_review,
-                    "total_discount" => $discount
-
-                ];
+        $data = array();
+        foreach ($course_data as $key => $cd) {
+            $lesson = $this->model_course->get_lesson_duration(['course_id' => $cd['id']]);
+            $total_students = $this->model_enrol->get_count_enrols_courses($cd['id']);
+            $rating_review = $this->model_course->get_rating_courses($cd['id']);
+            $duration = $this->get_duration($lesson);
+            if ($cd['discount_price'] != 0) {
+                $get_discount_percent = ($cd['discount_price'] / $cd['price']) * 100;
+            } elseif ($cd['discount_price'] == 0) {
+                $get_discount_percent = 0;
             }
-            return $data;
-        } catch (\Throwable $th) {
-            return $this->failNotFound('Data Not Found !');
+            $discount = intval($get_discount_percent);
+            $data[$key] = [
+                "id_course" => $cd['id'],
+                "instructor_id" => $cd["instructor_id"],
+                "title" =>  $cd['title'],
+                "short_description" => $cd['short_description'],
+                "price" => $cd['price'],
+                "instructor_name" => $cd['instructor_name'],
+                "discount_flag" => $cd['discount_flag'],
+                "discount_price" => $cd['discount_price'],
+                "thumbnail" => $this->model_course->get_thumbnail($cd['id']),
+                "level_course" => $cd['level_course'],
+                "total_lesson" => $cd['total_lesson'],
+                "language" => $cd['language'],
+                "duration" => $duration,
+                "students" => $total_students,
+                "rating" => $rating_review,
+                "total_discount" => $discount
+
+            ];
         }
+        return $data;
     }
     public function detail_courses($id_course)
     {
@@ -637,16 +604,20 @@ class Home extends FrontendController
     {
         $data = array();
         $my_course = $this->model_course->my_course($user_id);
-        foreach ($my_course as $key => $values) {
-            $data[$key] = [
-                'instructor' => $values->instructor_name,
-                'title' => $values->title,
-                'thumbnail' => $this->model_course->get_thumbnail($values->cid),
-                'rating' => $this->model_course->rating_from_user($user_id, $values->cid)
-            ];
+        if (!empty($my_course)) {
+            foreach ($my_course as $key => $values) {
+                $data[$key] = [
+                    'course_id' => $values->cid,
+                    'instructor' => $values->instructor_name,
+                    'title' => $values->title,
+                    'thumbnail' => $this->model_course->get_thumbnail($values->cid),
+                    'rating' => $this->model_course->rating_from_user($user_id, $values->cid)
+                ];
+            }
+            return $this->respond(get_response($data));
+        } else {
+            return $this->failNotFound();
         }
-
-        return $this->respond(get_response($data));
     }
 
     public function course_payment()
@@ -658,10 +629,21 @@ class Home extends FrontendController
         return $this->respondCreated(response_create());
     }
 
-    public function my_lesson($course_id)
+    public function my_lesson()
     {
-        $data_lesson = $this->model_course->get_my_lesson($course_id);
-        return $this->respond(get_response($data_lesson));
+        $course_id = $this->request->getVar('course');
+        $user_id = $this->request->getVar('user');
+        $where = [
+            'course_id' => $course_id,
+            'user_id' => $user_id
+        ];
+        $check_user = $this->model_enrol->where($where)->first();
+        if (!is_null($check_user)) {
+            $data_lesson = $this->model_course->get_my_lesson($course_id);
+            return $this->respond(get_response($data_lesson));
+        } else {
+            return $this->failForbidden('Cannot Access This Course');
+        }
     }
 
     public function watch_history()
