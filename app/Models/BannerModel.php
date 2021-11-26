@@ -39,4 +39,24 @@ class BannerModel extends Model
     protected $afterFind            = [];
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
+
+    public function get_banner($id = null)
+    {
+        if ($id == null) {
+            return $this->findAll();
+        } else {
+            return $this->where('id_b', $id)->first();
+        }
+    }
+
+    public function get_img($id)
+    {
+        $folder = "uploads/banner_img/banner_default_$id.jpg";
+        if (file_exists($folder)) {
+            return base_url() . '/' . $folder;
+        } else {
+            return null;
+        }
+    }
+    
 }

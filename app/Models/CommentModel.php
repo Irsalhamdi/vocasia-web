@@ -4,27 +4,29 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class UsersDetailModel extends Model
+class CommentModel extends Model
 {
     protected $DBGroup              = 'default';
-    protected $table                = 'user_detail';
+    protected $table                = 'comment';
     protected $primaryKey           = 'id';
     protected $useAutoIncrement     = true;
     protected $insertID             = 0;
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['id_user', 'foto_profile', 'biography', 'datebirth', 'phone', 'bank_account_id', 'is_instructor', 'jenis_kel'];
+    protected $allowedFields        = ['body','user_id','commentable_id','commentable_type','date_added','last_modified'];
 
     // Dates
-    protected $useTimestamps        = false;
-    protected $dateFormat           = 'datetime';
-    protected $createdField         = 'created_at';
-    protected $updatedField         = 'updated_at';
+    protected $useTimestamps        = true;
+    protected $dateFormat           = 'int';
+    protected $createdField         = 'date_added';
+    protected $updatedField         = 'last_modified';
     protected $deletedField         = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'user_id' => 'required',
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
@@ -40,19 +42,12 @@ class UsersDetailModel extends Model
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
 
-    public function get_profile_users($id_user)
+    public function get_comment($id = null)
     {
-        $folder = "uploads/foto_profile/foto_profile_default_$id_user.jpg";
-        if (file_exists($folder)) {
-            return base_url() . '/' . $folder;
+        if ($id == null) {
+            return $this->findAll();
         } else {
-            return null;
+            return $this->where('id', $id)->first();
         }
-    }
-
-    public function is_instructor_user($id_user)
-    {
-        $find_instructor = $this->db->table($this->table)->select('is_instructor')->where('id_user', $id_user)->get()->getRowObject();
-        return $find_instructor->is_instructor;
     }
 }

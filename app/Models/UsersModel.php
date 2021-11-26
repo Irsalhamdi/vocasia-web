@@ -81,4 +81,9 @@ class UsersModel extends Model
             return null;
         }
     }
+
+    public function get_instructor_list()
+    {
+        return $this->db->table('users a')->select("a.id,concat(a.first_name,' ',a.last_name) as instructor_name")->join('user_detail b', 'b.id_user = a.id')->where('b.is_instructor', 1)->get()->getResult();
+    }
 }

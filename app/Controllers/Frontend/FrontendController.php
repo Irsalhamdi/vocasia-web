@@ -44,5 +44,8 @@ class FrontendController extends ResourceController
         $this->model_watch = model('WatchHistoryModel');
         $this->model_affiliate = model('AffiliateModel');
         $this->model_payment_balance = model('PaymentBalanceModel');
+        $this->model_guide_user = model('GuideUserInstructorModel');
+        $this->model_banner = model('BannerModel');
+        $this->model_comment = model('CommentModel');
     }
 }
