@@ -103,6 +103,11 @@ $routes->group('instructor', ['namespace' => 'App\Controllers\Frontend', 'filter
     $routes->get('question/(:num)', 'Question::index/$1');
     $routes->get('paymentbalance/(:num)', 'PaymentBalance::index/$1');
     $routes->post('paymentbalance', 'PaymentBalance::create');
+    $routes->get('guide-users', 'GuideUserInstructor::index');
+    $routes->get('guide-user/(:num)', 'GuideUserInstructor::show/$1');
+    $routes->post('guide-user', 'GuideUserInstructor::create');
+    $routes->put('guide-user/(:num)', 'GuideUserInstructor::update/$1');
+    $routes->delete('guide-user/(:num)', 'GuideUserInstructor::delete/$1');
 });
 $routes->group('homepage', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'cors'], function ($routes) {
     $routes->get('courses', 'Home::get_all_courses');
@@ -114,6 +119,12 @@ $routes->group('homepage', ['namespace' => 'App\Controllers\Frontend', 'filter' 
     $routes->get('course/detail/instructor/(:num)', 'Home::get_instructor_student/$1');
     $routes->get('section/(:num)', 'Home::get_sections/$1');
     $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
+    $routes->get('banners', 'Banner::index');
+    $routes->get('banner/(:num)', 'Banner::show/$1');
+    $routes->post('banner', 'Banner::create');
+    $routes->post('banner-img/(:num)', 'Banner::img/$1');
+    $routes->put('banner/(:num)', 'Banner::update/$1');
+    $routes->delete('banner/(:num)', 'Banner::delete/$1');
 });
 $routes->group('mobile', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'cors'], function ($routes) {
     $routes->get('courses', 'Home::get_all_courses');
@@ -125,6 +136,12 @@ $routes->group('mobile', ['namespace' => 'App\Controllers\Frontend', 'filter' =>
     $routes->get('course/detail/instructor/(:num)', 'Home::get_instructor_student/$1');
     $routes->get('section/(:num)', 'Home::get_sections/$1');
     $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
+    $routes->get('banners', 'Banner::index');
+    $routes->get('banner/(:num)', 'Banner::show/$1');
+    $routes->post('banner', 'Banner::create');
+    $routes->post('banner-img/(:num)', 'Banner::img/$1');
+    $routes->put('banner/(:num)', 'Banner::update/$1');
+    $routes->delete('banner/(:num)', 'Banner::delete/$1');
 });
 $routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user,cors'], function ($routes) {
     $routes->get('me', 'Home::detail_users_login');
@@ -144,6 +161,11 @@ $routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 
     $routes->get('course/my/lesson', 'Home::my_lesson');
     $routes->post('lesson/update/progress', 'Home::watch_history');
     $routes->get('lesson/progress/(:num)', 'Home::get_watch_history/$1');
+    $routes->get('comments', 'Comment::index');
+    $routes->get('comment/(:num)', 'Comment::show/$1');
+    $routes->post('comment', 'Comment::create');
+    $routes->put('comment/(:num)', 'Comment::update/$1');
+    $routes->delete('comment/(:num)', 'Comment::delete/$1');
 });
 
 $routes->group('affiliate', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user,cors'], function ($routes) {
