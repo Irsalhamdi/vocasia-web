@@ -3,6 +3,7 @@
 namespace App\Controllers\Frontend;
 
 use App\Controllers\Frontend\FrontendController;
+use CodeIgniter\I18n\Time;
 
 class Home extends FrontendController
 {
@@ -326,7 +327,7 @@ class Home extends FrontendController
                 'bio' => strip_tags($this->model_course->get_bio_instructor(['id_user' => $courses->uid, 'bio_status' => $courses->bio_status, 'bio_instructor' => $courses->bio_instructor])),
                 'rating' => $this->model_course->get_rating_courses($courses->id),
                 'total_discount' => $discount,
-                'last_modified' => $courses->update_at
+                'last_modified' => $this->_generate_humanize_timestamps($courses->update_at)
             ];
         }
         return $this->respond(get_response($data));
@@ -683,5 +684,31 @@ class Home extends FrontendController
 
         ]);
         return $this->respondCreated(response_create());
+    }
+
+    private function _generate_humanize_timestamps($time)
+    {
+        $date_stamps = Time::createFromTimestamp($time, 'Asia/Jakarta', 'en_US');
+        $get_date =  $date_stamps->toDateTimeString();
+        $exp = explode('-', $get_date);
+        $date = substr($exp[2], 0, 2);
+        $month_in_bahasa = [
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember'
+
+        ];
+        $month = $exp[1];
+        $formated_humanize = $date . ' ' . $month_in_bahasa[$exp[1]] . ' ' . $exp[0];
+        return $formated_humanize;
     }
 }
