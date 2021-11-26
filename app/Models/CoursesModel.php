@@ -265,4 +265,15 @@ class CoursesModel extends Model
             ->where('status_course', 'active')
             ->where('(is_free_course is null OR is_free_course = 0)')->get()->getResultArray();
     }
+
+    public function search_course($keyword)
+    {
+        $course_data = $this->db->table('courses a')->select("a.title,a.short_description,a.price,concat(c.first_name,' ',c.last_name) as instructor_name,a.discount_flag,a.discount_price,a.thumbnail,a.level_course,COUNT(b.course_id) as total_lesson,a.id,c.id as instructor_id,a.language")->join('lesson b', 'b.course_id = a.id')->join('users c', 'c.id = a.user_id')->like('a.title', $keyword)->groupBy('b.course_id')->get()->getResultArray();
+
+        if (!empty($course_data)) {
+            return $course_data;
+        } else {
+            return null;
+        }
+    }
 }

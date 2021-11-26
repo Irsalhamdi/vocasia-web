@@ -81,6 +81,11 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => '
     $routes->delete('lesson-admin/(:num)', 'LessonAdmin::delete/$1');
     $routes->get('dashboard-admin', 'Dashboard::index');
     $routes->get('course/info', 'Courses::info_courses');
+    $routes->get('banner/(:num)', 'Banner::show/$1');
+    $routes->post('banner', 'Banner::create');
+    $routes->post('banner-img/(:num)', 'Banner::img/$1');
+    $routes->put('banner/(:num)', 'Banner::update/$1');
+    $routes->delete('banner/(:num)', 'Banner::delete/$1');
 });
 $routes->group('auth', ['namespace' => 'App\Controllers', 'filter' => 'cors'], function ($routes) {
     $routes->post('register', 'Auth::register');
@@ -120,11 +125,7 @@ $routes->group('homepage', ['namespace' => 'App\Controllers\Frontend', 'filter' 
     $routes->get('section/(:num)', 'Home::get_sections/$1');
     $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
     $routes->get('banners', 'Banner::index');
-    $routes->get('banner/(:num)', 'Banner::show/$1');
-    $routes->post('banner', 'Banner::create');
-    $routes->post('banner-img/(:num)', 'Banner::img/$1');
-    $routes->put('banner/(:num)', 'Banner::update/$1');
-    $routes->delete('banner/(:num)', 'Banner::delete/$1');
+    $routes->get('course/search', 'Home::search_keyword_course');
 });
 $routes->group('mobile', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'cors'], function ($routes) {
     $routes->get('courses', 'Home::get_all_courses');
@@ -137,13 +138,8 @@ $routes->group('mobile', ['namespace' => 'App\Controllers\Frontend', 'filter' =>
     $routes->get('section/(:num)', 'Home::get_sections/$1');
     $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
     $routes->get('banners', 'Banner::index');
-    $routes->get('banner/(:num)', 'Banner::show/$1');
-    $routes->post('banner', 'Banner::create');
-    $routes->post('banner-img/(:num)', 'Banner::img/$1');
-    $routes->put('banner/(:num)', 'Banner::update/$1');
-    $routes->delete('banner/(:num)', 'Banner::delete/$1');
 });
-$routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user,cors'], function ($routes) {
+$routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'cors'], function ($routes) {
     $routes->get('me', 'Home::detail_users_login');
     $routes->get('wishlist', 'Home::wishlist');
     $routes->post('wishlist', 'Home::add_to_wishlist');

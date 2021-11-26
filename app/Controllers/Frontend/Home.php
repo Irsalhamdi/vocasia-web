@@ -89,6 +89,21 @@ class Home extends FrontendController
         return $this->respond(get_response($data));
     }
 
+    public function search_keyword_course()
+    {
+        $keyword = $this->request->getVar('keyword');
+        if ($keyword) {
+            $course = $this->model_course->search_course($keyword);
+            if (is_null($course)) {
+                return $this->failNotFound();
+            } else {
+                $course_search_data = $this->course_data($course);
+                return $this->respond(get_response($course_search_data));
+            }
+        } else {
+            return $this->failNotFound();
+        }
+    }
     public function get_all_category()
     {
         $list_category = $this->model_category->list_category_home();
@@ -177,6 +192,17 @@ class Home extends FrontendController
         $find_price_course = $this->model_course->get_prices_for_cart($data_cart->cart_item);
         $price = $find_price_course->discount_flag != 0 ? $find_price_course->discount_price : $find_price_course->price;
         if (!is_null($find_price_course)) {
+            $check_cart = $this->model_cart->where(['id_user' => $data_cart->id_user, 'cart_item' => $data_cart->cart_item])->first();
+            if ($check_cart) {
+                $this->model_cart->delete($check_cart['id']);
+                return $this->respondDeleted([
+                    'status' => 200,
+                    'error' => false,
+                    'data' => [
+                        'messages' => 'cart delete !'
+                    ]
+                ]);
+            }
             $this->model_cart->insert([
                 'id_user' => $data_cart->id_user,
                 'cart_item' => $data_cart->cart_item,
