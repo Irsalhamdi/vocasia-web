@@ -34,6 +34,11 @@ class Home extends FrontendController
                 $lesson = $this->model_course->get_lesson_duration(['course_id' => $cbc['id']]);
                 $total_students = $this->model_enrol->get_count_enrols_courses($cbc['id']);
                 $rating_review = $this->model_course->get_rating_courses($cbc['id']);
+                if ($cbc['discount_price'] != 0) {
+                    $get_discount_percent = ($cbc['discount_price'] / $cbc['price']) * 100;
+                } elseif ($cbc['discount_price'] == 0) {
+                    $get_discount_percent = 0;
+                }
                 $duration = $this->get_duration($lesson);
                 $data[$key] = [
                     "id_course" => $cbc['id'],
@@ -49,7 +54,8 @@ class Home extends FrontendController
                     "total_lesson" => $cbc['total_lesson'],
                     "duration" => $duration,
                     "students" => $total_students,
-                    "rating" => $rating_review
+                    "rating" => $rating_review,
+                    "total_discount" => $get_discount_percent
 
                 ];
             }
