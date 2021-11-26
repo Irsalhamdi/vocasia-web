@@ -58,4 +58,5 @@ class BannerModel extends Model
             return null;
         }
     }
+    
 }
