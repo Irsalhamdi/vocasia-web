@@ -38,7 +38,7 @@ class Home extends FrontendController
                     "id_course" => $cbc['id'],
                     "instructor_id" => $cbc["instructor_id"],
                     "title" =>  $cbc['title'],
-                    "short_description" => $cbc['short_description'],
+                    "short_description" => strip_tags($cbc['short_description']),
                     "price" => $cbc['price'],
                     "instructor_name" => $cbc['instructor_name'],
                     "discount_flag" => $cbc['discount_flag'],
@@ -281,7 +281,7 @@ class Home extends FrontendController
                 "id_course" => $cd['id'],
                 "instructor_id" => $cd["instructor_id"],
                 "title" =>  $cd['title'],
-                "short_description" => $cd['short_description'],
+                "short_description" => strip_tags($cd['short_description']),
                 "price" => $cd['price'],
                 "instructor_name" => $cd['instructor_name'],
                 "discount_flag" => $cd['discount_flag'],
@@ -316,16 +316,17 @@ class Home extends FrontendController
                 'level_course' => $courses->level_course,
                 'total_lesson' => $courses->total_lesson,
                 'total_students' => $total_students,
-                'description' => $courses->description,
+                'description' => strip_tags($courses->description),
                 'outcome' => $courses->outcomes,
                 'requirement' => $courses->requirement,
                 'price' => $courses->price,
                 'discount_price' => $courses->discount_price,
                 'video_url' => $courses->video_url,
                 'total_duration' => $total_duration,
-                'bio' => $this->model_course->get_bio_instructor(['id_user' => $courses->uid, 'bio_status' => $courses->bio_status, 'bio_instructor' => $courses->bio_instructor]),
+                'bio' => strip_tags($this->model_course->get_bio_instructor(['id_user' => $courses->uid, 'bio_status' => $courses->bio_status, 'bio_instructor' => $courses->bio_instructor])),
                 'rating' => $this->model_course->get_rating_courses($courses->id),
-                'total_discount' => $discount
+                'total_discount' => $discount,
+                'last_modified' => $courses->update_at
             ];
         }
         return $this->respond(get_response($data));

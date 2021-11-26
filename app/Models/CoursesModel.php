@@ -149,7 +149,7 @@ class CoursesModel extends Model
 
     public function detail_course_for_homepage($id_course)
     {
-        return $this->db->table('courses a')->select("a.id,CONCAT(b.first_name,' ',b.last_name) as instructor_name,a.level_course,COUNT(d.course_id) as total_lesson,a.description,a.outcomes,a.requirement,a.bio_status,a.price,a.discount_price,a.video_url,a.bio_instructor,b.id as uid")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->join('lesson d', 'd.course_id = a.id')->where('a.id', $id_course)->get()->getResult();
+        return $this->db->table('courses a')->select("a.id,CONCAT(b.first_name,' ',b.last_name) as instructor_name,a.level_course,COUNT(d.course_id) as total_lesson,a.description,a.outcomes,a.requirement,a.bio_status,a.price,a.discount_price,a.video_url,a.bio_instructor,b.id as uid,a.update_at")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->join('lesson d', 'd.course_id = a.id')->where('a.id', $id_course)->get()->getResult();
     }
     public function get_bio_instructor($data)
     {
