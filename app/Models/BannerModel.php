@@ -14,13 +14,13 @@ class BannerModel extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['img','img_web_mobile_version','url','status','date'];
+    protected $allowedFields        = ['img', 'img_web_mobile_version', 'url', 'status', 'date'];
 
     // Dates
-    protected $useTimestamps        = true;
+    protected $useTimestamps        = false;
     protected $dateFormat           = 'datetime';
-    protected $createdField         = 'date';
-    protected $updatedField         = '';
+    protected $createdField         = 'created_at';
+    protected $updatedField         = 'updated_at';
     protected $deletedField         = 'deleted_at';
 
     // Validation
