@@ -13,16 +13,16 @@ class Category extends BackendController
         $data_catgeory = $this->model_category->get_category();
         foreach ($data_catgeory as $category) {
             $data[] = [
-            "id" => $category['id'],
-            "code_category" => $category['code_category'],
-            "name_category" => $category['name_category'],
-            "parent_category" => $category['parent_category'],
-            "slug_category" => $category['slug_category'],
-            "font_awesome_class" => $category['font_awesome_class'],
-            "thumbnail" => $this->model_category->get_thumbnail($category['id']),
-            "create_at" => $category['create_at'],
-            "update_at" => $category['update_at']
-        ];
+                "id" => $category['id'],
+                "code_category" => $category['code_category'],
+                "name_category" => $category['name_category'],
+                "parent_category" => $category['parent_category'],
+                "slug_category" => $category['slug_category'],
+                "font_awesome_class" => $category['font_awesome_class'],
+                "thumbnail" => $this->model_category->get_thumbnail($category['id']),
+                "create_at" => $category['create_at'],
+                "update_at" => $category['update_at']
+            ];
         }
         return $this->respond(get_response($data));
     }
@@ -75,7 +75,7 @@ class Category extends BackendController
         } elseif ($data_by_id) {
             $data_category = $this->request->getJSON();
             $slug_category = url_title($data_category->name_category);
-            
+
             $data_category->slug_category = $slug_category;
 
             $this->model_category->protect(false)->update($params, $data_category);
@@ -105,27 +105,25 @@ class Category extends BackendController
         ];
         if (!$this->validate($rules)) {
             return $this->fail('Failed To Upload Image Please Try Again');
-        }else {
+        } else {
             if ($data_category) {
+                $path = "uploads/category_thumbnail";
+                if (!file_exists($path)) {
+                    mkdir($path);
+                }
                 $thumbnail = $this->request->getFile('thumbnail');
                 $name = "category_thumbnail_default_$params.jpg";
-        
-                $data = [
-                'id' => $params,
-                'thumbnail'  => $name
-                ];
-                if ($data_category['thumbnail']) {
-                    unlink('uploads/category_thumbnail/' . $data_category['thumbnail']);    
+                $path_photo = $path . '/' . $name;
+                if (file_exists($path_photo)) {
+                    unlink('uploads/category_thumbnail/' . $name);
                 }
                 $thumbnail->move('uploads/category_thumbnail/', $name);
-                $this->model_category->update($params, $data);
-                
-                return $this->respondCreated(response_create());
+                // $this->model_category->update($params, $data);
 
-            }else {
+                return $this->respondCreated(response_create());
+            } else {
                 return $this->failNotFound();
             }
         }
-        
     }
 }

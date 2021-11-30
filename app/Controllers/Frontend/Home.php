@@ -55,7 +55,7 @@ class Home extends FrontendController
                     "duration" => $duration,
                     "students" => $total_students,
                     "rating" => $rating_review,
-                    "total_discount" => $get_discount_percent
+                    "total_discount" => intval($get_discount_percent)
 
                 ];
             }
@@ -344,6 +344,7 @@ class Home extends FrontendController
             $discount = intval($get_discount_percent);
             $data[$key] = [
                 'id' => $courses->id,
+                'title' => $courses->title,
                 'instructor_id' => $courses->uid,
                 'instructor' => $courses->instructor_name,
                 'level_course' => $courses->level_course,

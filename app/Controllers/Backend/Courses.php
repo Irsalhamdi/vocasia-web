@@ -157,20 +157,19 @@ class Courses extends BackendController
             return $this->fail('Failed To Upload Image Please Try Again');
         } else {
             if ($data_course) {
+                $path = 'uploads/courses_thumbnail';
+                if (!file_exists($path)) {
+                    mkdir($path);
+                }
                 $id_course_thumbnail = $data_course['id'];
+                $path_folder = `uploads/courses_thumbnail/course_thumbnail_default_$id_course_thumbnail.jpg`;
                 $thumbnail = $this->request->getFile('thumbnail');
                 $name = "course_thumbnail_default_$id_course_thumbnail.jpg";
-
-                $data = [
-                    'id' => $id_course,
-                    'thumbnail'  => $name
-                ];
-                if ($data_course['thumbnail']) {
-                    unlink('uploads/courses_thumbnail/' . $data_course['thumbnail']);
+                if (file_exists($path_folder)) {
+                    unlink('uploads/courses_thumbnail/' . $name);
                 }
                 $thumbnail->move('uploads/courses_thumbnail/', $name);
-                $this->model_course->update($id_course, $data);
-
+                // $this->model_course->update($id_course, $data);
                 return $this->respondCreated(response_create());
             } else {
                 return $this->failNotFound();
