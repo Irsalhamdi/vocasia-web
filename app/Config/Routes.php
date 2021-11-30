@@ -154,7 +154,7 @@ $routes->group('mobile', ['namespace' => 'App\Controllers\Frontend', 'filter' =>
     $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
     $routes->get('banners', 'Banner::index');
 });
-$routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'cors'], function ($routes) {
+$routes->group('users', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
     $routes->get('me', 'Home::detail_users_login');
     $routes->get('wishlist', 'Home::wishlist');
     $routes->post('wishlist', 'Home::add_to_wishlist');
@@ -172,9 +172,8 @@ $routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 
     $routes->get('course/my/lesson', 'Home::my_lesson');
     $routes->post('lesson/update/progress', 'Home::watch_history');
     $routes->get('lesson/progress/(:num)', 'Home::get_watch_history/$1');
-    $routes->get('comments', 'Comment::index');
     $routes->get('comment/(:num)', 'Comment::show/$1');
-    $routes->post('comment', 'Comment::create');
+    $routes->post('create-comment/(:num)', 'Comment::create_by_course/$1');
     $routes->put('comment/(:num)', 'Comment::update/$1');
     $routes->delete('comment/(:num)', 'Comment::delete/$1');
 });
