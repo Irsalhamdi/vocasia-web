@@ -229,7 +229,7 @@ class Home extends FrontendController
             'datebirth' => $user_detail->datebirth,
             'phone' => $user_detail->phone
         ];
-        return $this->respond(get_response($user_detail));
+        return $this->respond(get_response($data));
     }
 
     public function get_duration($lesson_duration)
