@@ -438,6 +438,12 @@ class Home extends FrontendController
             'phone' => [
                 'rules' => 'required'
             ],
+            'phone' => [
+                'rules' => 'required'
+            ],
+            'datebirth' => [
+                'rules' => 'required'
+            ],
         ];
 
         if (!$this->validate($rules)) {
@@ -462,6 +468,7 @@ class Home extends FrontendController
                     $user['id_user'] = $id;
                     $user['biography'] = $update->biography;
                     $user['phone'] = $update->phone;
+                    $user['datebirth'] = $update->datebirth;
                     $this->model_users_detail->where('id_user', $id)->set($user)->update();
 
                     if (!empty($update->social_link)) {
