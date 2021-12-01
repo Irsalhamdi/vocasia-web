@@ -438,15 +438,6 @@ class Home extends FrontendController
             'phone' => [
                 'rules' => 'required'
             ],
-            'facebook_link' => [
-                'rules' => 'required'
-            ],
-            'instagram' => [
-                'rules' => 'required'
-            ],
-            'twitter_link' => [
-                'rules' => 'required'
-            ],
         ];
 
         if (!$this->validate($rules)) {
