@@ -218,7 +218,7 @@ class CoursesModel extends Model
     }
     public function get_rating_by_star($id_course, $star)
     {
-        return $this->db->table('rating a')->select("CONCAT(b.first_name,' ',b.last_name) as user,a.review,a.rating")->join('users b', 'b.id = a.user_id')->where(['ratable_id' => $id_course, 'rating' => $star])->get()->getResultObject();
+        return $this->db->table('rating a')->select("CONCAT(b.first_name,' ',b.last_name) as user,a.review,a.rating,a.create_at")->join('users b', 'b.id = a.user_id')->where(['ratable_id' => $id_course, 'rating' => $star])->get()->getResultObject();
     }
 
     public function verify_redeem_voucher($code_voucher, $course_id)

@@ -92,11 +92,11 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => '
     $routes->post('update-favicon-logo', 'Setting::update_favicon_logo_settings');
     $routes->get('payment-settings', 'Setting::payment_settings');
     $routes->put('update-payment-settings', 'Setting::update_payment_settings');
-    $routes->put('update-paypal-settings', 'Setting::update_paypal_settings');    
+    $routes->put('update-paypal-settings', 'Setting::update_paypal_settings');
     $routes->put('update-stripe-settings', 'Setting::update_stripe_settings');
     $routes->get('instructor-settings', 'Setting::instructor_settings');
     $routes->put('update-instructor-settings', 'Setting::update_instructor_settings');
-    $routes->get('manage-language', 'Setting::manage_language');    
+    $routes->get('manage-language', 'Setting::manage_language');
     $routes->get('smtp-settings', 'Setting::smtp_settings');
     $routes->put('update-smtp-settings', 'Setting::update_smtp_settings');
     $routes->get('theme-settings', 'Setting::theme_settings');
