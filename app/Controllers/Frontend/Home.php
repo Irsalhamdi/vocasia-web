@@ -223,6 +223,12 @@ class Home extends FrontendController
     public function users_detail($id_user)
     {
         $user_detail = $this->model_users->get_detail_users($id_user);
+        $data = [
+            'fullname' => $user_detail->first_name . ' ' . $user_detail->last_name,
+            'biography' => $user_detail->biography,
+            'datebirth' => $user_detail->datebirth,
+            'phone' => $user_detail->phone
+        ];
         return $this->respond(get_response($user_detail));
     }
 
