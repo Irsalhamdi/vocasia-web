@@ -500,7 +500,7 @@ class Home extends FrontendController
 
         $rules = [
             'email' => [
-                'rules' => 'required|valid_email|is_unique[users.email]'
+                'rules' => 'required|valid_email'
             ],
             'old_password' => [
                 'rules' => 'required|min_length[6]'
