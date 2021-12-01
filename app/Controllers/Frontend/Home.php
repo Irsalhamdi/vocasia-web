@@ -475,9 +475,9 @@ class Home extends FrontendController
                             $this->model_users_social_link->where('id_user', $id)->set($user)->update();
                         } else {
                             $user['id_user'] = $id;
-                            $user['facebook'] = $update->social_link->facebook;
-                            $user['instagram'] = $update->social_link->instagram;
-                            $user['twitter'] = $update->social_link->twitter;
+                            $user['facebook'] = !empty($update->social_link->facebook) ? $update->social_link->facebook : null;
+                            $user['instagram'] = !empty($update->social_link->instagram) ? $update->social_link->instagram : null;
+                            $user['twitter'] = !empty($update->social_link->twitter) ? $update->social_link->twitter : null;
                             $this->model_users_social_link->save($user);
                         }
                     }
