@@ -462,23 +462,24 @@ class Home extends FrontendController
                     $user['id_user'] = $id;
                     $user['biography'] = $update->biography;
                     $user['phone'] = $update->phone;
-                    $user['datebirth'] = $update->datebirth;
-                    $this->model_users_detail->where('id_user', $id)->set($user)->update();;
+                    $this->model_users_detail->where('id_user', $id)->set($user)->update();
 
-                    $user_social_link = $this->model_users_social_link->where('id_user', $id)->first();
+                    if (!empty($update->social_link)) {
+                        $user_social_link = $this->model_users_social_link->where('id_user', $id)->first();
 
-                    if ($user_social_link) {
-                        $user['id_user'] = $id;
-                        $user['facebook_link'] = $update->facebook_link;
-                        $user['instagram'] = $update->instagram;
-                        $user['twitter_link'] = $update->twitter_link;
-                        $this->model_users_social_link->where('id_user', $id)->set($user)->update();
-                    } else {
-                        $user['id_user'] = $id;
-                        $user['facebook_link'] = $update->facebook_link;
-                        $user['instagram'] = $update->instagram;
-                        $user['twitter_link'] = $update->twitter_link;
-                        $this->model_users_social_link->save($user);
+                        if ($user_social_link) {
+                            $user['id_user'] = $id;
+                            $user['facebook'] = !empty($update->social_link->facebook) ? $update->social_link->facebook : $user_social_link['facebook'];
+                            $user['instagram'] = !empty($update->social_link->instagram) ? $update->social_link->instagram : $user_social_link['instagram'];
+                            $user['twitter'] = !empty($update->social_link->twitter) ? $update->social_link->twitter : $user_social_link['twitter'];
+                            $this->model_users_social_link->where('id_user', $id)->set($user)->update();
+                        } else {
+                            $user['id_user'] = $id;
+                            $user['facebook'] = $update->social_link->facebook;
+                            $user['instagram'] = $update->social_link->instagram;
+                            $user['twitter'] = $update->social_link->twitter;
+                            $this->model_users_social_link->save($user);
+                        }
                     }
                 } else {
                     $user['id_user'] = $id;
