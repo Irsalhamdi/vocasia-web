@@ -18,7 +18,7 @@ class UsersSocialLink extends Model
 
     // Dates
     protected $useTimestamps        = false;
-    protected $dateFormat           = 'datetime';
+    protected $dateFormat           = 'int';
     protected $createdField         = 'created_at';
     protected $updatedField         = 'updated_at';
     protected $deletedField         = 'deleted_at';
@@ -39,4 +39,9 @@ class UsersSocialLink extends Model
     protected $afterFind            = [];
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
+
+    public function get_social_link($user_id)
+    {
+        return $this->db->table($this->table)->select('facebook,twitter,instagram')->where('id_user', $user_id)->get()->getRow();
+    }
 }

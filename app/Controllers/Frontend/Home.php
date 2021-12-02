@@ -223,11 +223,15 @@ class Home extends FrontendController
     public function users_detail($id_user)
     {
         $user_detail = $this->model_users->get_detail_users($id_user);
+        $social_user = $this->model_users_social_link->get_social_link($id_user);
         $data = [
+            'id_user' => $user_detail->id,
             'fullname' => $user_detail->first_name . ' ' . $user_detail->last_name,
             'biography' => $user_detail->biography,
             'datebirth' => $user_detail->datebirth,
-            'phone' => $user_detail->phone
+            'phone' => $user_detail->phone,
+            'social_link' => !empty($social_user) ? $social_user : null,
+
         ];
         return $this->respond(get_response($data));
     }
