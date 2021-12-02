@@ -41,5 +41,7 @@ class BackendController extends ResourceController
         $this->model_setting = model('SettingModel');
         $this->model_frontend = model('FrontendModel');
         $this->model_banner = model('BannerModel');
+        $this->model_workshop = model('WorkshopModel');
+        $this->model_workshop_student = model('WorkshopStudentModel');        
     }
 }

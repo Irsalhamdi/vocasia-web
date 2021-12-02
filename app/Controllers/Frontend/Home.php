@@ -744,4 +744,34 @@ class Home extends FrontendController
         $formated_humanize = $date . ' ' . $month_in_bahasa[$exp[1]] . ' ' . $exp[0];
         return $formated_humanize;
     }
+
+    public function review($id){
+        
+        $rules = $this->model_review->validationRules;
+        if (!$this->validate($rules)) {
+            return $this->respond([
+                'status' => 403,
+                'error' => true,
+                'data' => [
+                    'message' => $this->validator->getErrors()
+                ]
+            ], 403);
+        }else{
+
+            $value =  $this->request->getJSON();
+
+            $data = [
+                'review' => $value->review,   
+                'ratable_id' => $value->course_id,   
+                'ratable_type' => 'course',
+                'rating' => $value->rating,
+                'date_added' => strtotime(date('D, d-M-Y')),
+                'user_id' => $id,
+            ];
+
+            $this->model_review->review($data);
+            return $this->respondCreated(response_create());
+        }
+    }
+
 }

@@ -101,6 +101,11 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => '
     $routes->put('update-smtp-settings', 'Setting::update_smtp_settings');
     $routes->get('theme-settings', 'Setting::theme_settings');
     $routes->get('mobile-settings', 'Setting::mobile_settings');
+    $routes->get('workshop', 'Workshop::index');
+    $routes->post('workshop', 'Workshop::create');
+    $routes->put('workshop/(:num)', 'Workshop::update/$1');
+    $routes->put('delete-workshop/(:num)', 'Workshop::delete/$1');
+    $routes->get('workshop-student', 'WorkshopStudent::index');    
 });
 $routes->group('auth', ['namespace' => 'App\Controllers', 'filter' => 'cors'], function ($routes) {
     $routes->post('register', 'Auth::register');
@@ -176,6 +181,7 @@ $routes->group('users', ['namespace' => 'App\Controllers\Frontend'], function ($
     $routes->post('create-comment/(:num)', 'Comment::create_by_course/$1');
     $routes->put('comment/(:num)', 'Comment::update/$1');
     $routes->delete('comment/(:num)', 'Comment::delete/$1');
+    $routes->post('review/(:num)', 'Home::review/$1');    
 });
 
 $routes->group('affiliate', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user,cors'], function ($routes) {
