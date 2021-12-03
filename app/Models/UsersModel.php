@@ -43,7 +43,7 @@ class UsersModel extends Model
 
     public function validate_user($email)
     {
-        $get_email = $this->db->table('users a')->select("a.email,concat(a.first_name,' ',a.last_name) as fullname,a.id as uid,a.role_id,b.role_name")->join('role_user b', 'a.role_id=b.id')->where('a.email', $email)->get()->getRow();
+        $get_email = $this->db->table('users a')->select("a.email,a.first_name,a.last_name,a.id as uid,a.role_id,b.role_name")->join('role_user b', 'a.role_id=b.id')->where('a.email', $email)->get()->getRow();
         if ($get_email) {
             return $get_email;
         } else {
@@ -53,17 +53,17 @@ class UsersModel extends Model
 
     public function get_detail_users($id_user)
     {
-        return $this->db->table('users a')->select("concat(a.first_name,' ',a.last_name) as fullname,b.biography,b.datebirth,b.phone")->join('user_detail b', 'b.id_user = a.id')->where('a.id', $id_user)->get()->getRow();
+        return $this->db->table('users a')->select("a.first_name,a.last_name,b.biography,b.datebrith,b.phone")->join('user_detail b', 'b.id_user = a.id')->where('a.id', $id_user)->get()->getRow();
     }
 
     public function get_count_user()
     {
-        return $this->db->table('users a')->select("a.email,concat(a.first_name,' ',a.last_name) as fullname,a.id as uid,a.role_id")->countAllResults();
+        return $this->db->table('users a')->select("a.email,a.first_name,a.last_name,a.id as uid,a.role_id")->countAllResults();
     }
 
     public function get_data_instructor()
     {
-        return $this->db->table('users a')->select("a.id,concat(a.first_name,' ',a.last_name) as fullname,a.email,b.is_instructor,c.title,payment.instructor_revenue")->join('user_detail b', 'b.id_user = a.id')->join('courses c', 'c.user_id = a.id')->join('payment', 'payment.id_user = a.id')->get()->getResult();
+        return $this->db->table('users a')->select("a.id,a.first_name,a.last_name,a.email,b.is_instructor,c.title,payment.instructor_revenue")->join('user_detail b', 'b.id_user = a.id')->join('courses c', 'c.user_id = a.id')->join('payment', 'payment.id_user = a.id')->get()->getResult();
     }
 
     public function get_count_new_user()
@@ -84,6 +84,6 @@ class UsersModel extends Model
 
     public function get_instructor_list()
     {
-        return $this->db->table('users a')->select("a.id,concat(a.first_name,' ',a.last_name) as instructor_name")->join('user_detail b', 'b.id_user = a.id')->where('b.is_instructor', 1)->get()->getResult();
+        return $this->db->table('users a')->select("a.id,a.first_name,a.last_name")->join('user_detail b', 'b.id_user = a.id')->where('b.is_instructor', 1)->get()->getResult();
     }
 }

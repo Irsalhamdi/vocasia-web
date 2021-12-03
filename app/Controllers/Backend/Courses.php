@@ -19,43 +19,18 @@ class Courses extends BackendController
         }
 
         $course_list = $this->model_course->get_course_list();
+
         foreach ($course_list as $courses) {
             $data[] = [
-                "id" => $courses->id,
                 'title' => $courses->title,
-                'short_description' => $courses->short_description,
-                'description' => $courses->description,
-                'bio_instructor' => $courses->bio_instructor,
-                'bio_status' => $courses->bio_status,
-                'outcomes' => $courses->outcomes,
-                'language' => $courses->language,
-                'category_id' => $courses->category_id,
-                'sub_category_id' => $courses->sub_category_id,
-                'section' => $courses->section,
-                'requirement' => $courses->requirement,
-                'price' => $courses->price,
-                'discount_flag' => $courses->discount_flag,
-                'discount_price' => $courses->discount_price,
-                'level_course' => $courses->level_course,
-                'user_id' => $courses->user_id,
-                'thumbnail' => $this->model_course->get_thumbnail($courses->id),
-                'video_url' => $courses->video_url,
-                'visibility' => $courses->visibility,
-                'is_top_course' => $courses->is_top_course,
-                'is_admin' => $courses->is_admin,
-                'status_course' => 'pending',
-                'course_overview_provider' => $courses->course_overview_provider,
-                'meta_keyword' => $courses->meta_keyword,
-                'meta_description' => $courses->meta_description,
-                'is_free_course' => $courses->is_free_course,
-                'is_prakerja' => $courses->is_prakerja,
-                'instructor_revenue' => $courses->instructor_revenue,
                 'create_at' => $courses->create_at,
-                'update_at' => $courses->update_at,
-                'delete_at' => $courses->delete_at,
-                'instructor_name' => $courses->instructor_name,
                 'name_category' => $courses->name_category,
-                'parent_category' => $courses->parent_category,
+                'lesson' => $this->model_lesson->get_lesson($courses->id),
+                'section' => $this->model_section->get_section($courses->id),
+                'count_enrol' => $this->model_enrol->get_count_enrols_courses($courses->id),
+                'status_course' => $courses->status_course,
+                'price' => $courses->price,
+                "id" => $courses->id
             ];
         }
         return $this->respond(get_response($data));
@@ -68,41 +43,15 @@ class Courses extends BackendController
             return $this->failNotFound();
         }
         $data = [
-            "id" => $course_list_by_id->id,
             'title' => $course_list_by_id->title,
-            'short_description' => $course_list_by_id->short_description,
-            'description' => $course_list_by_id->description,
-            'bio_instructor' => $course_list_by_id->bio_instructor,
-            'bio_status' => $course_list_by_id->bio_status,
-            'outcomes' => $course_list_by_id->outcomes,
-            'language' => $course_list_by_id->language,
-            'category_id' => $course_list_by_id->category_id,
-            'sub_category_id' => $course_list_by_id->sub_category_id,
-            'section' => $course_list_by_id->section,
-            'requirement' => $course_list_by_id->requirement,
-            'price' => $course_list_by_id->price,
-            'discount_flag' => $course_list_by_id->discount_flag,
-            'discount_price' => $course_list_by_id->discount_price,
-            'level_course' => $course_list_by_id->level_course,
-            'user_id' => $course_list_by_id->user_id,
-            'thumbnail' => $this->model_course->get_thumbnail($course_list_by_id->id),
-            'video_url' => $course_list_by_id->video_url,
-            'visibility' => $course_list_by_id->visibility,
-            'is_top_course' => $course_list_by_id->is_top_course,
-            'is_admin' => $course_list_by_id->is_admin,
-            'status_course' => 'pending',
-            'course_overview_provider' => $course_list_by_id->course_overview_provider,
-            'meta_keyword' => $course_list_by_id->meta_keyword,
-            'meta_description' => $course_list_by_id->meta_description,
-            'is_free_course' => $course_list_by_id->is_free_course,
-            'is_prakerja' => $course_list_by_id->is_prakerja,
-            'instructor_revenue' => $course_list_by_id->instructor_revenue,
             'create_at' => $course_list_by_id->create_at,
-            'update_at' => $course_list_by_id->update_at,
-            'delete_at' => $course_list_by_id->delete_at,
-            'instructor_name' => $course_list_by_id->instructor_name,
             'name_category' => $course_list_by_id->name_category,
-            'parent_category' => $course_list_by_id->parent_category,
+            'lesson' => $this->model_lesson->get_lesson($course_list_by_id->id),
+            'section' => $this->model_section->get_section($course_list_by_id->id),
+            'count_enrol' => $this->model_enrol->get_count_enrols_courses($course_list_by_id->id),
+            'status_course' => $course_list_by_id->status_course,
+            'price' => $course_list_by_id->price,
+            "id" => $course_list_by_id->id
         ];
 
         return $this->respond(get_response($data));
@@ -183,9 +132,50 @@ class Courses extends BackendController
         $count_data = $this->model_course->get_count_course(); // hitung total data ini akan mengembalikan angka
         $total_pages = ceil($count_data / $offset); //perhitungan dari jumlah data yg dihitung dibagi dengan batas data yg ditentukan
         $get_pagging_data = $this->model_course->get_pagging_data($offset, $start_index); //query berdasarkan data per halaman
+        
+        foreach ($get_pagging_data as $courses) {
+            $data[] = [
+                "id" => $courses->id,
+                'title' => $courses->title,
+                'short_description' => $courses->short_description,
+                'description' => $courses->description,
+                'bio_instructor' => $courses->bio_instructor,
+                'bio_status' => $courses->bio_status,
+                'outcomes' => $courses->outcomes,
+                'language' => $courses->language,
+                'category_id' => $courses->category_id,
+                'sub_category_id' => $courses->sub_category_id,
+                'section' => $courses->section,
+                'requirement' => $courses->requirement,
+                'price' => $courses->price,
+                'discount_flag' => $courses->discount_flag,
+                'discount_price' => $courses->discount_price,
+                'level_course' => $courses->level_course,
+                'user_id' => $courses->user_id,
+                'thumbnail' => $this->model_course->get_thumbnail($courses->id),
+                'video_url' => $courses->video_url,
+                'visibility' => $courses->visibility,
+                'is_top_course' => $courses->is_top_course,
+                'is_admin' => $courses->is_admin,
+                'status_course' => $courses->status_course,
+                'course_overview_provider' => $courses->course_overview_provider,
+                'meta_keyword' => $courses->meta_keyword,
+                'meta_description' => $courses->meta_description,
+                'is_free_course' => $courses->is_free_course,
+                'is_prakerja' => $courses->is_prakerja,
+                'instructor_revenue' => $courses->instructor_revenue,
+                'create_at' => $courses->create_at,
+                'update_at' => $courses->update_at,
+                'delete_at' => $courses->delete_at,
+                "instructor_name" => $courses->first_name .' '. $courses->last_name,
+                "name_category" => $courses->name_category,
+                "parent_category" => $courses->parent_category,
+            ];
+        }
+
         $return_data = [
             'total_page' => $total_pages,
-            'data' => $get_pagging_data
+            'data' => $data
         ];
         return $return_data;
     }

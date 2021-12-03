@@ -16,7 +16,20 @@ class Enrol extends BackendController
             return $this->respond(response_pagging($pagging['total_page'], $pagging['data']));
         }
         $enrol_list = $this->model_enrol->get_list_enrol();
-        return $this->respond(get_response($enrol_list));
+        foreach ($enrol_list as $enrol) {
+            $data[] = [
+            "id" => $enrol->id,
+            "user_id" => $enrol->user_id,
+            "course_id" => $enrol->course_id,
+            "payment_id" => $enrol->payment_id,
+            "create_at" => $enrol->create_at,
+            "name" => $enrol->first_name.' '.$enrol->last_name,
+            "title" => $enrol->title,
+            "phone" => $enrol->phone,
+            "foto_profile" => $this->model_users->get_foto_profile($enrol->user_id)
+            ];
+        }
+        return $this->respond(get_response($data));
     }
     public function create()
     {
@@ -56,7 +69,29 @@ class Enrol extends BackendController
         $enrol_exists = $this->model_enrol->get_list_enrol($id_enrol);
         if ($enrol_exists) {
             // enrol exists
-            return $this->respond(get_response($enrol_exists));
+            $data = [
+            "id" => $enrol_exists->id,
+            "user_id" => $enrol_exists->user_id,
+            "course_id" => $enrol_exists->course_id,
+            "payment_id" => $enrol_exists->payment_id,
+            "create_at" => $enrol_exists->create_at,
+            "update_at" => $enrol_exists->update_at,
+            "finish_date" => $enrol_exists->finish_date,
+            "name" => $enrol_exists->first_name.' '.$enrol_exists->last_name,
+            "title" => $enrol_exists->title,
+            "course_description" => $enrol_exists->course_description,
+            "short_description" => $enrol_exists->short_description,
+            "instructor_biography" => $enrol_exists->instructor_biography,
+            "outcomes" => $enrol_exists->outcomes,
+            "section" => $enrol_exists->section,
+            "requirement" => $enrol_exists->requirement,
+            "course_level" => $enrol_exists->course_level,
+            "price" => $enrol_exists->price,
+            "discount" => $enrol_exists->discount,
+            "languange" => $enrol_exists->languange,
+            "course_status" => $enrol_exists->course_status
+            ];
+            return $this->respond(get_response($data));
         } else {
             // enrol not exist
             return $this->failNotFound();
@@ -113,9 +148,22 @@ class Enrol extends BackendController
         $count_data = $this->model_enrol->get_count_enrol(); // hitung total data ini akan mengembalikan angka
         $total_pages = ceil($count_data / $offset); //perhitungan dari jumlah data yg dihitung dibagi dengan batas data yg ditentukan
         $get_pagging_data = $this->model_enrol->get_pagging_data($offset, $start_index); //query berdasarkan data per halaman
+        foreach ($get_pagging_data as $enrol) {
+            $data[] = [
+            "id" => $enrol->id,
+            "user_id" => $enrol->user_id,
+            "course_id" => $enrol->course_id,
+            "payment_id" => $enrol->payment_id,
+            "create_at" => $enrol->create_at,
+            "update_at" => $enrol->update_at,
+            "finish_date" => $enrol->finish_date,
+            "name" => $enrol->first_name.' '.$enrol->last_name,
+            "title" => $enrol->title
+            ];
+        }
         $return_data = [
             'total_page' => $total_pages,
-            'data' => $get_pagging_data
+            'data' => $enrol
         ];
         return $return_data;
     }

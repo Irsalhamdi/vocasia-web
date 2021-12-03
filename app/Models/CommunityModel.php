@@ -26,8 +26,6 @@ class CommunityModel extends Model
 
     // Validation
     protected $validationRules      = [
-        'name' => 'required',
-        'background' => 'required',
         'category_id' => 'required'
     ];
     protected $validationMessages   = [];
@@ -72,5 +70,15 @@ class CommunityModel extends Model
     public function get_pagging_data($limit, $offset)
     {
         return $this->db->table('community a')->select('a.*,b.name_category')->join('category b', 'b.id=a.category_id')->limit($limit, $offset)->get()->getResult();
+    }
+
+    public function get_background($id)
+    {
+        $folder = "uploads/community_background/community_background_default_$id.jpg";
+        if (file_exists($folder)) {
+            return base_url() . '/' . $folder;
+        } else {
+            return null;
+        }
     }
 }

@@ -71,6 +71,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => '
     $routes->get('revenue-instructor/(:num)', 'Revenue::instructor_revenue/$1');
     $routes->patch('delete/revenue-admin', 'Revenue::update_admin_revenue');
     $routes->post('community', 'Community::create');
+    $routes->post('community-background/(:num)', 'Community::background/$1');
     $routes->get('communities', 'Community::index');
     $routes->get('community/(:num)', 'Community::show/$1');
     $routes->put('community/(:num)', 'Community::update/$1');
@@ -95,7 +96,7 @@ $routes->group('auth', ['namespace' => 'App\Controllers', 'filter' => 'cors'], f
     $routes->post('mobile/login', 'Auth::login_mobile');
     $routes->get('refreshtoken', 'Auth::get_refresh_token');
 });
-$routes->group('instructor', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user,cors',], function ($routes) {
+$routes->group('instructor', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user,cors'], function ($routes) {
     $routes->get('lessons', 'Lesson::index');
     $routes->get('lesson/(:num)', 'Lesson::show_detail/$1');
     $routes->post('lesson', 'Lesson::create');

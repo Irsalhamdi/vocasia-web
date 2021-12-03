@@ -6,11 +6,6 @@ use App\Controllers\Backend\BackendController;
 
 class Community extends BackendController
 {
-    /**
-     * Return an array of resource objects, themselves in array format
-     *
-     * @return mixed
-     */
 
     protected $format = 'json';
 
@@ -24,31 +19,29 @@ class Community extends BackendController
         }
 
         $community_data = $this->model_community->get_list_community();
-        return $this->respond(get_response($community_data));
+        foreach ($community_data as $c) {
+            $data[] = [
+                "name" => $c->name,
+                "name_category" => $c->name_category,
+                "background" => $this->model_community->get_background($c->id),
+                "id" => $c->id
+            ];
+        }
+        return $this->respond(get_response($data));
     }
 
-    /**
-     * Return the properties of a resource object
-     *
-     * @return mixed
-     */
     public function show($id = null)
     {
         $community_data = $this->model_community->get_list_community($id);
-        return $this->respond(get_response($community_data));
+        $data[] = [
+                "name" => $community_data->name,
+                "name_category" => $community_data->name_category,
+                "background" => $community_data->background,
+                "id" => $community_data->id
+            ];
+        return $this->respond(get_response($data));
     }
 
-    /**
-     * Return a new resource object, with default properties
-     *
-     * @return mixed
-     */
-
-    /**
-     * Create a new resource object, from "posted" parameters
-     *
-     * @return mixed
-     */
     public function create()
     {
         $community = $this->request->getJSON();;
@@ -61,7 +54,6 @@ class Community extends BackendController
         if (!is_null($this->model_community->checking_valid_data($community->category_id))) {
             $this->model_community->insert([
                 'name' => $community->name,
-                'background' => $community->background,
                 'category_id' => $community->category_id,
                 'create_at' => strtotime(date('D, d-M-Y'))
             ]);
@@ -72,21 +64,6 @@ class Community extends BackendController
         }
     }
 
-    /**
-     * Return the editable properties of a resource object
-     *
-     * @return mixed
-     */
-    public function edit($id = null)
-    {
-        //
-    }
-
-    /**
-     * Add or update a model resource, from "posted" properties
-     *
-     * @return mixed
-     */
     public function update($id_community = null)
     {
         $community = $this->request->getJSON();
@@ -99,7 +76,6 @@ class Community extends BackendController
         if (!is_null($this->model_community->checking_valid_data($community->category_id))) {
             $data = [
                 'name' => $community->name,
-                'background' => $community->background,
                 'category_id' => $community->category_id,
                 'create_at' => strtotime(date('D, d-M-Y'))
             ];
@@ -111,11 +87,6 @@ class Community extends BackendController
         }
     }
 
-    /**
-     * Delete the designated resource object from the model
-     *
-     * @return mixed
-     */
     public function delete($id = null)
     {
         $find_community = $this->model_community->find($id);
@@ -137,5 +108,35 @@ class Community extends BackendController
             'data' => $get_pagging_data
         ];
         return $return_data;
+    }
+
+    public function background($id = null)
+    {
+        $data_community = $this->model_community->find($id);
+        $rules = [
+            'background' => 'max_size[background,2048]|is_image[background]'
+        ];
+        if (!$this->validate($rules)) {
+            return $this->fail('Failed To Upload Image Please Try Again');
+        } else {
+            if ($data_community) {
+                $path = "uploads/community_background";
+                if (!file_exists($path)) {
+                    mkdir($path);
+                }
+                $background = $this->request->getFile('background');
+                $name = "community_background_default_$id.jpg";
+                $path_photo = $path . '/' . $name;
+                if (file_exists($path_photo)) {
+                    unlink('uploads/community_background/' . $name);
+                }
+                $background->move('uploads/community_background/', $name);
+                // $this->model_community->update($id, $data);
+
+                return $this->respondCreated(response_create());
+            } else {
+                return $this->failNotFound();
+            }
+        }
     }
 }

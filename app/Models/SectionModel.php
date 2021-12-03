@@ -39,4 +39,14 @@ class SectionModel extends Model
     protected $afterFind            = [];
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
+
+    public function get_section($id_course = null)
+    {
+        return $this->db->table('section')->select("
+                section.title as title_section")
+                ->join('courses', 'courses.id = section.course_id')
+                ->where('section.course_id', $id_course)
+                ->get()
+                ->getResultArray();
+    }
 }
