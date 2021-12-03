@@ -53,7 +53,7 @@ class Courses extends BackendController
                 'create_at' => $courses->create_at,
                 'update_at' => $courses->update_at,
                 'delete_at' => $courses->delete_at,
-                'instructor_name' => $courses->instructor_name,
+                'instructor_name' => $courses->first_name . ' ' . $courses->last_name,
                 'name_category' => $courses->name_category,
                 'parent_category' => $courses->parent_category,
             ];
