@@ -33,7 +33,7 @@ $routes->setAutoRoute(false);
 // route since we don't have to scan directories.
 // $routes->get('/', 'Home::index');
 
-$routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => 'auth:admin,cors'], function ($routes) {
+$routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => 'auth:admin', 'filter' => 'cors'], function ($routes) {
     $routes->get('instructors', 'Instructor::index');
     $routes->get('courses', 'Courses::index');
     $routes->get('course/(:num)', 'Courses::show_detail/$1');
@@ -109,7 +109,7 @@ $routes->group('auth', ['namespace' => 'App\Controllers', 'filter' => 'cors'], f
     $routes->post('mobile/login', 'Auth::login_mobile');
     $routes->get('refreshtoken', 'Auth::get_refresh_token');
 });
-$routes->group('instructor', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user,cors',], function ($routes) {
+$routes->group('instructor', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user', 'filter' => 'cors'], function ($routes) {
     $routes->get('lessons', 'Lesson::index');
     $routes->get('lesson/(:num)', 'Lesson::show_detail/$1');
     $routes->post('lesson', 'Lesson::create');
