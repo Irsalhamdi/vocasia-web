@@ -145,7 +145,7 @@ class Home extends FrontendController
                     "thumbnail" => $this->model_course->get_thumbnail($wishlist->course_id),
                     "discount_price" => $wishlist->discount_price,
                     "discount_flag" => $wishlist->discount_flag,
-                    "total_discount" => $get_discount_percent
+                    "total_discount" => intval($get_discount_percent)
                 ];
             }
             return $this->respond(get_response($data));
