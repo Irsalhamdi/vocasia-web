@@ -53,11 +53,7 @@ class UsersModel extends Model
 
     public function get_detail_users($id_user)
     {
-<<<<<<< HEAD
-        return $this->db->table('users a')->select("a.first_name,a.last_name,b.biography,b.datebrith,b.phone")->join('user_detail b', 'b.id_user = a.id')->where('a.id', $id_user)->get()->getRow();
-=======
         return $this->db->table('users a')->select("a.first_name,a.last_name,b.biography,b.datebirth,b.phone,a.id")->join('user_detail b', 'b.id_user = a.id')->where('b.id_user', $id_user)->get()->getRow();
->>>>>>> 6956f93eb3a91d6a31b195313385a38704d55102
     }
 
     public function get_count_user()
