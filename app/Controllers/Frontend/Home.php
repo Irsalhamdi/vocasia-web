@@ -154,7 +154,8 @@ class Home extends FrontendController
                     "discount_flag" => $wishlist->discount_flag,
                     "total_discount" => intval($get_discount_percent),
                     "student" => $total_students,
-                    "review" => $rating_review
+                    "review" => $rating_review,
+                    "foto_profile" => $this->model_users->get_foto_profile($wishlist->instructor_id),
                 ];
             }
             return $this->respond(get_response($data));
@@ -242,7 +243,8 @@ class Home extends FrontendController
                     "discount_flag" => $ci->discount_flag,
                     "total_discount" => intval($get_discount_percent),
                     "student" => $total_students,
-                    "review" => $rating_review
+                    "review" => $rating_review,
+                    "foto_profile" => $this->model_users->get_foto_profile($ci->instructor_id),
                 ]
             ];
         }
