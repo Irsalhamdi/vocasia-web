@@ -219,13 +219,34 @@ class Home extends FrontendController
 
     public function cart_list($id_user)
     {
+        $data_cart = array();
         $cart_items = $this->model_cart->cart_item_list($id_user);
         $total_payment = $this->model_cart->get_total_payment_cart($id_user);
-        $response_data = [
-            'cart-items' => $cart_items,
-            'total_payment' => $total_payment
-        ];
-        return $this->respond(get_response($response_data));
+        foreach ($cart_items as $key => $ci) {
+            $total_students = $this->model_enrol->get_count_enrols_courses($ci->course_id);
+            $rating_review = $this->model_course->get_rating_courses($ci->course_id);
+            if ($ci->discount_price != 0) {
+                $get_discount_percent = ($ci->discount_price / $ci->price) * 100;
+            } elseif ($ci->discount_price == 0) {
+                $get_discount_percent = 0;
+            }
+            $data_cart[$key] = [
+                'cart_items' => [
+                    "cart_id" => $ci->cart_id,
+                    "course_id" => $ci->course_id,
+                    "title" => $ci->title,
+                    "price" => $ci->price,
+                    "instructor" => $ci->first_name . ' ' . $ci->last_name,
+                    "thumbnail" => $this->model_course->get_thumbnail($ci->course_id),
+                    "discount_price" => $ci->discount_price,
+                    "discount_flag" => $ci->discount_flag,
+                    "total_discount" => intval($get_discount_percent),
+                    "student" => $total_students,
+                    "review" => $rating_review
+                ]
+            ];
+        }
+        return $this->respond(get_response($data_cart));
     }
 
     public function add_to_cart()

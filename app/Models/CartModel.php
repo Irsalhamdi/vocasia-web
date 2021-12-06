@@ -42,7 +42,7 @@ class CartModel extends Model
 
     public function cart_item_list($id_user)
     {
-        return $this->db->table('carts a')->select("b.title,b.discount_flag,b.discount_price,b.price,d.first_name,d.last_name")->join('courses b', 'b.id = a.cart_item')->join('users c', 'c.id = a.id_user')->join('users d', 'd.id = b.user_id')->where('c.id', $id_user)->get()->getResultObject();
+        return $this->db->table('carts a')->select("b.title,b.discount_flag,b.discount_price,b.price,d.first_name,d.last_name,b.id as course_id,a.id as cart_id")->join('courses b', 'b.id = a.cart_item')->join('users c', 'c.id = a.id_user')->join('users d', 'd.id = b.user_id')->where('c.id', $id_user)->get()->getResultObject();
     }
 
     public function get_total_payment_cart($id_user)
