@@ -14,11 +14,11 @@ class UsersSocialLink extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['id_user', 'facebook_link', 'instagram', 'twitter_link'];
+    protected $allowedFields        = ['id_user', 'facebook', 'instagram', 'twitter'];
 
     // Dates
     protected $useTimestamps        = false;
-    protected $dateFormat           = 'datetime';
+    protected $dateFormat           = 'int';
     protected $createdField         = 'created_at';
     protected $updatedField         = 'updated_at';
     protected $deletedField         = 'deleted_at';
@@ -39,4 +39,9 @@ class UsersSocialLink extends Model
     protected $afterFind            = [];
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
+
+    public function get_social_link($user_id)
+    {
+        return $this->db->table($this->table)->select('facebook,twitter,instagram')->where('id_user', $user_id)->get()->getRow();
+    }
 }

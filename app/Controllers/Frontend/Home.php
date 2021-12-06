@@ -46,7 +46,7 @@ class Home extends FrontendController
                     "title" =>  $cbc['title'],
                     "short_description" => strip_tags($cbc['short_description']),
                     "price" => $cbc['price'],
-                    "instructor_name" => $cbc['instructor_name'],
+                    "instructor_name" => $cbc['first_name'] . ' ' . $cbc['last_name'],
                     "discount_flag" => $cbc['discount_flag'],
                     "discount_price" => $cbc['discount_price'],
                     "thumbnail" => $this->model_course->get_thumbnail($cbc['id']),
@@ -75,7 +75,7 @@ class Home extends FrontendController
                     "instructor_id" => $all_course["instructor_id"],
                     "title" =>  $all_course['title'],
                     "price" => $all_course['price'],
-                    "instructor_name" => $all_course['instructor_name'],
+                    "instructor_name" => $all_course['first_name'] . ' ' . $all_course['last_name'],
                     "discount_flag" => $all_course['discount_flag'],
                     "discount_price" => $all_course['discount_price'],
                     "thumbnail" => $this->model_course->get_thumbnail($all_course['id']),
@@ -223,7 +223,17 @@ class Home extends FrontendController
     public function users_detail($id_user)
     {
         $user_detail = $this->model_users->get_detail_users($id_user);
-        return $this->respond(get_response($user_detail));
+        $social_user = $this->model_users_social_link->get_social_link($id_user);
+        $data = [
+            'id_user' => $user_detail->id,
+            'fullname' => $user_detail->first_name . ' ' . $user_detail->last_name,
+            'biography' => $user_detail->biography,
+            'datebirth' => $user_detail->datebirth,
+            'phone' => $user_detail->phone,
+            'social_link' => !empty($social_user) ? $social_user : null,
+
+        ];
+        return $this->respond(get_response($data));
     }
 
     public function get_duration($lesson_duration)
@@ -316,7 +326,7 @@ class Home extends FrontendController
                 "title" =>  $cd['title'],
                 "short_description" => strip_tags($cd['short_description']),
                 "price" => $cd['price'],
-                "instructor_name" => $cd['instructor_name'],
+                "instructor_name" => $cd['first_name'] . ' ' . $cd['last_name'],
                 "discount_flag" => $cd['discount_flag'],
                 "discount_price" => $cd['discount_price'],
                 "thumbnail" => $this->model_course->get_thumbnail($cd['id']),
@@ -346,7 +356,7 @@ class Home extends FrontendController
                 'id' => $courses->id,
                 'title' => $courses->title,
                 'instructor_id' => $courses->uid,
-                'instructor' => $courses->instructor_name,
+                'instructor' => $courses->first_name . ' ' . $courses->last_name,
                 'level_course' => $courses->level_course,
                 'total_lesson' => $courses->total_lesson,
                 'total_students' => $total_students,
@@ -432,13 +442,10 @@ class Home extends FrontendController
             'phone' => [
                 'rules' => 'required'
             ],
-            'facebook_link' => [
+            'phone' => [
                 'rules' => 'required'
             ],
-            'instagram' => [
-                'rules' => 'required'
-            ],
-            'twitter_link' => [
+            'datebirth' => [
                 'rules' => 'required'
             ],
         ];
@@ -466,22 +473,24 @@ class Home extends FrontendController
                     $user['biography'] = $update->biography;
                     $user['phone'] = $update->phone;
                     $user['datebirth'] = $update->datebirth;
-                    $this->model_users_detail->where('id_user', $id)->set($user)->update();;
+                    $this->model_users_detail->where('id_user', $id)->set($user)->update();
 
-                    $user_social_link = $this->model_users_social_link->where('id_user', $id)->first();
+                    if (!empty($update->social_link)) {
+                        $user_social_link = $this->model_users_social_link->where('id_user', $id)->first();
 
-                    if ($user_social_link) {
-                        $user['id_user'] = $id;
-                        $user['facebook_link'] = $update->facebook_link;
-                        $user['instagram'] = $update->instagram;
-                        $user['twitter_link'] = $update->twitter_link;
-                        $this->model_users_social_link->where('id_user', $id)->set($user)->update();
-                    } else {
-                        $user['id_user'] = $id;
-                        $user['facebook_link'] = $update->facebook_link;
-                        $user['instagram'] = $update->instagram;
-                        $user['twitter_link'] = $update->twitter_link;
-                        $this->model_users_social_link->save($user);
+                        if ($user_social_link) {
+                            $user['id_user'] = $id;
+                            $user['facebook'] = !empty($update->social_link->facebook) ? $update->social_link->facebook : $user_social_link['facebook'];
+                            $user['instagram'] = !empty($update->social_link->instagram) ? $update->social_link->instagram : $user_social_link['instagram'];
+                            $user['twitter'] = !empty($update->social_link->twitter) ? $update->social_link->twitter : $user_social_link['twitter'];
+                            $this->model_users_social_link->where('id_user', $id)->set($user)->update();
+                        } else {
+                            $user['id_user'] = $id;
+                            $user['facebook'] = !empty($update->social_link->facebook) ? $update->social_link->facebook : null;
+                            $user['instagram'] = !empty($update->social_link->instagram) ? $update->social_link->instagram : null;
+                            $user['twitter'] = !empty($update->social_link->twitter) ? $update->social_link->twitter : null;
+                            $this->model_users_social_link->save($user);
+                        }
                     }
                 } else {
                     $user['id_user'] = $id;
@@ -502,7 +511,7 @@ class Home extends FrontendController
 
         $rules = [
             'email' => [
-                'rules' => 'required|valid_email|is_unique[users.email]'
+                'rules' => 'required|valid_email'
             ],
             'old_password' => [
                 'rules' => 'required|min_length[6]'
