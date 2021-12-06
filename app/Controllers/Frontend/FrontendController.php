@@ -47,5 +47,6 @@ class FrontendController extends ResourceController
         $this->model_guide_user = model('GuideUserInstructorModel');
         $this->model_banner = model('BannerModel');
         $this->model_comment = model('CommentModel');
+        $this->model_review = model('ReviewModel');        
     }
 }
