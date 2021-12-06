@@ -142,7 +142,7 @@ class Home extends FrontendController
                     "title" => $wishlist->title,
                     "price" => $wishlist->price,
                     "instructor" => $wishlist->first_name . ' ' . $wishlist->last_name,
-                    "thumbnail" => $this->model_course->get_thumbnail($wishlist->id),
+                    "thumbnail" => $this->model_course->get_thumbnail($wishlist->id_course),
                     "discount_price" => $wishlist->discount_price,
                     "discount_flag" => $wishlist->discount_flag,
                     "total_discount" => $get_discount_percent
