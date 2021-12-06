@@ -13,15 +13,15 @@ class Category extends BackendController
         $data_catgeory = $this->model_category->get_category();
         foreach ($data_catgeory as $category) {
             $data[] = [
-                "id" => $category['id'],
-                "code_category" => $category['code_category'],
-                "name_category" => $category['name_category'],
-                "parent_category" => $category['parent_category'],
-                "slug_category" => $category['slug_category'],
-                "font_awesome_class" => $category['font_awesome_class'],
-                "thumbnail" => $this->model_category->get_thumbnail($category['id']),
-                "create_at" => $category['create_at'],
-                "update_at" => $category['update_at']
+            "id" => $category['id'],
+            "code_category" => $category['code_category'],
+            "name_category" => $category['name_category'],
+            "parent_category" => $category['parent_category'],
+            "slug_category" => $category['slug_category'],
+            "font_awesome_class" => $category['font_awesome_class'],
+            "thumbnail" => $this->model_category->get_thumbnail($category['id']),
+            "create_at" => $category['create_at'],
+            "update_at" => $category['update_at']
             ];
         }
         return $this->respond(get_response($data));

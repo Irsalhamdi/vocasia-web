@@ -59,6 +59,16 @@ class LessonModel extends Model
                 ->getRow();            
     }
 
+    public function get_lesson($id_course = null)
+    {
+        return $this->db->table('lesson')->select("
+                lesson.title as title_lesson")
+                ->join('courses', 'courses.id = lesson.course_id')
+                ->where('lesson.course_id', $id_course)
+                ->get()
+                ->getResultArray();
+    }
+
     public function get_count_lesson()
     {
         return $this->db->table('lesson')->select("

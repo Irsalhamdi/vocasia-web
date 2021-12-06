@@ -44,20 +44,19 @@ class EnrolModel extends Model
     {
         if (!empty($id)) {
             return $this->db->table('enrol')->select(
-                "enrol.*,concat(users.first_name,' ',users.last_name)
-                as Name,
-                courses.title as Title,
-                courses.description as Course Description,
-                courses.short_description as Short Description,
-                courses.bio_instructor as Instructor Biography,
-                courses.outcomes as Outcomes,
-                courses.section as Section,
-                courses.requirement as Requirement,
-                courses.level_course as Course Level, 
-                courses.price as Price,
-                courses.discount_price as Discount,
-                courses.language as Languange,
-                courses.status_course as Course Status"
+                "enrol.*,users.first_name,users.last_name,
+                courses.title as title,
+                courses.description as course_description,
+                courses.short_description as short_description,
+                courses.bio_instructor as instructor_biography,
+                courses.outcomes as outcomes,
+                courses.section as section,
+                courses.requirement as requirement,
+                courses.level_course as course_level, 
+                courses.price as price,
+                courses.discount_price as discount,
+                courses.language as languange,
+                courses.status_course as course_status"
             )
                 ->join('users', 'users.id = enrol.user_id')
                 ->join('courses', 'courses.id = enrol.course_id')
@@ -65,16 +64,16 @@ class EnrolModel extends Model
                 ->get()
                 ->getRow();
         }
-        return $this->db->table('enrol')->select("enrol.*,concat(users.first_name,' ',users.last_name)as Name,courses.title as Title,")->join('users', 'users.id = enrol.user_id')->join('courses', 'courses.id = enrol.course_id')->get()->getResult();
+        return $this->db->table('enrol')->select("enrol.*,users.first_name,users.last_name,courses.title as title,user_detail.phone")->join('users', 'users.id = enrol.user_id')->join('user_detail', 'user_detail.id_user = enrol.user_id')->join('courses', 'courses.id = enrol.course_id')->get()->getResult();
     }
 
     public function get_count_enrol()
     {
-        return $this->db->table('enrol')->select("enrol.*,concat(users.first_name,' ',users.last_name)as Name,courses.title as Title,")->join('users', 'users.id = enrol.user_id')->join('courses', 'courses.id = enrol.course_id')->countAllResults();
+        return $this->db->table('enrol')->select("enrol.*,users.first_name,users.last_name,courses.title as Title,")->join('users', 'users.id = enrol.user_id')->join('courses', 'courses.id = enrol.course_id')->countAllResults();
     }
     public function get_pagging_data($limit, $offset)
     {
-        return $this->db->table('enrol')->select("enrol.*,concat(users.first_name,' ',users.last_name)as Name,courses.title as Title,")->join('users', 'users.id = enrol.user_id')->join('courses', 'courses.id = enrol.course_id')->limit($limit, $offset)->get()->getResult();
+        return $this->db->table('enrol')->select("enrol.*,users.first_name,users.last_name,courses.title as title,")->join('users', 'users.id = enrol.user_id')->join('courses', 'courses.id = enrol.course_id')->limit($limit, $offset)->get()->getResult();
     }
 
     public function get_count_enrols_courses($id_course)
@@ -83,4 +82,5 @@ class EnrolModel extends Model
         $data_count = !empty($data->total_students) ? $data->total_students : null;
         return $data_count;
     }
+    
 }

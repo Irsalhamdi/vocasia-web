@@ -42,16 +42,8 @@ class CommentModel extends Model
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
 
-    public function get_comment($id = null)
-    {
-        if ($id == null) {
-            return $this->db->table('comment a')->select("a.*,concat(b.first_name,' ',b.last_name) as user, c.title")->join('users b', 'b.id = a.user_id')->join('courses c', 'c.id = a.commentable_id')->get()->getResult();
-        } else {
-            return $this->db->table('comment a')->select("a.*,concat(b.first_name,' ',b.last_name) as user, c.title")->join('users b', 'b.id = a.user_id')->join('courses c', 'c.id = a.commentable_id')->where('a.id', $id)->get()->getRow();
-        }
-    }
     public function get_comment_by_course($id_course = null)
     {
-        return $this->db->table('comment a')->select("a.*,concat(b.first_name,' ',b.last_name) as user, c.title")->join('users b', 'b.id = a.user_id')->join('courses c', 'c.id = a.commentable_id')->where('a.commentable_id', $id_course)->get()->getResult();
+        return $this->db->table('comment a')->select("a.*,b.first_name, b.last_name, c.title")->join('users b', 'b.id = a.user_id')->join('courses c', 'c.id = a.commentable_id')->where('a.commentable_id', $id_course)->get()->getResult();
     }
 }

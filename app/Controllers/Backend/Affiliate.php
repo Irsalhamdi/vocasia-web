@@ -17,7 +17,16 @@ class Affiliate extends BackendController
             return $this->respond(response_pagging($pagging['total_page'], $pagging['data']));
         }
         $affiliate_list = $this->model_affiliate->get_list_affiliate();
-        return $this->respond(get_response($affiliate_list));
+        foreach ($affiliate_list as $a) {
+            $data[] = [
+                "name" => $a->first_name .' '. $a->last_name,
+                "code_reff" => $a->code_reff,
+                "leader" => $a->leader,
+                "update_at" => $a->update_at,
+                "id" => $a->id_affiliate
+            ];
+        }
+        return $this->respond(get_response($data));
     }
 
     public function show_detail($id = null)
@@ -25,7 +34,15 @@ class Affiliate extends BackendController
         $affiliate_exist = $this->model_affiliate->get_list_affiliate($id);
         if ($affiliate_exist) {
             // affiliate exists
-            return $this->respond(get_response($affiliate_exist));
+            $data = [
+                "name" => $affiliate_exist->first_name .' '. $affiliate_exist->last_name,
+                "code_reff" => $affiliate_exist->code_reff,
+                "leader" => $affiliate_exist->leader,
+                "update_at" => $affiliate_exist->update_at,
+                "id" => $affiliate_exist->id_affiliate
+            ];
+        
+            return $this->respond(get_response($data));
         } else {
             //affiliate not exists
             return $this->failNotFound();

@@ -16,7 +16,17 @@ class Coupon extends BackendController
             return $this->respond(response_pagging($pagging['total_page'], $pagging['data']));
         }
         $coupon_list = $this->model_coupon->get_list_coupon();
-        return $this->respond(get_response($coupon_list));
+        foreach ($coupon_list as $coupon) {
+            $data[] = [
+                'type_coupon' => $coupon->type_coupon,
+                'code_coupon' => $coupon->code_coupon,
+                'value' => $coupon->value,
+                'quantity' => $coupon->quantity,
+                'id_courses' => $coupon->course_id,
+                'id' => $coupon->id
+            ];
+        }
+        return $this->respond(get_response($data));
     }
     public function create()
     {
@@ -42,7 +52,15 @@ class Coupon extends BackendController
         $coupon_exist = $this->model_coupon->get_list_coupon($id_coupon);
         if ($coupon_exist) {
             // coupon exists
-            return $this->respond(get_response($coupon_exist));
+            $data[] = [
+                'type_coupon' => $coupon_exist->type_coupon,
+                'code_coupon' => $coupon_exist->code_coupon,
+                'value' => $coupon_exist->value,
+                'quantity' => $coupon_exist->quantity,
+                'id_courses' => $coupon_exist->course_id,
+                'id' => $coupon_exist->id
+            ];
+            return $this->respond(get_response($data));
         } else {
             //coupon not exists
             return $this->failNotFound();

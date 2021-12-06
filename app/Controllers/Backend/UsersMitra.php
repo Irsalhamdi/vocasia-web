@@ -17,8 +17,20 @@ class UsersMitra extends BackendController
             return $this->respond(response_pagging($pagging['total_page'], $pagging['data']));
         }
         $users_mitra_list = $this->model_users_mitra->get_list_users_mitra();
-
-        return $this->respond(get_response($users_mitra_list));
+        foreach ($users_mitra_list as $mitra) {
+            $data[] = [
+            "id" => $mitra->id,
+            "id_user" => $mitra->id_user,
+            "number_code" => $mitra->number_code,
+            "collage" => $mitra->collage,
+            "major" => $mitra->major,
+            "mitra_name" => $mitra->mitra_name,
+            "create_at" => $mitra->create_at,
+            "update_at" => $mitra->update_at,
+            "name" => $mitra->first_name.' '.$mitra->last_name,
+            ];
+        }
+        return $this->respond(get_response($data));
     }
 
     public function show_detail($id = null)
@@ -26,7 +38,18 @@ class UsersMitra extends BackendController
         $users_mitra_exist = $this->model_users_mitra->get_list_users_mitra($id);
         if ($users_mitra_exist) {
             // users mitra exists
-            return $this->respond(get_response($users_mitra_exist));
+            $data = [
+            "id" => $users_mitra_exist->id,
+            "id_user" => $users_mitra_exist->id_user,
+            "number_code" => $users_mitra_exist->number_code,
+            "collage" => $users_mitra_exist->collage,
+            "major" => $users_mitra_exist->major,
+            "mitra_name" => $users_mitra_exist->mitra_name,
+            "create_at" => $users_mitra_exist->create_at,
+            "update_at" => $users_mitra_exist->update_at,
+            "name" => $users_mitra_exist->first_name.' '.$users_mitra_exist->last_name,
+            ];
+            return $this->respond(get_response($data));
         } else {
             //users mitra not exists
             return $this->failNotFound();

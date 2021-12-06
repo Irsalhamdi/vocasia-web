@@ -19,7 +19,7 @@ class Comment extends FrontendController
             "commentable_type" => $c->commentable_type,
             "body" => $c->body,
             "user_id" => $c->user_id,
-            "user" => $c->user,
+            "user" => $c->first_name .' '. $c->last_name,
             "foto_profil" => $this->model_users_detail->get_profile_users($c->user_id),
             "id_comment" => $c->id,
             "date_added" => $c->date_added,

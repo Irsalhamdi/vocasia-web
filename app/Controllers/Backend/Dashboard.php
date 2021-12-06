@@ -16,6 +16,17 @@ class Dashboard extends BackendController
         $data_enrols = $this->model_enrol->get_count_enrol();
         $data_users = $this->model_users->get_count_user();
         $data_instructor = $this->model_users->get_data_instructor();
+        foreach ($data_instructor as $instructor) {
+            $data[] = [
+            "id" => $instructor->id,
+            "fullname" => $instructor->first_name.' '.$instructor->last_name,
+            "email" => $instructor->email,
+            "is_instructor" => $instructor->is_instructor,
+            "title" => $instructor->title,
+            "instructor_revenue" => $instructor->instructor_revenue,
+            
+            ];
+        }
         $data_new_users = $this->model_users->get_count_new_user();
 
         return $this->respond([
@@ -28,7 +39,7 @@ class Dashboard extends BackendController
                 'enrols' => $data_enrols,
                 'users' => $data_users,
                 'new-users' => $data_new_users,
-                'data-instructor' => $data_instructor
+                'data-instructor' => $data
             ]
         ]);
     }

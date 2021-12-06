@@ -25,10 +25,7 @@ class CategoryModel extends Model
 
     // Validation
     protected $validationRules      = [
-        'code_category' => 'required',
         'name_category' => 'required',
-        'parent_category' => 'required',
-        'font_awesome_class' => 'required',
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;

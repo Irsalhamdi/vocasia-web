@@ -44,10 +44,10 @@ class DashboardInstructorModel extends Model
     {
         
         if (is_null($id)) {
-            return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where('a.delete_at',$delete_at)->get()->getResult();
+            return $this->db->table('courses a')->select("a.*,b.first_name,b.last_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where('a.delete_at',$delete_at)->get()->getResult();
         }
 
-        return $this->db->table('courses a')->select("a.*,concat(b.first_name,' ',b.last_name) as instructor_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where(['a.id'=>$id,'a.delete_at'=>$delete_at])->get()->getRow();
+        return $this->db->table('courses a')->select("a.*,b.first_name,b.last_name,c.name_category,c.parent_category")->join('users b', 'b.id = a.user_id')->join('category c', 'c.id = a.category_id')->where(['a.id'=>$id,'a.delete_at'=>$delete_at])->get()->getRow();
 
     }
 }
