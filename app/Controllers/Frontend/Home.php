@@ -55,7 +55,8 @@ class Home extends FrontendController
                     "duration" => $duration,
                     "students" => $total_students,
                     "rating" => $rating_review,
-                    "total_discount" => intval($get_discount_percent)
+                    "total_discount" => intval($get_discount_percent),
+                    "foto_profile" => $this->model_users->get_foto_profile($cbc['instructor_id']),
 
                 ];
             }
@@ -81,7 +82,8 @@ class Home extends FrontendController
                     "thumbnail" => $this->model_course->get_thumbnail($all_course['id']),
                     "students" => $total_students,
                     "rating" => $rating_review,
-                    "total_discount" => $discount
+                    "total_discount" => $discount,
+                    "foto_profile" => $this->model_users->get_foto_profile($all_course['instructor_id']),
 
                 ];
             }
@@ -111,7 +113,9 @@ class Home extends FrontendController
                         "total_lesson" => $course->total_lesson,
                         "id" => $course->id,
                         "instructor_id" => $course->instructor_id,
-                        "language" => $course->language
+                        "language" => $course->language,
+                        "foto_profile" => $this->model_users->get_foto_profile($course->instructor_id),
+
                     ];
                 }
                 return $this->respond(get_response($data));
