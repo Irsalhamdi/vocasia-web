@@ -167,7 +167,7 @@ class CoursesModel extends Model
         $total_course = $this->db->table('courses')->selectCount('user_id', 'total_course')->where('user_id', $id_user)->get()->getRowObject();
         $total_students = $this->db->table('enrol a')->selectCount('a.user_id', 'total_student')->join('courses b', 'b.id = a.course_id')->join('users c', 'c.id = b.user_id')->where('c.id', $id_user)->get()->getRowObject();
         return [
-            'instructor_name' => $total_review->first_name.' '.$total_review->last_name,
+            'instructor_name' => $total_review->first_name . ' ' . $total_review->last_name,
             'total_review' => $total_review->total_review,
             'total_course' => $total_course->total_course,
             'total_students' => $total_students->total_student
@@ -191,8 +191,8 @@ class CoursesModel extends Model
     {
         $data_rating = $this->db->table('rating a')->select("b.first_name,b.last_name,a.review,a.rating")->join('users b', 'b.id = a.user_id')->where('ratable_id', $id_course)->get()->getResultObject();
         foreach ($data_rating as $r) {
-            $data[] =[
-                'name' => $r->first_name.' '.$r->last_name,
+            $data[] = [
+                'name' => $r->first_name . ' ' . $r->last_name,
                 'review' => $r->review,
                 'rating' => $r->rating,
             ];

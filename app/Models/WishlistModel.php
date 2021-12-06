@@ -42,6 +42,10 @@ class WishlistModel extends Model
 
     public function get_user_wishlist($id_user)
     {
+<<<<<<< HEAD
         return $this->db->table('wishlist a')->select("a.id as wishlist_id, b.title, b.price, d.first_name, d.last_name, b.thumbnail")->join('courses b', 'b.id = a.wishlist_item')->join('users c', 'c.id = a.id_user')->join('users d', 'd.id = b.user_id')->where('a.id_user', $id_user)->get()->getResult();
+=======
+        return $this->db->table('wishlist a')->select("a.id as wishlist_id,b.title,b.price,concat(d.first_name,' ',d.last_name) as instructor,b.thumbnail,b.id as course_id")->join('courses b', 'b.id = a.wishlist_item')->join('users c', 'c.id = a.id_user')->join('users d', 'd.id = b.user_id')->where('a.id_user', $id_user)->get()->getResult();
+>>>>>>> 6956f93eb3a91d6a31b195313385a38704d55102
     }
 }

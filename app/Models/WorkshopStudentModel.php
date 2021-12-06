@@ -3,24 +3,25 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use PDO;
 
-class UsersSocialLink extends Model
+class WorkshopStudentModel extends Model
 {
     protected $DBGroup              = 'default';
-    protected $table                = 'social_link_users';
+    protected $table                = 'workshop_student';
     protected $primaryKey           = 'id';
     protected $useAutoIncrement     = true;
     protected $insertID             = 0;
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['id_user', 'facebook', 'instagram', 'twitter'];
+    protected $allowedFields        = ['ws_name', 'seri', 'gender', 'fname', 'lname', 'email', 'no_hp', 'instansi', 'rf_code', 'id_payment'];
 
     // Dates
-    protected $useTimestamps        = false;
-    protected $dateFormat           = 'int';
-    protected $createdField         = 'created_at';
-    protected $updatedField         = 'updated_at';
+    protected $useTimestamps        = true;
+    protected $dateFormat           = 'datetime';
+    protected $createdField         = 'date_added';
+    protected $updatedField         = 'last_modified';
     protected $deletedField         = 'deleted_at';
 
     // Validation
@@ -40,8 +41,11 @@ class UsersSocialLink extends Model
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
 
-    public function get_social_link($user_id)
-    {
-        return $this->db->table($this->table)->select('facebook,twitter,instagram')->where('id_user', $user_id)->get()->getRow();
+    public function get_workshop_student(){
+        return $this->db->table('workshop_student')->orderBy('date_added', 'desc')
+                                                    ->get()
+                                                    ->getResult();
+                                                   
     }
+
 }

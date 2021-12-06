@@ -147,4 +147,26 @@ class PaymentModel extends Model
       ->join('courses c', 'a.course_id = c.id')
       ->like('a.id_payment', $reff_code)->get()->getResultArray();
     }
+
+    public function get_workshop_payment_status($id_payment){
+
+      $check = $this->db->table('payment')->like('id_payment', $id_payment)->get()->getResult();
+      
+      if($check){
+
+        if ($check == -5) {
+          return 'Checkout dibatalkan';
+          } elseif ($check == 2) {
+            return 'Belum membayar';
+          } elseif ($check == 1) {
+            return 'Sudah membayar';
+          } 
+        else {
+          return 'Expired';
+        }
+
+      }else{
+        return 'ID Payment Invalid';
+      }
+    }
 }
