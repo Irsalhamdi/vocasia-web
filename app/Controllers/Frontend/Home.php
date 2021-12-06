@@ -15,7 +15,7 @@ class Home extends FrontendController
         $data_user = $this->model_users->where('email', $emai)->first();
         $data_response = [
             'id_user' => $data_user['id'],
-            'fullname' => $data_user['first_name'].' '.$data_user['last_name'],
+            'fullname' => $data_user['first_name'] . ' ' . $data_user['last_name'],
             'email' => $data_user['email'],
             'foto_profile' => $this->model_users->get_foto_profile($data_user['id']),
             'is_instructor' => $this->model_users_detail->is_instructor_user($data_user['id']),
@@ -46,11 +46,7 @@ class Home extends FrontendController
                     "title" =>  $cbc['title'],
                     "short_description" => strip_tags($cbc['short_description']),
                     "price" => $cbc['price'],
-<<<<<<< HEAD
-                    "instructor_name" => $cbc['first_name'].' '.$cbc['last_name'],
-=======
                     "instructor_name" => $cbc['first_name'] . ' ' . $cbc['last_name'],
->>>>>>> 6956f93eb3a91d6a31b195313385a38704d55102
                     "discount_flag" => $cbc['discount_flag'],
                     "discount_price" => $cbc['discount_price'],
                     "thumbnail" => $this->model_course->get_thumbnail($cbc['id']),
@@ -79,11 +75,7 @@ class Home extends FrontendController
                     "instructor_id" => $all_course["instructor_id"],
                     "title" =>  $all_course['title'],
                     "price" => $all_course['price'],
-<<<<<<< HEAD
-                    "instructor_name" => $all_course['first_name'].' '.$all_course['last_name'],
-=======
                     "instructor_name" => $all_course['first_name'] . ' ' . $all_course['last_name'],
->>>>>>> 6956f93eb3a91d6a31b195313385a38704d55102
                     "discount_flag" => $all_course['discount_flag'],
                     "discount_price" => $all_course['discount_price'],
                     "thumbnail" => $this->model_course->get_thumbnail($all_course['id']),
@@ -108,18 +100,18 @@ class Home extends FrontendController
                 $course_search_data = $this->course_data($course);
                 foreach ($course_search_data as $course) {
                     $data[] = [
-                    "title" => $course->title,
-                    "short_description" => $course->short_description,
-                    "price" => $course->price,
-                    "instructor_name" => $course->first_name.' '.$course->last_name,
-                    "discount_flag" => $course->discount_flag,
-                    "discount_price" => $course->discount_price,
-                    "thumbnail" => $course->thumbnail,
-                    "level_course" => $course->level_course,
-                    "total_lesson" => $course->total_lesson,
-                    "id" => $course->id,
-                    "instructor_id" => $course->instructor_id,
-                    "language" => $course->language
+                        "title" => $course->title,
+                        "short_description" => $course->short_description,
+                        "price" => $course->price,
+                        "instructor_name" => $course->first_name . ' ' . $course->last_name,
+                        "discount_flag" => $course->discount_flag,
+                        "discount_price" => $course->discount_price,
+                        "thumbnail" => $course->thumbnail,
+                        "level_course" => $course->level_course,
+                        "total_lesson" => $course->total_lesson,
+                        "id" => $course->id,
+                        "instructor_id" => $course->instructor_id,
+                        "language" => $course->language
                     ];
                 }
                 return $this->respond(get_response($data));
@@ -140,14 +132,14 @@ class Home extends FrontendController
         if (!is_null($id_user)) {
             $item_wishlist = $this->model_wishlist->get_user_wishlist($id_user);
             foreach ($item_wishlist as $wishlist) {
-            $data[] = [
-            "wishlist_id" => $wishlist->wishlist_id,
-            "title" => $wishlist->title,
-            "price" => $wishlist->price,
-            "instructor" => $wishlist->first_name.' '.$wishlist->last_name,
-            "thumbnail" => $wishlist->thumbnail
-            ];
-        }
+                $data[] = [
+                    "wishlist_id" => $wishlist->wishlist_id,
+                    "title" => $wishlist->title,
+                    "price" => $wishlist->price,
+                    "instructor" => $wishlist->first_name . ' ' . $wishlist->last_name,
+                    "thumbnail" => $wishlist->thumbnail
+                ];
+            }
             return $this->respond(get_response($data));
         } else {
             return $this->respond([
@@ -256,14 +248,6 @@ class Home extends FrontendController
     public function users_detail($id_user)
     {
         $user_detail = $this->model_users->get_detail_users($id_user);
-<<<<<<< HEAD
-            $data = [
-            "fullname" => $user_detail->first_name.' '.$user_detail->last_name,
-            "biography" => $user_detail->biography,
-            "datebrith" => $user_detail->datebrith,
-            "phone" => $user_detail->phone
-            ];
-=======
         $social_user = $this->model_users_social_link->get_social_link($id_user);
         $data = [
             'id_user' => $user_detail->id,
@@ -274,7 +258,6 @@ class Home extends FrontendController
             'social_link' => !empty($social_user) ? $social_user : null,
 
         ];
->>>>>>> 6956f93eb3a91d6a31b195313385a38704d55102
         return $this->respond(get_response($data));
     }
 
@@ -335,18 +318,18 @@ class Home extends FrontendController
                 }
                 foreach ($data_filter as $course) {
                     $data[] = [
-                    "title" => $course->title,
-                    "short_description" => $course->short_description,
-                    "price" => $course->price,
-                    "instructor_name" => $course->first_name.' '.$course->last_name,
-                    "discount_flag" => $course->discount_flag,
-                    "discount_price" => $course->discount_price,
-                    "thumbnail" => $course->thumbnail,
-                    "level_course" => $course->level_course,
-                    "total_lesson" => $course->total_lesson,
-                    "id" => $course->id,
-                    "instructor_id" => $course->instructor_id,
-                    "language" => $course->language
+                        "title" => $course->title,
+                        "short_description" => $course->short_description,
+                        "price" => $course->price,
+                        "instructor_name" => $course->first_name . ' ' . $course->last_name,
+                        "discount_flag" => $course->discount_flag,
+                        "discount_price" => $course->discount_price,
+                        "thumbnail" => $course->thumbnail,
+                        "level_course" => $course->level_course,
+                        "total_lesson" => $course->total_lesson,
+                        "id" => $course->id,
+                        "instructor_id" => $course->instructor_id,
+                        "language" => $course->language
                     ];
                 }
                 $data_response = $this->course_data($data);
@@ -358,18 +341,18 @@ class Home extends FrontendController
                 }
                 foreach ($data_filter_rating as $course) {
                     $data[] = [
-                    "title" => $course->title,
-                    "short_description" => $course->short_description,
-                    "price" => $course->price,
-                    "instructor_name" => $course->first_name.' '.$course->last_name,
-                    "discount_flag" => $course->discount_flag,
-                    "discount_price" => $course->discount_price,
-                    "thumbnail" => $course->thumbnail,
-                    "level_course" => $course->level_course,
-                    "total_lesson" => $course->total_lesson,
-                    "id" => $course->id,
-                    "instructor_id" => $course->instructor_id,
-                    "language" => $course->language
+                        "title" => $course->title,
+                        "short_description" => $course->short_description,
+                        "price" => $course->price,
+                        "instructor_name" => $course->first_name . ' ' . $course->last_name,
+                        "discount_flag" => $course->discount_flag,
+                        "discount_price" => $course->discount_price,
+                        "thumbnail" => $course->thumbnail,
+                        "level_course" => $course->level_course,
+                        "total_lesson" => $course->total_lesson,
+                        "id" => $course->id,
+                        "instructor_id" => $course->instructor_id,
+                        "language" => $course->language
                     ];
                 }
                 $data_response = $this->course_data($data);
@@ -430,11 +413,7 @@ class Home extends FrontendController
                 'id' => $courses->id,
                 'title' => $courses->title,
                 'instructor_id' => $courses->uid,
-<<<<<<< HEAD
-                'instructor' => $courses->first_name.' '.$courses->last_name,
-=======
                 'instructor' => $courses->first_name . ' ' . $courses->last_name,
->>>>>>> 6956f93eb3a91d6a31b195313385a38704d55102
                 'level_course' => $courses->level_course,
                 'total_lesson' => $courses->total_lesson,
                 'total_students' => $total_students,
@@ -502,12 +481,12 @@ class Home extends FrontendController
             $star = $this->request->getVar('star');
             $data_rating = $this->model_course->get_rating_by_star($course_id, $star);
             foreach ($data_rating as $r) {
-            $data[] =[
-                'user' => $r->first_name.' '.$r->last_name,
-                'review' => $r->review,
-                'rating' => $r->rating,
-            ];
-        }
+                $data[] = [
+                    'user' => $r->first_name . ' ' . $r->last_name,
+                    'review' => $r->review,
+                    'rating' => $r->rating,
+                ];
+            }
             return $this->respond(get_response($data_rating));
         }
         $data_rating = $this->model_course->get_rating_course($course_id);
@@ -737,7 +716,7 @@ class Home extends FrontendController
             foreach ($my_course as $key => $values) {
                 $data[$key] = [
                     'course_id' => $values->cid,
-                    'instructor' => $values->first_name.' '.$values->last_name,
+                    'instructor' => $values->first_name . ' ' . $values->last_name,
                     'title' => $values->title,
                     'thumbnail' => $this->model_course->get_thumbnail($values->cid),
                     'rating' => $this->model_course->rating_from_user($user_id, $values->cid)
@@ -839,8 +818,9 @@ class Home extends FrontendController
         return $formated_humanize;
     }
 
-    public function review($id){
-        
+    public function review($id)
+    {
+
         $rules = $this->model_review->validationRules;
         if (!$this->validate($rules)) {
             return $this->respond([
@@ -850,13 +830,13 @@ class Home extends FrontendController
                     'message' => $this->validator->getErrors()
                 ]
             ], 403);
-        }else{
+        } else {
 
             $value =  $this->request->getJSON();
 
             $data = [
-                'review' => $value->review,   
-                'ratable_id' => $value->course_id,   
+                'review' => $value->review,
+                'ratable_id' => $value->course_id,
                 'ratable_type' => 'course',
                 'rating' => $value->rating,
                 'date_added' => strtotime(date('D, d-M-Y')),
@@ -867,5 +847,4 @@ class Home extends FrontendController
             return $this->respondCreated(response_create());
         }
     }
-
 }
