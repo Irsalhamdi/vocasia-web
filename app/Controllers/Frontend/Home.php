@@ -435,7 +435,7 @@ class Home extends FrontendController
                 'bio' => strip_tags($this->model_course->get_bio_instructor(['id_user' => $courses->uid, 'bio_status' => $courses->bio_status, 'bio_instructor' => $courses->bio_instructor])),
                 'rating' => $this->model_course->get_rating_courses($courses->id),
                 'total_discount' => $discount,
-                'last_modified' => $this->_generate_humanize_timestamps($courses->update_at)
+                'last_modified' => !is_null($courses->update_at) ? $this->_generate_humanize_timestamps($courses->update_at) : $this->_generate_humanize_timestamps($courses->create_at)
             ];
         }
         return $this->respond(get_response($data));
