@@ -23,7 +23,7 @@ class MidtransPayment extends ResourceController
         $this->model_payment = model('PaymentModel');
         $this->course_model = model('CoursesModel');
         helper('curl');
-        MidtransConfig::$overrideNotifUrl = 'http://localhost:8080/midtrans/payment/notification';
+        MidtransConfig::$overrideNotifUrl = 'https://api.vocasia.pasia.id/midtrans/payment/notification';
     }
 
 
