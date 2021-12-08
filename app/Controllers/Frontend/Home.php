@@ -135,39 +135,42 @@ class Home extends FrontendController
         $id_user = $this->request->getVar('users');
         if (!is_null($id_user)) {
             $item_wishlist = $this->model_wishlist->get_user_wishlist($id_user);
-            foreach ($item_wishlist as $wishlist) {
-                $total_students = $this->model_enrol->get_count_enrols_courses($wishlist->course_id);
-                $rating_review = $this->model_course->get_rating_courses($wishlist->course_id);
-                if ($wishlist->discount_price != 0) {
-                    $get_discount_percent = ($wishlist->discount_price / $wishlist->price) * 100;
-                } elseif ($wishlist->discount_price == 0) {
-                    $get_discount_percent = 0;
+                if(!empty($item_wishlist)){
+                    foreach ($item_wishlist as $wishlist) {
+                    $total_students = $this->model_enrol->get_count_enrols_courses($wishlist->course_id);
+                    $rating_review = $this->model_course->get_rating_courses($wishlist->course_id);
+                    if ($wishlist->discount_price != 0) {
+                        $get_discount_percent = ($wishlist->discount_price / $wishlist->price) * 100;
+                    } elseif ($wishlist->discount_price == 0) {
+                        $get_discount_percent = 0;
+                    }
+                    $data[] = [
+                        "wishlist_id" => $wishlist->wishlist_id,
+                        "course_id" => $wishlist->course_id,
+                        "title" => $wishlist->title,
+                        "price" => $wishlist->price,
+                        "instructor" => $wishlist->first_name . ' ' . $wishlist->last_name,
+                        "thumbnail" => $this->model_course->get_thumbnail($wishlist->course_id),
+                        "discount_price" => $wishlist->discount_price,
+                        "discount_flag" => $wishlist->discount_flag,
+                        "total_discount" => intval($get_discount_percent),
+                        "student" => $total_students,
+                        "review" => $rating_review,
+                        "foto_profile" => $this->model_users->get_foto_profile($wishlist->instructor_id),
+                    ];
                 }
-                $data[] = [
-                    "wishlist_id" => $wishlist->wishlist_id,
-                    "course_id" => $wishlist->course_id,
-                    "title" => $wishlist->title,
-                    "price" => $wishlist->price,
-                    "instructor" => $wishlist->first_name . ' ' . $wishlist->last_name,
-                    "thumbnail" => $this->model_course->get_thumbnail($wishlist->course_id),
-                    "discount_price" => $wishlist->discount_price,
-                    "discount_flag" => $wishlist->discount_flag,
-                    "total_discount" => intval($get_discount_percent),
-                    "student" => $total_students,
-                    "review" => $rating_review,
-                    "foto_profile" => $this->model_users->get_foto_profile($wishlist->instructor_id),
-                ];
-            }
             return $this->respond(get_response($data));
-        } else {
-            return $this->respond([
-                'status' => 200,
-                'error' => false,
-                'data' => [
-                    'messages' => 'Wishlist Empty !'
-                ]
-            ]);
+            } else {
+                return $this->respond([
+                    'status' => 200,
+                    'error' => false,
+                    'data' => [
+                        
+                    ]
+               ]);
         }
+            
+        } 
     }
     public function add_to_wishlist()
     {
