@@ -156,7 +156,7 @@ class MidtransPayment extends ResourceController
         $notification = $notif->getResponse();
         if ($notification->transaction_status == 'settlement') {
             $data_payment = array();
-            $id_payment = $notification->id_order;
+            $id_payment = $notification->order_id;
             $find_id_payment = $this->model_payment->where('id_payment', $id_payment)->get()->getResult();
             if (!empty($find_id_payment)) {
                 foreach ($find_id_payment as $key => $values) {
