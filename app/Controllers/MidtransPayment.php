@@ -6,6 +6,7 @@ use App\Models\CoursesModel;
 use CodeIgniter\RESTful\ResourceController;
 use Midtrans\Config as MidtransConfig;
 use Config\Services;
+use Exception;
 use Midtrans\CoreApi as CoreApi;
 use Midtrans\Notification as Notification;
 
@@ -157,14 +158,14 @@ class MidtransPayment extends ResourceController
         if ($notification->transaction_status == 'settlement') {
             $data_payment = array();
             $id_payment = $notification->order_id;
-            $find_id_payment = $this->model_payment->where('id_payment', $id_payment)->get()->getResult();
-            if (!empty($find_id_payment)) {
-                foreach ($find_id_payment as $key => $values) {
-                    $data_payment[$key] = [
-                        $values->status_payment => 1,
-                    ];
-                    $this->model_payment->update($id_payment, $data_payment);
-                }
+            $find_id_payment = $this->model_payment->where('id_payment', $id_payment)->first();
+            if (empty($find_id_payment)) {
+                $data_update = [
+                    'status_payment' => 1
+                ];
+                $this->model_payment->update($id_payment, $data_update);
+            } else {
+                throw new Exception('Failed Update');
             }
         }
     }
