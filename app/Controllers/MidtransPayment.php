@@ -158,15 +158,7 @@ class MidtransPayment extends ResourceController
         if ($notification->transaction_status == 'settlement') {
             $data_payment = array();
             $id_payment = $notification->order_id;
-            $find_id_payment = $this->model_payment->where('id_payment', $id_payment)->first();
-            if (empty($find_id_payment)) {
-                $data_update = [
-                    'status_payment' => 1
-                ];
-                $this->model_payment->update($id_payment, $data_update);
-            } else {
-                throw new Exception('Failed Update');
-            }
+            $this->model_payment->where('id_payment', $id_payment)->set(['status_payment' => 1])->update();
         }
     }
 }
