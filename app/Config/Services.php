@@ -34,8 +34,14 @@ class Services extends BaseService
     {
         return getenv('JWT_SECRET_TOKEN');
     }
-    public static function getBaseUrl()
+
+    public static function getMidtransServerKey()
     {
-        return getenv('app.baseURL');
+        return getenv('MIDTRANS_SERVER_KEY');
+    }
+
+    public static function getMidtransClientKey()
+    {
+        return getenv('MIDTRANS_CLIENT_KEY');
     }
 }
