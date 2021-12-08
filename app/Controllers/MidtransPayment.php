@@ -7,6 +7,7 @@ use CodeIgniter\RESTful\ResourceController;
 use Midtrans\Config as MidtransConfig;
 use Config\Services;
 use Midtrans\CoreApi as CoreApi;
+use Midtrans\Notification as Notification;
 
 class MidtransPayment extends ResourceController
 {
@@ -21,6 +22,8 @@ class MidtransPayment extends ResourceController
         MidtransConfig::$serverKey = Services::getMidtransServerKey();;
         $this->model_payment = model('PaymentModel');
         $this->course_model = model('CoursesModel');
+        helper('curl');
+        MidtransConfig::$overrideNotifUrl = 'http://localhost:8080/midtrans/payment/notification';
     }
 
 
@@ -37,7 +40,6 @@ class MidtransPayment extends ResourceController
 
 
         foreach ($data_invoice->data_invoice as $key => $values) {
-            $find_instructor_course = $this->course_model->select('instructor_revenue')->where('id', $values->id_kursus)->get()->getResult();
             $data_items[$key] = [
                 'id'   => $values->id_kursus,
                 'name' => $values->title_kursus,
@@ -68,22 +70,45 @@ class MidtransPayment extends ResourceController
                     'bank' => $data_invoice->bank
                 )
             );
-            $client = \Config\Services::curlrequest();
-            $url_request = $client->setBody(json_encode($transaction_data))->request('post', 'https://api.sandbox.midtrans.com/v2/charge', array(
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'Authorization' => 'Basic U0ItTWlkLXNlcnZlci02SzE4S3E0Y1FLMlhOTk5lazZmSWwyUjk=',
-                    'Content-Type' => 'application/json'
-                ]
-            ));
-            $response = json_decode($url_request->getBody());
+            $url_request = curlRequest($transaction_data);
+            $response = $url_request;
+        } elseif ($data_invoice->payment_type == 'cstore' && $data_invoice->store == 'alfamart') {
+            $transaction_data = array(
+                'payment_type' => $data_invoice->payment_type,
+                'transaction_details' => $data_transaction,
+                'item_details'        => $data_items,
+                'customer_details'    => $data_customer,
+                'cstore' => array(
+                    'store' => $data_invoice->store,
+                    'message' => "Message",
+                    "alfamart_free_text_1" => 'Pembayaran Kursus Vocasia'
+                )
+            );
+            $response = curlRequest($transaction_data);
+        } elseif ($data_invoice->payment_type == 'cstore' && $data_invoice->store == 'indomaret') {
+            $transaction_data = array(
+                'payment_type' => $data_invoice->payment_type,
+                'transaction_details' => $data_transaction,
+                'item_details'        => $data_items,
+                'customer_details'    => $data_customer,
+                'cstore' => array(
+                    'store' => $data_invoice->store,
+                    "message" => 'Pembayaran Kursus Platform Vocasia'
+                )
+            );
+            $response = curlRequest($transaction_data);
         }
         if ($response->transaction_status == 'pending') {
             foreach ($data_invoice->data_invoice as $key => $values) {
                 $find_instructor_course = $this->course_model->select('instructor_revenue')->where('id', $values->id_kursus)->get()->getResult();
                 foreach ($find_instructor_course as $key => $values2) {
-                    $instructor_revenue = $values2->instructor_revenue / 100 * $values->harga;
-                    $admin_revenue = $values->harga - $instructor_revenue;
+                    if (!is_null($values2->instructor_revenue)) {
+                        $instructor_revenue = $values2->instructor_revenue / 100 * $values->harga;
+                        $admin_revenue = $values->harga - $instructor_revenue;
+                    } else {
+                        $instructor_revenue = 0;
+                        $admin_revenue = $values->harga;
+                    }
                 }
                 if ($response->payment_type != 'bank_transfer') {
                     $this->model_payment->insert([
@@ -117,7 +142,30 @@ class MidtransPayment extends ResourceController
                 }
             }
         }
-
         return $this->respondCreated($response);
+    }
+
+    public function notify_transaction()
+    {
+        try {
+            $notif = new Notification();
+        } catch (\Exception $e) {
+            exit($e->getMessage());
+        }
+
+        $notification = $notif->getResponse();
+        if ($notification->transaction_status == 'settlement') {
+            $data_payment = array();
+            $id_payment = $notification->id_order;
+            $find_id_payment = $this->model_payment->where('id_payment', $id_payment)->get()->getResult();
+            if (!empty($find_id_payment)) {
+                foreach ($find_id_payment as $key => $values) {
+                    $data_payment[$key] = [
+                        'status_payment' => 1,
+                    ];
+                    $this->model_payment->update($id_payment, $data_payment);
+                }
+            }
+        }
     }
 }
