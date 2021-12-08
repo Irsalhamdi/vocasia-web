@@ -161,7 +161,7 @@ class MidtransPayment extends ResourceController
             if (!empty($find_id_payment)) {
                 foreach ($find_id_payment as $key => $values) {
                     $data_payment[$key] = [
-                        'status_payment' => 1,
+                        $values->status_payment => 1,
                     ];
                     $this->model_payment->update($id_payment, $data_payment);
                 }
