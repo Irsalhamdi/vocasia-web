@@ -2,14 +2,12 @@
 
 namespace App\Controllers;
 
-use App\Models\CoursesModel;
-use App\Models\EnrolModel;
 use CodeIgniter\RESTful\ResourceController;
 use Midtrans\Config as MidtransConfig;
 use Config\Services;
-use Exception;
 use Midtrans\CoreApi as CoreApi;
 use Midtrans\Notification as Notification;
+
 
 class MidtransPayment extends ResourceController
 {
@@ -25,7 +23,7 @@ class MidtransPayment extends ResourceController
         $this->model_payment = model('PaymentModel');
         $this->course_model = model('CoursesModel');
         $this->enrol_model = model('EnrolModel');
-        helper('curl');
+        helper(['curl', 'pusher']);
         MidtransConfig::$overrideNotifUrl = 'https://api.vocasia.pasia.id/midtrans/payment/notification';
     }
 
@@ -157,6 +155,7 @@ class MidtransPayment extends ResourceController
                 }
             }
         }
+        pusher_notification('before-paid', $response->order_id);
         return $this->respondCreated($response);
     }
 
@@ -190,8 +189,11 @@ class MidtransPayment extends ResourceController
                         'course_id' => $value->course_id,
                         'payment_id' => $value->id_payment,
                     ]);
+
+                    pusher_notification('after-paid', $value->id_payment);
                 }
             } else {
+                pusher_notification('fail-paid');
                 return $this->fail('You Have Enrolled This Course !');
             }
         } catch (\Exception $e) {
