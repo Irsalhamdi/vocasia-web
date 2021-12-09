@@ -160,7 +160,7 @@ $routes->group('mobile', ['namespace' => 'App\Controllers\Frontend', 'filter' =>
     $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
     $routes->get('banners', 'Banner::index');
 });
-$routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user,cors'], function ($routes) {
+$routes->group('users', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
     $routes->get('me', 'Home::detail_users_login');
     $routes->get('wishlist', 'Home::wishlist');
     $routes->post('wishlist', 'Home::add_to_wishlist');
@@ -189,6 +189,7 @@ $routes->group('payment', ['namespace' => 'App\Controllers'], function ($routes)
 });
 
 $routes->post('midtrans/payment/notification', 'MidtransPayment::notify_transaction');
+$routes->get('midtrans/check', 'MidtransPayment::status_payment');
 
 $routes->group('affiliate', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user,cors'], function ($routes) {
     $routes->get('access/(:num)', 'Affiliate::access/$1');

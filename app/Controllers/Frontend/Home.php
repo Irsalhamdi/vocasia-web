@@ -135,8 +135,8 @@ class Home extends FrontendController
         $id_user = $this->request->getVar('users');
         if (!is_null($id_user)) {
             $item_wishlist = $this->model_wishlist->get_user_wishlist($id_user);
-                if(!empty($item_wishlist)){
-                    foreach ($item_wishlist as $wishlist) {
+            if (!empty($item_wishlist)) {
+                foreach ($item_wishlist as $wishlist) {
                     $total_students = $this->model_enrol->get_count_enrols_courses($wishlist->course_id);
                     $rating_review = $this->model_course->get_rating_courses($wishlist->course_id);
                     if ($wishlist->discount_price != 0) {
@@ -159,31 +159,40 @@ class Home extends FrontendController
                         "foto_profile" => $this->model_users->get_foto_profile($wishlist->instructor_id),
                     ];
                 }
-            return $this->respond(get_response($data));
+                return $this->respond(get_response($data));
             } else {
                 return $this->respond([
                     'status' => 200,
                     'error' => false,
-                    'data' => [
-                        
-                    ]
-               ]);
+                    'data' => []
+                ]);
+            }
         }
-            
-        } 
     }
     public function add_to_wishlist()
     {
         try {
             $wishlist_item = $this->request->getJSON();
-            $this->model_wishlist->insert($wishlist_item);
-            return $this->respondCreated([
-                'status' => 201,
-                'error' => false,
-                'data' => [
-                    'messages' => 'Wishlist Success Added !'
-                ]
-            ]);
+            $check_wishlist = $this->model_wishlist->where(['id_user' => $wishlist_item->id_user, 'wishlist_item' => $wishlist_item->wishlist_item])->first();
+            if (!empty($check_wishlist)) {
+                $this->model_wishlist->delete($check_wishlist['id']);
+                return $this->respondDeleted([
+                    'status' => 200,
+                    'error' => false,
+                    'data' => [
+                        'messages' => 'wishlist deleted !'
+                    ]
+                ]);
+            } else {
+                $this->model_wishlist->insert($wishlist_item);
+                return $this->respondCreated([
+                    'status' => 201,
+                    'error' => false,
+                    'data' => [
+                        'messages' => 'Wishlist Success Added !'
+                    ]
+                ]);
+            }
         } catch (\Throwable $th) {
             return $this->failNotFound();
         }

@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\CoursesModel;
+use App\Models\EnrolModel;
 use CodeIgniter\RESTful\ResourceController;
 use Midtrans\Config as MidtransConfig;
 use Config\Services;
@@ -23,6 +24,7 @@ class MidtransPayment extends ResourceController
         MidtransConfig::$serverKey = Services::getMidtransServerKey();;
         $this->model_payment = model('PaymentModel');
         $this->course_model = model('CoursesModel');
+        $this->enrol_model = model('EnrolModel');
         helper('curl');
         MidtransConfig::$overrideNotifUrl = 'https://api.vocasia.pasia.id/midtrans/payment/notification';
     }
@@ -98,6 +100,18 @@ class MidtransPayment extends ResourceController
                 )
             );
             $response = curlRequest($transaction_data);
+        } elseif ($data_invoice->payment_type == 'echannel') {
+            $transaction_data = array(
+                'payment_type' => $data_invoice->payment_type,
+                'transaction_details' => $data_transaction,
+                'item_details'        => $data_items,
+                'customer_details'    => $data_customer,
+                'echannel' => array(
+                    'bill_info1' => 'Pembayaran Kursus Platform Vocasia',
+                    'bill_info2' => 'Pembayaran Online E Channel Mandiri'
+                )
+            );
+            $response = curlRequest($transaction_data);
         }
         if ($response->transaction_status == 'pending') {
             foreach ($data_invoice->data_invoice as $key => $values) {
@@ -156,9 +170,32 @@ class MidtransPayment extends ResourceController
 
         $notification = $notif->getResponse();
         if ($notification->transaction_status == 'settlement') {
-            $data_payment = array();
-            $id_payment = $notification->order_id;
-            $this->model_payment->where('id_payment', $id_payment)->set(['status_payment' => 1])->update();
+            if ($notification->fraud_status == 'accept') {
+                $id_payment = $notification->order_id;
+                $this->model_payment->where('id_payment', $id_payment)->set(['status_payment' => 1])->update();
+                $this->_enrolled_user($id_payment);
+            }
+        }
+    }
+
+    private function _enrolled_user($id_payment)
+    {
+        try {
+            $find_user_id = $this->model_payment->where('id_payment', $id_payment)->get()->getResult();
+            $check_enrolled = $this->enrol_model->where('payment_id', $id_payment)->get()->getResult();
+            if (!empty($find_user_id) && empty($check_enrolled)) {
+                foreach ($find_user_id as $key => $value) {
+                    $this->enrol_model->insert([
+                        'user_id' => $value->id_user,
+                        'course_id' => $value->course_id,
+                        'payment_id' => $value->id_payment,
+                    ]);
+                }
+            } else {
+                return $this->fail('You Have Enrolled This Course !');
+            }
+        } catch (\Exception $e) {
+            echo json_encode($e->getMessage());
         }
     }
 }

@@ -17,8 +17,8 @@ class EnrolModel extends Model
     protected $allowedFields        = ['user_id', 'course_id', 'payment_id', 'create_at', 'update_at'];
 
     // Dates
-    protected $useTimestamps        = false;
-    protected $dateFormat           = 'datetime';
+    protected $useTimestamps        = true;
+    protected $dateFormat           = 'int';
     protected $createdField         = 'create_at';
     protected $updatedField         = 'update_at';
     protected $deletedField         = 'deleted_at';
@@ -82,5 +82,4 @@ class EnrolModel extends Model
         $data_count = !empty($data->total_students) ? $data->total_students : null;
         return $data_count;
     }
-    
 }
