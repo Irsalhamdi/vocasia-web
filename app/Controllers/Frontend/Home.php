@@ -100,28 +100,10 @@ class Home extends FrontendController
                 return $this->failNotFound();
             } else {
                 $course_search_data = $this->course_data($course);
-                foreach ($course_search_data as $course) {
-                    $data[] = [
-                        "title" => $course->title,
-                        "short_description" => $course->short_description,
-                        "price" => $course->price,
-                        "instructor_name" => $course->first_name . ' ' . $course->last_name,
-                        "discount_flag" => $course->discount_flag,
-                        "discount_price" => $course->discount_price,
-                        "thumbnail" => $course->thumbnail,
-                        "level_course" => $course->level_course,
-                        "total_lesson" => $course->total_lesson,
-                        "id" => $course->id,
-                        "instructor_id" => $course->instructor_id,
-                        "language" => $course->language,
-                        "foto_profile" => $this->model_users->get_foto_profile($course->instructor_id),
-
-                    ];
-                }
-                return $this->respond(get_response($data));
+                return $this->respond(get_response($course_search_data));
             }
         } else {
-            return $this->failNotFound();
+            return $this->respond([]);
         }
     }
     public function get_all_category()
@@ -444,6 +426,7 @@ class Home extends FrontendController
                 "language" => $cd['language'],
                 "duration" => $duration,
                 "students" => $total_students,
+                "foto_profile" => $this->model_users->get_foto_profile($cd['id']),
                 "rating" => $rating_review,
                 "total_discount" => $discount
 
