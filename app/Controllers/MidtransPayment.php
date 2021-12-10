@@ -110,6 +110,29 @@ class MidtransPayment extends ResourceController
                 )
             );
             $response = curlRequest($transaction_data);
+        } elseif ($data_invoice->payment_type == 'shopeepay') {
+            $transaction_data = array(
+                'payment_type' => $data_invoice->payment_type,
+                'transaction_details' => $data_transaction,
+                'item_details'        => $data_items,
+                'customer_details'    => $data_customer,
+                'shopeepay' => array(
+                    'callback_url' => 'https://midtrans.com/',
+                )
+            );
+            $response = curlRequest($transaction_data);
+        } elseif ($data_invoice->payment_type == 'credit_card') {
+            $transaction_data = array(
+                'payment_type' => $data_invoice->payment_type,
+                'credit_card'  => array(
+                    'token_id'      => '481111-1114-eaa738a8-dcc6-4f63-870d-f8cc79e0676d',
+                    'authentication' => true,
+                ),
+                'transaction_details' => $data_transaction,
+                'item_details'        => $data_items,
+                'customer_details'    => $data_customer
+            );
+            $response = CoreApi::charge($transaction_data);
         }
         if ($response->transaction_status == 'pending') {
             foreach ($data_invoice->data_invoice as $key => $values) {
