@@ -168,12 +168,31 @@ class MidtransPayment extends ResourceController
         }
 
         $notification = $notif->getResponse();
-        if ($notification->transaction_status == 'settlement') {
-            if ($notification->fraud_status == 'accept') {
-                $id_payment = $notification->order_id;
-                $this->model_payment->where('id_payment', $id_payment)->set(['status_payment' => 1])->update();
-                $this->_enrolled_user($id_payment);
+        $id_payment = $notification->order_id;
+        if ($notification->transaction_status == 'capture') {
+            if ($notification->payment_type == 'credit_card') {
+                if ($notification->fraud_status == 'challange') {
+                    $this->model_payment->where('id_payment', $id_payment)->set(['status_payment' => -1])->update();
+                    pusher_notification('deny-paid', $id_payment);
+                }
+            } elseif ($notification->transaction_status == 'settlement') {
+                if ($notification->fraud_status == 'accept') {
+                    $this->model_payment->where('id_payment', $id_payment)->set(['status_payment' => 1])->update();
+                    $this->_enrolled_user($id_payment);
+                }
+            } elseif ($notification->transaction_status == 'cancel') {
+                $this->model_payment->where('id_payment', $id_payment)->set(['status_payment' => -3])->update();
+                pusher_notification('cancel-paid', $id_payment);
+                return $this->respond('Trnsaksi Dibatalkan Hubungi Admin Untuk Info Lebih Lanjut');
             }
+        } elseif ($notification->transaction_status == 'deny') {
+            $this->model_payment->where('id_payment', $id_payment)->set(['status_payment' => -1])->update();
+            pusher_notification('deny-paid', $id_payment);
+            return $this->respond($notification->status_message);
+        } elseif ($notification->transaction_status == 'expire') {
+            $this->model_payment->where('id_payment', $id_payment)->set(['status_payment' => -2])->update();
+            pusher_notification('expire-paid', $id_payment);
+            return $this->respond('Pembayaran Telah Kadaluarsa !');
         }
     }
 

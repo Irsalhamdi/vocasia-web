@@ -31,4 +31,16 @@ function event_list_notification($event, $order_id = null)
         $data = 'Pembayaran Pesanan Ditolak !';
         return $data;
     }
+    if ($event == 'cancel-paid') {
+        $data = 'Pembayaran Pesanan #' . $order_id .   ' Dibatalkan !';
+        return $data;
+    }
+    if ($event == 'deny-paid') {
+        $data = 'Pembayaran Pesanan #' . $order_id .   ' Ditolak !';
+        return $data;
+    }
+    if ($event == 'expire-paid') {
+        $data = 'Pembayaran Pesanan #' . $order_id .   ' Telah Melewati Batas !';
+        return $data;
+    }
 }
