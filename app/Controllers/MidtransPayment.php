@@ -174,9 +174,7 @@ class MidtransPayment extends ResourceController
                 if ($notification->fraud_status == 'challange') {
                     $this->model_payment->where('id_payment', $id_payment)->set(['status_payment' => -1])->update();
                     pusher_notification('deny-paid', $id_payment);
-                }
-            } elseif ($notification->transaction_status == 'settlement') {
-                if ($notification->fraud_status == 'accept') {
+                } else {
                     $this->model_payment->where('id_payment', $id_payment)->set(['status_payment' => 1])->update();
                     $this->_enrolled_user($id_payment);
                 }
@@ -184,6 +182,11 @@ class MidtransPayment extends ResourceController
                 $this->model_payment->where('id_payment', $id_payment)->set(['status_payment' => -3])->update();
                 pusher_notification('cancel-paid', $id_payment);
                 return $this->respond('Trnsaksi Dibatalkan Hubungi Admin Untuk Info Lebih Lanjut');
+            }
+        } elseif ($notification->transaction_status == 'settlement') {
+            if ($notification->fraud_status == 'accept') {
+                $this->model_payment->where('id_payment', $id_payment)->set(['status_payment' => 1])->update();
+                $this->_enrolled_user($id_payment);
             }
         } elseif ($notification->transaction_status == 'deny') {
             $this->model_payment->where('id_payment', $id_payment)->set(['status_payment' => -1])->update();
