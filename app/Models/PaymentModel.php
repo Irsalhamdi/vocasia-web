@@ -169,4 +169,10 @@ class PaymentModel extends Model
         return 'ID Payment Invalid';
       }
     }
+
+    public function get_payment_user($user_id, $course_id)
+    {
+      return $this->db->table('payment')->select('payment.id_payment')
+      ->where('payment.id_user',$user_id)->where('payment.course_id',$course_id)->get()->getFirstRow();
+    }
 }

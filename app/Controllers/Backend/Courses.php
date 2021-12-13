@@ -24,12 +24,9 @@ class Courses extends BackendController
             $data[] = [
                 'title' => $courses->title,
                 'create_at' => $courses->create_at,
-<<<<<<< HEAD
-=======
                 'update_at' => $courses->update_at,
                 'delete_at' => $courses->delete_at,
                 'instructor_name' => $courses->first_name . ' ' . $courses->last_name,
->>>>>>> 6956f93eb3a91d6a31b195313385a38704d55102
                 'name_category' => $courses->name_category,
                 'lesson' => $this->model_lesson->get_lesson($courses->id),
                 'section' => $this->model_section->get_section($courses->id),

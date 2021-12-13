@@ -135,7 +135,7 @@ $routes->group('instructor', ['namespace' => 'App\Controllers\Frontend', 'filter
     $routes->put('guide-user/(:num)', 'GuideUserInstructor::update/$1');
     $routes->delete('guide-user/(:num)', 'GuideUserInstructor::delete/$1');
 });
-$routes->group('homepage', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'cors'], function ($routes) {
+$routes->group('homepage', ['namespace' => 'App\Controllers\Frontend','filter' => 'cors'], function ($routes) {
     $routes->get('courses', 'Home::get_all_courses');
     $routes->get('categories', 'Home::get_all_category');
     $routes->post('wishlist', 'Home::add_to_wishlist');
@@ -147,6 +147,10 @@ $routes->group('homepage', ['namespace' => 'App\Controllers\Frontend', 'filter' 
     $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
     $routes->get('banners', 'Banner::index');
     $routes->get('course/search', 'Home::search_keyword_course');
+    $routes->get('sertifikat/(:num)', 'Home::sertifikat/$1');
+    $routes->post('message/(:num)', 'MessageThread::create/$1');
+    $routes->get('messages/sender/(:num)', 'MessageThread::sender/$1');
+    $routes->get('messages/receiver/(:num)', 'MessageThread::receiver/$1');
 });
 $routes->group('mobile', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'cors'], function ($routes) {
     $routes->get('courses', 'Home::get_all_courses');
@@ -160,7 +164,7 @@ $routes->group('mobile', ['namespace' => 'App\Controllers\Frontend', 'filter' =>
     $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
     $routes->get('banners', 'Banner::index');
 });
-$routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user', 'filter' => 'cors'], function ($routes) {
+$routes->group('users', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
     $routes->get('me', 'Home::detail_users_login');
     $routes->get('wishlist', 'Home::wishlist');
     $routes->post('wishlist', 'Home::add_to_wishlist');

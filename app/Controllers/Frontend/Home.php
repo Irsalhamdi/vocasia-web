@@ -847,4 +847,36 @@ class Home extends FrontendController
             return $this->respondCreated(response_create());
         }
     }
+
+    public function sertifikat($user_id)
+    {
+        $course = $this->request->getJSON('course_id');
+
+        $user = $this->model_enrol->get_sertifikat($user_id ,$course);
+        $section = $this->model_enrol->count_section($course);
+        $watch_progress = $this->model_watch->count_progress($course, $user_id);
+        $progress = ($watch_progress / $section) * 1;
+
+        if ($user && $course && $watch_progress) {
+            if ($progress === 1) {
+                $update = [
+                    'finish_date' => Time::now()
+                ];
+                
+                $this->model_enrol->protect(false)->update($user->id, $update);
+            }
+            $enrol = $this->model_enrol->get_sertifikat($user_id ,$course);
+            $data = [
+                'name' => $enrol->first_name . ' ' . $enrol->last_name,
+                'title' => $enrol->title,
+                'finish_date' => strtotime($enrol->finish_date),
+                'certificate_no' => $this->model_payment->get_payment_user($user_id , $enrol->course_id)
+            ];
+            return $this->respond(get_response($data));
+
+        }else {
+            return $this->failNotFound();
+        }
+    }
+
 }

@@ -39,4 +39,18 @@ class WatchHistoryModel extends Model
     protected $afterFind            = [];
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
+
+    public function get_user($user_id)
+    {
+        return $this->db->table('watch_history a')->select('course_id,progress')
+        ->where('a.id_user',$user_id)->get()->getResult();
+    }
+
+    public function count_progress($course_id, $user_id)
+    {
+        return $this->db->table('watch_history a')->select('course_id,progress')
+        ->where('a.course_id',$course_id)->where('a.id_user',$user_id)->countAllResults();
+    }
+
+
 }
