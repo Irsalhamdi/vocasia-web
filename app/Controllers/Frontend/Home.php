@@ -226,23 +226,27 @@ class Home extends FrontendController
                 $get_discount_percent = 0;
             }
             $data_cart[$key] = [
-                'cart_items' => [
-                    "cart_id" => $ci->cart_id,
-                    "course_id" => $ci->course_id,
-                    "title" => $ci->title,
-                    "price" => $ci->price,
-                    "instructor" => $ci->first_name . ' ' . $ci->last_name,
-                    "thumbnail" => $this->model_course->get_thumbnail($ci->course_id),
-                    "discount_price" => $ci->discount_price,
-                    "discount_flag" => $ci->discount_flag,
-                    "total_discount" => intval($get_discount_percent),
-                    "student" => $total_students,
-                    "review" => $rating_review,
-                    "foto_profile" => $this->model_users->get_foto_profile($ci->instructor_id),
-                ]
+                "cart_id" => $ci->cart_id,
+                "course_id" => $ci->course_id,
+                "title" => $ci->title,
+                "price" => $ci->price,
+                "instructor" => $ci->first_name . ' ' . $ci->last_name,
+                "thumbnail" => $this->model_course->get_thumbnail($ci->course_id),
+                "discount_price" => $ci->discount_price,
+                "discount_flag" => $ci->discount_flag,
+                "total_discount" => intval($get_discount_percent),
+                "student" => $total_students,
+                "review" => $rating_review,
+                "foto_profile" => $this->model_users->get_foto_profile($ci->instructor_id),
+
             ];
         }
-        return $this->respond(get_response($data_cart));
+        return $this->respond([
+            'status' => 200,
+            'error' => false,
+            'data' => $data_cart,
+            'total_payment' => $total_payment
+        ]);
     }
 
     public function add_to_cart()
@@ -350,23 +354,7 @@ class Home extends FrontendController
                 if (is_null($data_filter)) {
                     return $this->failNotFound('not found!');
                 }
-                foreach ($data_filter as $course) {
-                    $data[] = [
-                        "title" => $course->title,
-                        "short_description" => $course->short_description,
-                        "price" => $course->price,
-                        "instructor_name" => $course->first_name . ' ' . $course->last_name,
-                        "discount_flag" => $course->discount_flag,
-                        "discount_price" => $course->discount_price,
-                        "thumbnail" => $course->thumbnail,
-                        "level_course" => $course->level_course,
-                        "total_lesson" => $course->total_lesson,
-                        "id" => $course->id,
-                        "instructor_id" => $course->instructor_id,
-                        "language" => $course->language
-                    ];
-                }
-                $data_response = $this->course_data($data);
+                $data_response = $this->course_data($data_filter);
                 return $this->respond(get_response($data_response));
             } else {
                 $data_filter_rating = $this->model_course->get_rating_from_filter($filter[0]);
@@ -464,7 +452,10 @@ class Home extends FrontendController
                 'bio' => strip_tags($this->model_course->get_bio_instructor(['id_user' => $courses->uid, 'bio_status' => $courses->bio_status, 'bio_instructor' => $courses->bio_instructor])),
                 'rating' => $this->model_course->get_rating_courses($courses->id),
                 'total_discount' => $discount,
-                'last_modified' => !is_null($courses->update_at) ? $this->_generate_humanize_timestamps($courses->update_at) : $this->_generate_humanize_timestamps($courses->create_at)
+                'last_modified' => !is_null($courses->update_at) ? $this->_generate_humanize_timestamps($courses->update_at) : $this->_generate_humanize_timestamps($courses->create_at),
+                "foto_profile" => $this->model_users->get_foto_profile($courses->uid),
+                "thumbnail" => $this->model_course->get_thumbnail($courses->id),
+
             ];
         }
         return $this->respond(get_response($data));
