@@ -47,6 +47,6 @@ class CartModel extends Model
 
     public function get_total_payment_cart($id_user)
     {
-        return $this->db->table('carts')->selectSum('cart_price')->where('id_user', $id_user)->groupBy('id_user')->get()->getResult();
+        return $this->db->table('carts')->selectSum('cart_price')->where('id_user', $id_user)->groupBy('id_user')->get()->getFirstRow();
     }
 }

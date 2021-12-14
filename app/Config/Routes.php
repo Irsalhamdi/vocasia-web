@@ -135,7 +135,7 @@ $routes->group('instructor', ['namespace' => 'App\Controllers\Frontend', 'filter
     $routes->put('guide-user/(:num)', 'GuideUserInstructor::update/$1');
     $routes->delete('guide-user/(:num)', 'GuideUserInstructor::delete/$1');
 });
-$routes->group('homepage', ['namespace' => 'App\Controllers\Frontend','filter' => 'cors'], function ($routes) {
+$routes->group('homepage', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'cors'], function ($routes) {
     $routes->get('courses', 'Home::get_all_courses');
     $routes->get('categories', 'Home::get_all_category');
     $routes->post('wishlist', 'Home::add_to_wishlist');
