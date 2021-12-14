@@ -53,7 +53,7 @@ class CategoryModel extends Model
 
     public function list_category_home()
     {
-        return $this->db->table($this->table)->select('id,name_category,slug_category')->get()->getResult();
+        return $this->db->table($this->table)->select('id,name_category,slug_category,parent_category,font_awesome_class')->get()->getResult();
     }
 
     public function get_thumbnail($params)

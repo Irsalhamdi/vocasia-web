@@ -193,6 +193,7 @@ $routes->group('payment', ['namespace' => 'App\Controllers'], function ($routes)
 });
 
 $routes->post('midtrans/payment/notification', 'MidtransPayment::notify_transaction');
+$routes->get('midtrans/check', 'MidtransPayment::status_payment');
 
 $routes->group('affiliate', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user,cors'], function ($routes) {
     $routes->get('access/(:num)', 'Affiliate::access/$1');

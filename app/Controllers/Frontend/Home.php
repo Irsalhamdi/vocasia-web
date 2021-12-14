@@ -100,28 +100,10 @@ class Home extends FrontendController
                 return $this->failNotFound();
             } else {
                 $course_search_data = $this->course_data($course);
-                foreach ($course_search_data as $course) {
-                    $data[] = [
-                        "title" => $course->title,
-                        "short_description" => $course->short_description,
-                        "price" => $course->price,
-                        "instructor_name" => $course->first_name . ' ' . $course->last_name,
-                        "discount_flag" => $course->discount_flag,
-                        "discount_price" => $course->discount_price,
-                        "thumbnail" => $course->thumbnail,
-                        "level_course" => $course->level_course,
-                        "total_lesson" => $course->total_lesson,
-                        "id" => $course->id,
-                        "instructor_id" => $course->instructor_id,
-                        "language" => $course->language,
-                        "foto_profile" => $this->model_users->get_foto_profile($course->instructor_id),
-
-                    ];
-                }
-                return $this->respond(get_response($data));
+                return $this->respond(get_response($course_search_data));
             }
         } else {
-            return $this->failNotFound();
+            return $this->respond([]);
         }
     }
     public function get_all_category()
@@ -135,8 +117,8 @@ class Home extends FrontendController
         $id_user = $this->request->getVar('users');
         if (!is_null($id_user)) {
             $item_wishlist = $this->model_wishlist->get_user_wishlist($id_user);
-                if(!empty($item_wishlist)){
-                    foreach ($item_wishlist as $wishlist) {
+            if (!empty($item_wishlist)) {
+                foreach ($item_wishlist as $wishlist) {
                     $total_students = $this->model_enrol->get_count_enrols_courses($wishlist->course_id);
                     $rating_review = $this->model_course->get_rating_courses($wishlist->course_id);
                     if ($wishlist->discount_price != 0) {
@@ -159,31 +141,40 @@ class Home extends FrontendController
                         "foto_profile" => $this->model_users->get_foto_profile($wishlist->instructor_id),
                     ];
                 }
-            return $this->respond(get_response($data));
+                return $this->respond(get_response($data));
             } else {
                 return $this->respond([
                     'status' => 200,
                     'error' => false,
-                    'data' => [
-                        
-                    ]
-               ]);
+                    'data' => []
+                ]);
+            }
         }
-            
-        } 
     }
     public function add_to_wishlist()
     {
         try {
             $wishlist_item = $this->request->getJSON();
-            $this->model_wishlist->insert($wishlist_item);
-            return $this->respondCreated([
-                'status' => 201,
-                'error' => false,
-                'data' => [
-                    'messages' => 'Wishlist Success Added !'
-                ]
-            ]);
+            $check_wishlist = $this->model_wishlist->where(['id_user' => $wishlist_item->id_user, 'wishlist_item' => $wishlist_item->wishlist_item])->first();
+            if (!empty($check_wishlist)) {
+                $this->model_wishlist->delete($check_wishlist['id']);
+                return $this->respondDeleted([
+                    'status' => 200,
+                    'error' => false,
+                    'data' => [
+                        'messages' => 'wishlist deleted !'
+                    ]
+                ]);
+            } else {
+                $this->model_wishlist->insert($wishlist_item);
+                return $this->respondCreated([
+                    'status' => 201,
+                    'error' => false,
+                    'data' => [
+                        'messages' => 'Wishlist Success Added !'
+                    ]
+                ]);
+            }
         } catch (\Throwable $th) {
             return $this->failNotFound();
         }
@@ -235,23 +226,27 @@ class Home extends FrontendController
                 $get_discount_percent = 0;
             }
             $data_cart[$key] = [
-                'cart_items' => [
-                    "cart_id" => $ci->cart_id,
-                    "course_id" => $ci->course_id,
-                    "title" => $ci->title,
-                    "price" => $ci->price,
-                    "instructor" => $ci->first_name . ' ' . $ci->last_name,
-                    "thumbnail" => $this->model_course->get_thumbnail($ci->course_id),
-                    "discount_price" => $ci->discount_price,
-                    "discount_flag" => $ci->discount_flag,
-                    "total_discount" => intval($get_discount_percent),
-                    "student" => $total_students,
-                    "review" => $rating_review,
-                    "foto_profile" => $this->model_users->get_foto_profile($ci->instructor_id),
-                ]
+                "cart_id" => $ci->cart_id,
+                "course_id" => $ci->course_id,
+                "title" => $ci->title,
+                "price" => $ci->price,
+                "instructor" => $ci->first_name . ' ' . $ci->last_name,
+                "thumbnail" => $this->model_course->get_thumbnail($ci->course_id),
+                "discount_price" => $ci->discount_price,
+                "discount_flag" => $ci->discount_flag,
+                "total_discount" => intval($get_discount_percent),
+                "student" => $total_students,
+                "review" => $rating_review,
+                "foto_profile" => $this->model_users->get_foto_profile($ci->instructor_id),
+
             ];
         }
-        return $this->respond(get_response($data_cart));
+        return $this->respond([
+            'status' => 200,
+            'error' => false,
+            'data' => $data_cart,
+            'total_payment' => $total_payment
+        ]);
     }
 
     public function add_to_cart()
@@ -359,23 +354,7 @@ class Home extends FrontendController
                 if (is_null($data_filter)) {
                     return $this->failNotFound('not found!');
                 }
-                foreach ($data_filter as $course) {
-                    $data[] = [
-                        "title" => $course->title,
-                        "short_description" => $course->short_description,
-                        "price" => $course->price,
-                        "instructor_name" => $course->first_name . ' ' . $course->last_name,
-                        "discount_flag" => $course->discount_flag,
-                        "discount_price" => $course->discount_price,
-                        "thumbnail" => $course->thumbnail,
-                        "level_course" => $course->level_course,
-                        "total_lesson" => $course->total_lesson,
-                        "id" => $course->id,
-                        "instructor_id" => $course->instructor_id,
-                        "language" => $course->language
-                    ];
-                }
-                $data_response = $this->course_data($data);
+                $data_response = $this->course_data($data_filter);
                 return $this->respond(get_response($data_response));
             } else {
                 $data_filter_rating = $this->model_course->get_rating_from_filter($filter[0]);
@@ -435,6 +414,7 @@ class Home extends FrontendController
                 "language" => $cd['language'],
                 "duration" => $duration,
                 "students" => $total_students,
+                "foto_profile" => $this->model_users->get_foto_profile($cd['id']),
                 "rating" => $rating_review,
                 "total_discount" => $discount
 
@@ -457,6 +437,7 @@ class Home extends FrontendController
                 'title' => $courses->title,
                 'instructor_id' => $courses->uid,
                 'instructor' => $courses->first_name . ' ' . $courses->last_name,
+                'short_description' => $courses->short_description,
                 'level_course' => $courses->level_course,
                 'total_lesson' => $courses->total_lesson,
                 'total_students' => $total_students,
@@ -465,12 +446,16 @@ class Home extends FrontendController
                 'requirement' => $courses->requirement,
                 'price' => $courses->price,
                 'discount_price' => $courses->discount_price,
+                'discount_flag' => $courses->discount_flag,
                 'video_url' => $courses->video_url,
                 'total_duration' => $total_duration,
                 'bio' => strip_tags($this->model_course->get_bio_instructor(['id_user' => $courses->uid, 'bio_status' => $courses->bio_status, 'bio_instructor' => $courses->bio_instructor])),
                 'rating' => $this->model_course->get_rating_courses($courses->id),
                 'total_discount' => $discount,
-                'last_modified' => !is_null($courses->update_at) ? $this->_generate_humanize_timestamps($courses->update_at) : $this->_generate_humanize_timestamps($courses->create_at)
+                'last_modified' => !is_null($courses->update_at) ? $this->_generate_humanize_timestamps($courses->update_at) : $this->_generate_humanize_timestamps($courses->create_at),
+                "foto_profile" => $this->model_users->get_foto_profile($courses->uid),
+                "thumbnail" => $this->model_course->get_thumbnail($courses->id),
+
             ];
         }
         return $this->respond(get_response($data));

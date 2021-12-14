@@ -17,8 +17,8 @@ class EnrolModel extends Model
     protected $allowedFields        = ['user_id', 'course_id', 'payment_id', 'create_at', 'update_at','finish_date'];
 
     // Dates
-    protected $useTimestamps        = false;
-    protected $dateFormat           = 'datetime';
+    protected $useTimestamps        = true;
+    protected $dateFormat           = 'int';
     protected $createdField         = 'create_at';
     protected $updatedField         = 'update_at';
     protected $deletedField         = 'deleted_at';
