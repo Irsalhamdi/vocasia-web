@@ -6,6 +6,9 @@ use App\Controllers\Frontend\FrontendController;
 
 class Affiliate extends FrontendController
 {
+    
+    protected $format = 'json';
+
     public function pull($id){
 
         $rules = [

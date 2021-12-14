@@ -49,4 +49,12 @@ class SectionModel extends Model
                 ->get()
                 ->getResultArray();
     }
+
+    public function count_section($course_id)
+    {
+        return $this->db->table('section')->select('title')
+        ->join('courses','courses.id = section.course_id')
+        ->where('section.course_id',$course_id)
+        ->countAllResults();
+    }
 }
