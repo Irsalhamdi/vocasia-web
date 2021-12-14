@@ -245,7 +245,7 @@ class Home extends FrontendController
             'status' => 200,
             'error' => false,
             'data' => $data_cart,
-            'total_payment' => $total_payment->cart_price
+            'total_payment' => $total_payment['cart_price']
         ]);
     }
 
