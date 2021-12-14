@@ -48,5 +48,6 @@ class FrontendController extends ResourceController
         $this->model_banner = model('BannerModel');
         $this->model_comment = model('CommentModel');
         $this->model_review = model('ReviewModel');        
+        $this->model_message_thread = model('MessageThreadModel');        
     }
 }

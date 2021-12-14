@@ -77,4 +77,10 @@ class LessonModel extends Model
                 ->join('section', 'section.id = lesson.section_id')
                 ->countAllResults();
     }
+
+    public function count_section($course_id)
+    {
+        return $this->db->table('lesson')->select('lesson.course_id')
+        ->where('lesson.course_id', $course_id)->countAllResults();
+    }
 }

@@ -14,7 +14,7 @@ class EnrolModel extends Model
     protected $returnType           = 'array';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
-    protected $allowedFields        = ['user_id', 'course_id', 'payment_id', 'create_at', 'update_at'];
+    protected $allowedFields        = ['user_id', 'course_id', 'payment_id', 'create_at', 'update_at','finish_date'];
 
     // Dates
     protected $useTimestamps        = false;
@@ -81,6 +81,19 @@ class EnrolModel extends Model
         $data = $this->db->table('enrol')->select('COUNT(user_id) as total_students')->where('course_id', $id_course)->groupBy('course_id')->get()->getRowObject();
         $data_count = !empty($data->total_students) ? $data->total_students : null;
         return $data_count;
+    }
+
+    public function get_sertifikat($user_id = null , $course_id = null)
+    {
+        return $this->db->table('enrol')->select(
+                "enrol.*,users.first_name,users.last_name,
+                courses.title as title,courses.id as course_id")
+                ->join('users', 'users.id = enrol.user_id')
+                ->join('courses', 'courses.id = enrol.course_id')
+                ->where('enrol.user_id', $user_id)
+                ->where('enrol.course_id', $course_id)
+                ->get()
+                ->getRow();
     }
     
 }
