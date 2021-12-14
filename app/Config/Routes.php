@@ -33,7 +33,7 @@ $routes->setAutoRoute(false);
 // route since we don't have to scan directories.
 // $routes->get('/', 'Home::index');
 
-$routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => 'auth:admin', 'filter' => 'cors'], function ($routes) {
+$routes->group('admin', ['namespace' => 'App\Controllers\Backend', 'filter' => 'auth:admin,cors'], function ($routes) {
     $routes->get('instructors', 'Instructor::index');
     $routes->get('courses', 'Courses::index');
     $routes->get('course/(:num)', 'Courses::show_detail/$1');
@@ -115,7 +115,7 @@ $routes->group('auth', ['namespace' => 'App\Controllers', 'filter' => 'cors'], f
     $routes->post('mobile/login', 'Auth::login_mobile');
     $routes->get('refreshtoken', 'Auth::get_refresh_token');
 });
-$routes->group('instructor', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user', 'filter' => 'cors'], function ($routes) {
+$routes->group('instructor', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user,cors',], function ($routes) {
     $routes->get('lessons', 'Lesson::index');
     $routes->get('lesson/(:num)', 'Lesson::show_detail/$1');
     $routes->post('lesson', 'Lesson::create');
@@ -164,7 +164,7 @@ $routes->group('mobile', ['namespace' => 'App\Controllers\Frontend', 'filter' =>
     $routes->get('course/rating/(:num)', 'Home::get_rating/$1');
     $routes->get('banners', 'Banner::index');
 });
-$routes->group('users', ['namespace' => 'App\Controllers\Frontend'], function ($routes) {
+$routes->group('users', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user,cors'], function ($routes) {
     $routes->get('me', 'Home::detail_users_login');
     $routes->get('wishlist', 'Home::wishlist');
     $routes->post('wishlist', 'Home::add_to_wishlist');
@@ -177,7 +177,6 @@ $routes->group('users', ['namespace' => 'App\Controllers\Frontend'], function ($
     $routes->post('profile/user-photo/(:num)', 'Home::user_photo/$1');
     $routes->get('users-info/(:num)', 'Home::users_detail/$1');
     $routes->post('voucher', 'Home::redeem_voucher');
-    $routes->post('payment/course', 'Home::payment');
     $routes->get('course/my/(:num)', 'Home::my_course/$1');
     $routes->get('course/my/lesson', 'Home::my_lesson');
     $routes->post('lesson/update/progress', 'Home::watch_history');
@@ -189,30 +188,11 @@ $routes->group('users', ['namespace' => 'App\Controllers\Frontend'], function ($
     $routes->post('review/(:num)', 'Home::review/$1');
 });
 
-// $routes->group('users', ['namespace' => 'App\Controllers\Frontend','filter' => 'auth:user,cors'], function ($routes) {
-//     $routes->get('me', 'Home::detail_users_login');
-//     $routes->get('wishlist', 'Home::wishlist');
-//     $routes->post('wishlist', 'Home::add_to_wishlist');
-//     $routes->delete('wishlist/delete/(:num)', 'Home::delete_wishlist/$1');
-//     $routes->get('carts/(:num)', 'Home::cart_list/$1');
-//     $routes->post('add-to-cart', 'Home::add_to_cart');
-//     $routes->delete('cart/delete/(:num)', 'Home::delete_cart/$1');
-//     $routes->put('profile/user-profile/(:num)', 'Home::user_profile/$1');
-//     $routes->put('profile/user-credentials/(:num)', 'Home::user_credentials/$1');
-//     $routes->post('profile/user-photo/(:num)', 'Home::user_photo/$1');
-//     $routes->get('users-info/(:num)', 'Home::users_detail/$1');
-//     $routes->post('voucher', 'Home::redeem_voucher');
-//     $routes->post('payment/course', 'Home::payment');
-//     $routes->get('course/my/(:num)', 'Home::my_course/$1');
-//     $routes->get('course/my/lesson', 'Home::my_lesson');
-//     $routes->post('lesson/update/progress', 'Home::watch_history');
-//     $routes->get('lesson/progress/(:num)', 'Home::get_watch_history/$1');
-//     $routes->get('comment/(:num)', 'Comment::show/$1');
-//     $routes->post('create-comment/(:num)', 'Comment::create_by_course/$1');
-//     $routes->put('comment/(:num)', 'Comment::update/$1');
-//     $routes->delete('comment/(:num)', 'Comment::delete/$1');
-// });
+$routes->group('payment', ['namespace' => 'App\Controllers'], function ($routes) {
+    $routes->post('charge', 'MidtransPayment::charge');
+});
 
+$routes->post('midtrans/payment/notification', 'MidtransPayment::notify_transaction');
 
 $routes->group('affiliate', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'auth:user,cors'], function ($routes) {
     $routes->get('access/(:num)', 'Affiliate::access/$1');

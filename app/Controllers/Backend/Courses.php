@@ -135,7 +135,7 @@ class Courses extends BackendController
         $count_data = $this->model_course->get_count_course(); // hitung total data ini akan mengembalikan angka
         $total_pages = ceil($count_data / $offset); //perhitungan dari jumlah data yg dihitung dibagi dengan batas data yg ditentukan
         $get_pagging_data = $this->model_course->get_pagging_data($offset, $start_index); //query berdasarkan data per halaman
-        
+
         foreach ($get_pagging_data as $courses) {
             $data[] = [
                 "id" => $courses->id,
@@ -170,7 +170,7 @@ class Courses extends BackendController
                 'create_at' => $courses->create_at,
                 'update_at' => $courses->update_at,
                 'delete_at' => $courses->delete_at,
-                "instructor_name" => $courses->first_name .' '. $courses->last_name,
+                "instructor_name" => $courses->first_name . ' ' . $courses->last_name,
                 "name_category" => $courses->name_category,
                 "parent_category" => $courses->parent_category,
             ];

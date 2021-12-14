@@ -2,85 +2,170 @@
 
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
+use App\Models\CoursesModel;
+use CodeIgniter\RESTful\ResourceController;
+use Midtrans\Config as MidtransConfig;
+use Config\Services;
+use Midtrans\CoreApi as CoreApi;
+use Midtrans\Notification as Notification;
 
-class MidtransPayment extends BaseController
+class MidtransPayment extends ResourceController
 {
-    public function index()
+    protected $format = 'json';
+    public function __construct()
     {
-        \Midtrans\Config::$serverKey = 'SB-Mid-server-6K18Kq4cQK2XNNNek6fIl2R9';
-        \Midtrans\Config::$isProduction = false;
-        \Midtrans\Config::$isSanitized = true;
 
-        $client_key = 'SB-Mid-client-JKeQLtkIddmCivY5';
+        $this->server_key = Services::getMidtransServerKey();
+        $client_key = Services::getMidtransClientKey();
+        MidtransConfig::$isProduction = false;
+        MidtransConfig::$isSanitized = true;
+        MidtransConfig::$serverKey = Services::getMidtransServerKey();;
+        $this->model_payment = model('PaymentModel');
+        $this->course_model = model('CoursesModel');
+        helper('curl');
+        MidtransConfig::$overrideNotifUrl = 'http://localhost:8080/midtrans/payment/notification';
+    }
 
-        $transaction_details = array(
-            'order_id'    => time(),
-            'gross_amount'  => 200000
+
+    function charge()
+    {
+        $data_invoice = $this->request->getJSON();
+        $data_transaction = array();
+        $id_user = $data_invoice->customer_detail->id_user;
+        $data_customer = array(
+            'first_name' => $data_invoice->customer_detail->nama,
+            'email' => $data_invoice->customer_detail->email,
         );
+        $data_items = array();
 
-        $items = array(
-            array(
-                'id'       => 'item1',
-                'price'    => 100000,
-                'quantity' => 1,
-                'name'     => 'Adidas f50'
-            ),
-            array(
-                'id'       => 'item2',
-                'price'    => 50000,
-                'quantity' => 2,
-                'name'     => 'Nike N90'
-            )
-        );
 
-        // Populate customer's billing address
-        $billing_address = array(
-            'first_name'   => "Andri",
-            'last_name'    => "Setiawan",
-            'address'      => "Karet Belakang 15A, Setiabudi.",
-            'city'         => "Jakarta",
-            'postal_code'  => "51161",
-            'phone'        => "081322311801",
-            'country_code' => 'IDN'
-        );
+        foreach ($data_invoice->data_invoice as $key => $values) {
+            $data_items[$key] = [
+                'id'   => $values->id_kursus,
+                'name' => $values->title_kursus,
+                'quantity'  => $values->qty,
+                'price' => $values->harga
 
-        // Populate customer's shipping address
-        $shipping_address = array(
-            'first_name'   => "John",
-            'last_name'    => "Watson",
-            'address'      => "Bakerstreet 221B.",
-            'city'         => "Jakarta",
-            'postal_code'  => "51162",
-            'phone'        => "081322311801",
-            'country_code' => 'IDN'
-        );
+            ];
+        }
+        $data_transaction = [
+            'order_id' => rand() + $id_user,
+            'gross_amount' => $data_invoice->total_payment
+        ];
+        if ($data_invoice->payment_type == 'gopay') {
+            $transaction_data = array(
+                'payment_type' => $data_invoice->payment_type,
+                'transaction_details' => $data_transaction,
+                'item_details'        => $data_items,
+                'customer_details'    => $data_customer
+            );
+            $response = CoreApi::charge($transaction_data);
+        } elseif ($data_invoice->payment_type == 'bank_transfer') {
+            $transaction_data = array(
+                'payment_type' => $data_invoice->payment_type,
+                'transaction_details' => $data_transaction,
+                'item_details'        => $data_items,
+                'customer_details'    => $data_customer,
+                'bank_transfer' => array(
+                    'bank' => $data_invoice->bank
+                )
+            );
+            $url_request = curlRequest($transaction_data);
+            $response = $url_request;
+        } elseif ($data_invoice->payment_type == 'cstore' && $data_invoice->store == 'alfamart') {
+            $transaction_data = array(
+                'payment_type' => $data_invoice->payment_type,
+                'transaction_details' => $data_transaction,
+                'item_details'        => $data_items,
+                'customer_details'    => $data_customer,
+                'cstore' => array(
+                    'store' => $data_invoice->store,
+                    'message' => "Message",
+                    "alfamart_free_text_1" => 'Pembayaran Kursus Vocasia'
+                )
+            );
+            $response = curlRequest($transaction_data);
+        } elseif ($data_invoice->payment_type == 'cstore' && $data_invoice->store == 'indomaret') {
+            $transaction_data = array(
+                'payment_type' => $data_invoice->payment_type,
+                'transaction_details' => $data_transaction,
+                'item_details'        => $data_items,
+                'customer_details'    => $data_customer,
+                'cstore' => array(
+                    'store' => $data_invoice->store,
+                    "message" => 'Pembayaran Kursus Platform Vocasia'
+                )
+            );
+            $response = curlRequest($transaction_data);
+        }
+        if ($response->transaction_status == 'pending') {
+            foreach ($data_invoice->data_invoice as $key => $values) {
+                $find_instructor_course = $this->course_model->select('instructor_revenue')->where('id', $values->id_kursus)->get()->getResult();
+                foreach ($find_instructor_course as $key => $values2) {
+                    if (!is_null($values2->instructor_revenue)) {
+                        $instructor_revenue = $values2->instructor_revenue / 100 * $values->harga;
+                        $admin_revenue = $values->harga - $instructor_revenue;
+                    } else {
+                        $instructor_revenue = 0;
+                        $admin_revenue = $values->harga;
+                    }
+                }
+                if ($response->payment_type != 'bank_transfer') {
+                    $this->model_payment->insert([
+                        'id_payment' => $response->order_id,
+                        'id_user' => $id_user,
+                        'payment_type' => $response->payment_type,
+                        'course_id' => $values->id_kursus,
+                        'amount' => $values->harga,
+                        'admin_revenue' => $admin_revenue,
+                        'instructor_revenue' => $instructor_revenue,
+                        'status_payment' => 2,
+                        'status' => 0
 
-        // Populate customer's info
-        $customer_details = array(
-            'first_name'       => "Andri",
-            'last_name'        => "Setiawan",
-            'email'            => "test@test.com",
-            'phone'            => "081322311801",
-            'billing_address'  => $billing_address,
-            'shipping_address' => $shipping_address
-        );
+                    ]);
+                } else {
+                    $bank_name = $response->va_numbers[0];
+                    $this->model_payment->insert([
+                        'id_payment' => $response->order_id,
+                        'id_user' => $id_user,
+                        'payment_type' => $response->payment_type,
+                        'payment_bank' => $bank_name->bank,
+                        'payment_va'   => $bank_name->va_number,
+                        'course_id' => $values->id_kursus,
+                        'amount' => $values->harga,
+                        'admin_revenue' => $admin_revenue,
+                        'instructor_revenue' => $instructor_revenue,
+                        'status_payment' => 2,
+                        'status' => 0
 
-        $transaction_data = array(
-            'payment_type' => 'gopay',
-            'credit_card'  => array(
-                'token_id'      => $client_key,
-                'authentication' => true,
-                //        'bank'          => 'bni', // optional to set acquiring bank
-                //        'save_token_id' => true   // optional for one/two clicks feature
-            ),
-            'transaction_details' => $transaction_details,
-            'item_details'        => $items,
-            'customer_details'    => $customer_details
-        );
+                    ]);
+                }
+            }
+        }
+        return $this->respondCreated($response);
+    }
 
-        $response = \Midtrans\CoreApi::charge($transaction_data);
+    public function notify_transaction()
+    {
+        try {
+            $notif = new Notification();
+        } catch (\Exception $e) {
+            exit($e->getMessage());
+        }
 
-        var_dump($response);
+        $notification = $notif->getResponse();
+        if ($notification->transaction_status == 'settlement') {
+            $data_payment = array();
+            $id_payment = $notification->id_order;
+            $find_id_payment = $this->model_payment->where('id_payment', $id_payment)->get()->getResult();
+            if (!empty($find_id_payment)) {
+                foreach ($find_id_payment as $key => $values) {
+                    $data_payment[$key] = [
+                        'status_payment' => 1,
+                    ];
+                    $this->model_payment->update($id_payment, $data_payment);
+                }
+            }
+        }
     }
 }
