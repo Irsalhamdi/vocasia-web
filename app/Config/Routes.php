@@ -151,6 +151,13 @@ $routes->group('homepage', ['namespace' => 'App\Controllers\Frontend', 'filter' 
     $routes->post('message/(:num)', 'MessageThread::create/$1');
     $routes->get('messages/sender/(:num)', 'MessageThread::sender/$1');
     $routes->get('messages/receiver/(:num)', 'MessageThread::receiver/$1');
+    $routes->post('qna-all', 'Home::qna_all');    
+    $routes->post('qna-all-more', 'Home::qna_all_more');
+    $routes->post('qna-detail-replies', 'Home::qna_detail');        
+    $routes->post('qna-create', 'Home::create_qna');
+    $routes->post('qna-create-replies', 'Home::create_qna_replies');
+    $routes->post('qna-search', 'Home::search');
+    $routes->post('qna-up', 'Home::up');    
 });
 $routes->group('mobile', ['namespace' => 'App\Controllers\Frontend', 'filter' => 'cors'], function ($routes) {
     $routes->get('courses', 'Home::get_all_courses');

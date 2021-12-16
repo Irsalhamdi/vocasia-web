@@ -83,4 +83,14 @@ class LessonModel extends Model
         return $this->db->table('lesson')->select('lesson.course_id')
         ->where('lesson.course_id', $course_id)->countAllResults();
     }
+
+    public function get_id_lesson($id_course, $id_lesson){
+        
+        return $this->db->table('lesson')->select('lesson.id')
+                                         ->where('course_id', $id_course)
+                                         ->where('id', $id_lesson)
+                                         ->get()
+                                         ->getRow();
+    }
+
 }
