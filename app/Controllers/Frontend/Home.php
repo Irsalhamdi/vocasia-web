@@ -905,4 +905,441 @@ class Home extends FrontendController
             return $this->failNotFound();
         }
     }
+
+    public function qna_all(){
+
+        $rules = [
+            'idc' => 'required|integer',
+            'idl' => 'required|integer',
+            'fil1' => 'required',
+            'fil2' => 'required'
+        ];
+
+        if(!$this->validate($rules)){
+            return $this->respond([
+                'status' => 403,
+                'error' => true,
+                'data' => [
+                    'message' => $this->validator->getErrors()
+                ]
+            ], 403);
+        }else{
+            
+            $filter = $this->request->getVar();
+
+            if(empty($filter)){
+
+                return $this->respond([
+                    'status' => '403',
+                    'error' => true,
+                    'data' => [
+                        'message' => 'Please Serch Filter Keywords'
+                    ]
+                ], 403);
+            }else{
+
+                $data['idc'] = $filter->idc; 
+                $data['idl'] = $filter->idl;
+                $data['fil1'] = $filter->fil1; 
+                $data['fil2'] = $filter->fil2;
+                $count = $this->model_qna->get_qna_count($data['idc']);
+                $data = $this->model_qna->all($data['idc'], $data['idl'], $data['fil1'], $data['fil2']);
+
+                if(empty($data)){
+                    return $this->failNotFound();
+                }else{
+
+                    foreach($data as $value){
+                        $result[] = [
+                            'image' => $this->model_users_detail->get_profile_users($value['ids']),
+                            'first_name' => $value['first_name'],
+                            'id_qna' => $value['id_qna'],
+                            'id_course' => $value['id_course'],
+                            'id_lesson' => $value['id_lesson'],
+                            'title' => $value['title'],
+                            'quest' => $value['quest'],
+                            'sender' => $value['sender'],
+                            'up' => $value['up'],
+                            'reply_amount' => $value['jum_rep'],
+                            'date_add' => $value['date_add']
+                        ];
+                    }
+
+                    return $this->respond([
+                        'status' => 201,
+                        'error' => false,
+                        'data' => [
+                            'qna amount' => $count,
+                            'data' => $result
+                        ]
+                    ], 201);
+                }
+            }
+        }
+    }    
+
+    public function qna_all_more(){
+    
+        $rules = [
+            'idc' => 'required|integer',
+            'idl' => 'required|integer',
+            'fil1' => 'required',
+            'fil2' => 'required'
+        ];
+
+        if(!$this->validate($rules)){
+            return $this->respond([
+                'status' => 403,
+                'error' => true,
+                'data' => [
+                    'message' => $this->validator->getErrors()
+                ]
+            ], 403);
+        }else{
+
+            $filter = $this->request->getVar();
+
+            if(empty($filter)){
+
+                return $this->respond([
+                    'status' => '403',
+                    'error' => true,
+                    'data' => [
+                        'message' => 'Please Serch Filter Keywords'
+                    ]
+                ], 403);
+            }else{
+
+                $data['idc'] = $filter->idc; 
+                $data['idl'] = $filter->idl;
+                $data['fil1'] = $filter->fil1; 
+                $data['fil2'] = $filter->fil2;
+                $count = $this->model_qna->get_qna_count($data['idc']);
+                $data = $this->model_qna->more($data['idc'], $data['idl'], $data['fil1'], $data['fil2']);
+                
+                if(empty($data)){
+                    return $this->failNotFound();
+                }else{
+
+                    foreach($data as $value){
+                        $result[] = [
+                            'image' => $this->model_users_detail->get_profile_users($value['ids']),
+                            'first_name' => $value['first_name'],
+                            'id_qna' => $value['id_qna'],
+                            'id_course' => $value['id_course'],
+                            'id_lesson' => $value['id_lesson'],
+                            'title' => $value['title'],
+                            'quest' => $value['quest'],
+                            'sender' => $value['sender'],
+                            'up' => $value['up'],
+                            'reply_amount' => $value['jum_rep'],
+                            'date_add' => $value['date_add']
+                        ];
+                    }
+                
+                    return $this->respond([
+                        'status' => 201,
+                        'error' => false,
+                        'data' => [
+                            'qna_amount' => $count,
+                            'data' => $result
+                        ]
+                    ], 201);
+                }
+            }
+        }
+    }
+
+    public function qna_detail(){
+
+        $rules = [
+            'id_qna' => 'required|integer',
+            'text' => 'required'
+        ];
+
+        if(!$this->validate($rules)){
+            return $this->respond([
+                'status' => 403,
+                'error' => true,
+                'message' => [
+                    'data' => $this->validator->getErrors()
+                ]
+            ], 403);
+        }else{
+
+            $post = $this->request->getVar();
+
+            if(empty($post)){
+
+                return $this->respond([
+                    'status' => '403',
+                    'error' => true,
+                    'data' => [
+                        'message' => 'please enter id qna'
+                    ]
+                ]);
+            }else{
+                $data['id_qna'] = $post->id_qna; 
+
+                if(!($this->model_qna->find($data['id_qna']))){
+
+                    return $this->failNotFound();
+                }else{
+
+                    $value = $this->model_qna->get_qna_detail($data['id_qna']);
+                    $replies = $this->model_qna_reply->get_qna_detail_reply($data['id_qna']);
+
+                    if(empty($replies)){
+                        return $this->respond([
+                            'id_qna' => $value->id_qna,
+                            'image' => $this->model_users_detail->get_profile_users($value->ids),
+                            'title' => $value->title,
+                            'quest' => $value->quest,
+                            'name' => $value->first_name,
+                            'id_lesson' => $value->id_lesson,
+                            'date_add' => $value->date_add,
+                            'up' => $value->up,
+                            'reply_amount' => count($replies),
+                        ]);
+                    }else{
+
+                        foreach($replies as $reply){
+                            $result[] = [
+                                'id_qna' => $reply['id_qna'],
+                                'image' => $reply['ids'],
+                                'text_rep' => $reply['text_rep'],
+                                'name' => $reply['first_name'],
+                                'date_add' => $reply['date_add'],
+                                'up' => $reply['up'],
+                            ];
+                        };
+
+                        return $this->respond([
+                            'status' => 201,
+                            'error' => false,
+                            'data' => [
+                                'id_qna' => $value->id_qna,
+                                'image' => $this->model_users_detail->get_profile_users($value->ids),
+                                'title' => $value->title,
+                                'quest' => $value->quest,
+                                'name' => $value->first_name,
+                                'id_lesson' => $value->id_lesson,
+                                'date_add' => $value->date_add,
+                                'up' => $value->up,
+                                'reply_amount' => count($replies),
+                                'reply' => $result,
+                            ]
+                        ]);
+                    }
+                }
+            }
+        }    
+    }
+
+    public function create_qna(){
+
+        $rules = [
+            'sender' => 'required|integer',
+            'title' => 'required',
+            'quest' => 'required',
+            'id_course' => 'required|integer',
+            'id_lesson' => 'required|integer'
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->respond([
+                'status' => '403',
+                'error' => true,
+                'data' => $this->validator->getErrors()
+            ], 403);
+        } else {
+
+            $id_course = $this->request->getVar('id_course');
+            $id_lesson = $this->request->getVar('id_lesson');
+
+            $check_course    = $this->model_lesson->get_lesson($id_course);
+            if(empty($check_course)){
+                    return $this->respond([
+                        'status' => 403,
+                        'error' => true,
+                        'data' => [
+                            'message' => 'Course Not Found'
+                        ]
+                    ], 403);
+            }else{
+                $check_lesson = $this->model_lesson->get_id_lesson($id_course, $id_lesson); 
+                if(empty($check_lesson)){
+                    return $this->respond([
+                        'status' => 403,
+                        'error' => true,
+                        'data' => [
+                            'message' => 'Lesson Not Found'
+                        ]
+                    ], 403);
+                }else{
+                    
+                    $data = $this->request->getJson();
+                    $this->model_qna->insert([
+                        'sender' => $data->sender,
+                        'title' => $data->title,
+                        'quest' => $data->quest,
+                        'id_course' => $id_course,
+                        'id_lesson' => $id_lesson,
+                        'up' => 0,
+                        'user_id_up' => '',
+                        'date_add' => date('d M Y H:i:s'),
+                        'status' => 0
+                    ]);
+                    return $this->respondCreated(response_create());
+                }
+            }   
+        }      
+    }
+
+    public function create_qna_replies(){
+        
+        $rules = [
+            'sender' => 'required|integer',
+            'text_rep' => 'required',
+            'id_qna' => 'required|integer'
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->respond([
+                'status' => '403',
+                'error' => true,
+                'data' => $this->validator->getErrors()
+            ], 403);
+        } else {
+
+            $id_qna = $this->request->getVar('id_qna');
+            $check_qna = $this->model_qna->check_qna($id_qna);
+
+            if(!empty($check_qna)){
+
+                $data = $this->request->getJSON();
+                $this->model_qna_reply->insert([
+                    'id_qna' => $id_qna,
+                    'sender' => $data->sender,
+                    'text_rep' => $data->text_rep,
+                    'date_add' => date('d M Y H:i:s'),
+                    'up' => 0
+                ]);
+                return $this->respondCreated(response_create());
+            }else{
+                return $this->failNotFound();
+            }
+        }
+    }
+
+    public function search(){
+
+        $rules = [
+            'id_course' => 'required|integer',
+            'text' => 'required'
+        ];
+
+        if(!$this->validate($rules)){
+            return $this->respond([
+                'status' => 403,
+                'error' => true,
+                'data' => [
+                    'message' => $this->validator->getErrors()
+                ]
+            ], 403);
+        }else{
+
+            $data = $this->request->getVar();
+            $id = $data->id_course;
+            if(!empty($data)){
+
+                $result = $this->model_qna->search($id, $data);
+                foreach($result as $value){
+                    $data = [
+                        'id_qna' => $value['id_qna'],
+                        'name' => $value['first_name'],
+                        'image' => $this->model_users_detail->get_profile_users($value['sender']),                
+                        'title' => $value['title'],
+                        'quest' => $value['quest'],
+                        'id_lesson' => $value['id_lesson'],
+                        'up' => $value['up'],
+                        'date_add' => $value['date_add'],
+                        'reply' => count($this->model_qna_reply->get_qna_detail_reply($value['id_qna']))
+                    ];
+                }
+                return $this->respond(get_response($data));
+            }else{
+                return $this->failNotFound();
+            }
+        }
+    }
+
+    public function up(){
+
+        $rules = [
+            'id_qna' => 'required|integer',
+            'up' => 'required|integer',
+            'sender' => 'required'
+        ];
+
+        if(!$this->validate($rules)){
+
+            return $this->respond([
+                'status' => 403,
+                'error' => true,
+                'data' => [
+                    'message' => $this->validator->getErrors()
+                ]
+            ], 403);
+        }else{
+
+            $post = $this->request->getVar();
+            $sender = $post->sender;
+            
+            $upid = $this->model_qna->get_up($post->id_qna);
+
+            if ($upid->user_id_up != null || $upid->user_id_up == "[null]") {
+                $dat = json_decode($upid->user_id_up);
+            } else {
+                $dat = array(json_decode($upid->user_id_up));
+            }
+            if (in_array($sender, $dat)) {
+                $key = array_search($sender, $dat);
+                unset($dat[$key]);
+                
+                $data = array(
+                    'up'            => $post->up - 1,
+                    'user_id_up'    => json_encode($dat)
+                );
+
+                $this->model_qna->do_up_qna($post->id_qna, $data);
+
+                return $this->respond([
+                    'status' => 201,
+                    'error' => false,
+                    'data' => [
+                        'message' => 'Down'
+                    ]
+                ], 201);
+
+            } else {
+                array_push($dat, $sender);
+
+                $data = array(
+                    'up'            => $post->up + 1,
+                    'user_id_up'    => json_encode($dat)
+                );
+
+                $this->model_qna->do_up_qna($post->id_qna, $data);
+
+                return $this->respond([
+                    'status' => 201,
+                    'error' => false,
+                    'data' => [
+                        'message' => 'Up'
+                    ]
+                ], 201);
+            }
+        }
+    }
 }
